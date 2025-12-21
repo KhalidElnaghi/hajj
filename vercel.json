@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/uploads/:path*",  
+      "destination": "http://156.67.27.191:8001/uploads/:path*"
+    }
+  ]
+}
