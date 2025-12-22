@@ -21,20 +21,23 @@ type Props<T> = {
   actions: TableBulkAction<T>[];
   badgeColor?: string;
   iconSrc?: string;
+  inactiveIconSrc?: string;
   onAfterAction?: () => void;
   disableWhenEmpty?: boolean;
   buttonProps?: ButtonProps;
 };
 
-const DEFAULT_ICON = '/assets/images/pilgrims/bulk-actions.svg';
+const DEFAULT_ICON_ACTIVE = '/assets/images/pilgrims/bulk-actions.svg';
+const DEFAULT_ICON_INACTIVE = '/assets/images/pilgrims/bulk-actions-dark.svg';
 
 export default function TableBulkActions<T>({
   label,
   selectedIds,
   selectedRows = [],
   actions,
-  badgeColor = '#17a2b8',
-  iconSrc = DEFAULT_ICON,
+  badgeColor = '#dc3545',
+  iconSrc = DEFAULT_ICON_ACTIVE,
+  inactiveIconSrc = DEFAULT_ICON_INACTIVE,
   onAfterAction,
   disableWhenEmpty = true,
   buttonProps,
@@ -43,11 +46,15 @@ export default function TableBulkActions<T>({
   const menuOpen = Boolean(anchorEl);
   const selectedCount = selectedIds?.length || 0;
   const disableOpen = disableWhenEmpty ? selectedCount === 0 : false;
+  const isDisabled = disableOpen || actions.length === 0 || buttonProps?.disabled;
+  const isActive = selectedCount > 0 && !buttonProps?.disabled && actions.length > 0;
+  const effectiveVariant = buttonProps?.variant ?? (isActive ? 'contained' : 'outlined');
 
   const actionIds = useMemo(() => selectedIds.map((id) => String(id)), [selectedIds]);
+  const renderedIcon = isActive ? iconSrc : (inactiveIconSrc ?? iconSrc);
 
   const handleOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
-    if (disableOpen || actions.length === 0) return;
+    if (isDisabled) return;
     setAnchorEl(event.currentTarget);
   };
 
@@ -64,12 +71,12 @@ export default function TableBulkActions<T>({
     <>
       <Button
         {...buttonProps}
-        variant={buttonProps?.variant ?? 'contained'}
+        variant={effectiveVariant}
         onClick={handleOpen}
-        disabled={disableOpen || actions.length === 0 || buttonProps?.disabled}
+        disabled={isDisabled}
         sx={{
-          bgcolor: '#0b0b0b',
-          color: '#fff',
+          bgcolor: isDisabled ? '#fff' : isActive ? '#0b0b0b' : '#fff',
+          color: isDisabled ? '#333' : isActive ? '#fff' : '#333',
           borderRadius: 1,
           height: 44,
           paddingInlineStart: 2,
@@ -77,7 +84,17 @@ export default function TableBulkActions<T>({
           minWidth: 200,
           position: 'relative',
           boxShadow: 'none',
-          '&:hover': { bgcolor: '#1c1c1c', boxShadow: 'none' },
+          border: isDisabled || !isActive ? '1px solid #dce5ef' : 'none',
+          '&:hover': {
+            bgcolor: isDisabled ? '#fff' : isActive ? '#1c1c1c' : '#fff',
+            boxShadow: 'none',
+          },
+          '&.Mui-disabled': {
+            bgcolor: '#fff !important',
+            color: '#333 !important',
+            border: '1px solid #dce5ef !important',
+            opacity: 1,
+          },
           ...buttonProps?.sx,
         }}
       >
@@ -104,10 +121,10 @@ export default function TableBulkActions<T>({
         </Box>
 
         <Stack direction="row" alignItems="center" spacing={1} sx={{ marginInlineEnd: 3 }}>
-          {iconSrc.startsWith('/') ? (
-            <Image src={iconSrc} alt="bulk actions" width={20} height={20} />
+          {renderedIcon.startsWith('/') ? (
+            <Image src={renderedIcon} alt="bulk actions" width={20} height={20} />
           ) : (
-            <Iconify icon={iconSrc} width={20} height={20} />
+            <Iconify icon={renderedIcon} width={20} height={20} />
           )}
           <Box component="span" sx={{ fontWeight: 600, fontSize: 14 }}>
             {label}
@@ -138,7 +155,8 @@ export default function TableBulkActions<T>({
       >
         {actions.map((action) => {
           const disabled = action.disabled || (disableWhenEmpty && selectedCount === 0);
-          const isCustomIcon = action.icon && (action.icon.startsWith('/') || action.icon.startsWith('http'));
+          const isCustomIcon =
+            action.icon && (action.icon.startsWith('/') || action.icon.startsWith('http'));
           return (
             <MenuItem
               key={action.key}
@@ -161,7 +179,12 @@ export default function TableBulkActions<T>({
                       sx={{ width: 16, height: 16 }}
                     />
                   ) : (
-                    <Iconify icon={action.icon} width={16} height={16} sx={{ color: 'text.secondary' }} />
+                    <Iconify
+                      icon={action.icon}
+                      width={16}
+                      height={16}
+                      sx={{ color: 'text.secondary' }}
+                    />
                   )
                 ) : null}
                 <Typography variant="body2" sx={{ fontSize: 13, color: 'text.primary' }}>
@@ -182,4 +205,3 @@ export default function TableBulkActions<T>({
     </>
   );
 }
-
