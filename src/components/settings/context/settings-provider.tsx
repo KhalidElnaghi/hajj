@@ -3,6 +3,7 @@
 import Cookies from 'js-cookie';
 import isEqual from 'lodash/isEqual';
 import { useMemo, useState, useEffect, useCallback } from 'react';
+import { useLocale } from 'next-intl';
 
 import { useLocalStorage } from 'src/hooks/use-local-storage';
 
@@ -22,6 +23,7 @@ type SettingsProviderProps = {
 
 export function SettingsProvider({ children, defaultSettings }: SettingsProviderProps) {
   const { state, update, reset } = useLocalStorage(STORAGE_KEY, defaultSettings);
+  const locale = useLocale();
 
   const [openDrawer, setOpenDrawer] = useState(false);
   const onChangeDirectionByLang = useCallback(
@@ -31,21 +33,13 @@ export function SettingsProvider({ children, defaultSettings }: SettingsProvider
     [update]
   );
   useEffect(() => {
-    const storedLang = Cookies.get('browserLang') || Cookies.get('Language');
+    // Keep the cookie and theme direction in sync with the active locale
+    const resolvedLang = locale || Cookies.get('Language') || 'ar';
 
-    let finalLang = storedLang;
-
-    if (!finalLang) {
-      // Default to Arabic on first render
-      finalLang = 'ar';
-
-      Cookies.set('Language', finalLang, { path: '/' });
-    }
-
-    onChangeDirectionByLang(finalLang);
-    Cookies.set('Language', finalLang, { path: '/' });
+    onChangeDirectionByLang(resolvedLang);
+    Cookies.set('Language', resolvedLang, { path: '/' });
     Cookies.remove('browserLang');
-  }, [onChangeDirectionByLang]);
+  }, [locale, onChangeDirectionByLang]);
 
   const onToggleDrawer = useCallback(() => {
     setOpenDrawer((prev) => !prev);
