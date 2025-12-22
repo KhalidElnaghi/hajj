@@ -7,7 +7,11 @@ import {
   Button,
   Card,
   Container,
+  Dialog,
+  DialogContent,
+  DialogTitle,
   Divider,
+  IconButton,
   InputAdornment,
   Menu,
   MenuItem,
@@ -18,14 +22,11 @@ import {
 
 import { useTranslations } from 'next-intl';
 
+import { useDisclosure } from 'src/hooks/useDisclosure';
+
 import SharedTable from 'src/components/custom-shared-table/shared-table/SharedTable';
-import TableBulkActions from 'src/components/custom-shared-table/shared-table/TableBulkActions';
 import useTable from 'src/components/custom-shared-table/shared-table/use-table';
-import {
-  headCellType,
-  Action,
-  TableBulkAction,
-} from 'src/components/custom-shared-table/shared-table/types';
+import { headCellType, Action } from 'src/components/custom-shared-table/shared-table/types';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs/custom-breadcrumbs';
 import Iconify from 'src/components/iconify';
 import Image from 'next/image';
@@ -222,6 +223,7 @@ const dummyPilgrims: Pilgrim[] = [
 export default function PilgrimsView() {
   const t = useTranslations();
   const table = useTable();
+  const bulkDialog = useDisclosure();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [genderFilter, setGenderFilter] = useState<string>('all');
@@ -293,26 +295,76 @@ export default function PilgrimsView() {
     },
   ];
 
-  const bulkActions: TableBulkAction<Pilgrim>[] = [
+  // Bulk dialog options based on the image
+  const bulkDialogOptions = [
     {
-      key: 'bulk-message',
-      label: t('Label.message'),
-      icon: '/assets/icons/table/sms.svg',
-      onClick: (selectedIds, rows) => console.log('message pilgrims', selectedIds, rows),
+      key: 'send-message',
+      label: t('Label.send_emergency_message'),
+      icon: '/assets/images/pilgrims/bulk-action/sms.svg',
+      action: () => console.log('Send message to pilgrims'),
     },
     {
-      key: 'bulk-view',
-      label: t('Label.view'),
-      icon: '/assets/icons/table/view.svg',
-      onClick: (selectedIds, rows) => console.log('view pilgrims', selectedIds, rows),
+      key: 'today',
+      label: t('Label.today'),
+      icon: '/assets/images/pilgrims/bulk-action/tags.svg',
+      action: () => console.log('Today actions'),
     },
     {
-      key: 'bulk-delete',
-      label: t('Label.delete'),
-      icon: '/assets/icons/table/delete.svg',
-      onClick: (selectedIds, rows) => console.log('delete pilgrims', selectedIds, rows),
+      key: 'accommodation-needs',
+      label: t('Label.accommodation_needs_in_rituals'),
+      icon: '/assets/images/pilgrims/bulk-action/accommodation.svg',
+      action: () => console.log('Accommodation needs'),
+    },
+    {
+      key: 'transportation',
+      label: t('Label.transportation_vehicles'),
+      icon: '/assets/images/pilgrims/bulk-action/transport.svg',
+      action: () => console.log('Transportation'),
+    },
+    {
+      key: 'camp',
+      label: t('Label.camp'),
+      icon: '/assets/images/pilgrims/bulk-action/tents.svg',
+      action: () => console.log('Camp'),
+    },
+    {
+      key: 'gathering-points',
+      label: t('Label.gathering_points'),
+      icon: '/assets/images/pilgrims/bulk-action/location.svg',
+      action: () => console.log('Gathering points'),
+    },
+    {
+      key: 'link-supervisors',
+      label: t('Label.link_supervisors'),
+      icon: '/assets/images/pilgrims/bulk-action/link.svg',
+      action: () => console.log('Link supervisors'),
+    },
+    {
+      key: 'arrival-time',
+      label: t('Label.arrival_time'),
+      icon: '/assets/images/pilgrims/bulk-action/time.svg',
+      action: () => console.log('Arrival time'),
+    },
+    {
+      key: 'shipping-management',
+      label: t('Label.shipping_management'),
+      icon: '/assets/images/pilgrims/bulk-action/shipping.svg',
+      action: () => console.log('Shipping management'),
+    },
+    {
+      key: 'send-receipt-notification',
+      label: t('Label.send_receipt_notification'),
+      icon: '/assets/images/pilgrims/bulk-action/receive.svg',
+      action: () => console.log('Send receipt notification'),
     },
   ];
+
+  const handleDialogOptionClick = (option: (typeof bulkDialogOptions)[0]) => {
+    option.action();
+    bulkDialog.onClose();
+    // You can add navigation or state changes here based on the option
+    // For example: router.push(`/pilgrims/${option.key}`);
+  };
 
   const registrationStatusColors: Record<string, { bg: string; color: string; label: string }> = {
     completed: { bg: '#E8F5E9', color: '#2E7D32', label: 'مكتمل' },
@@ -324,13 +376,6 @@ export default function PilgrimsView() {
   const healthStatusColors: Record<string, { bg: string; color: string; label: string }> = {
     good: { bg: '#E8F5E9', color: '#2E7D32', label: 'جيد' },
     attention: { bg: '#FFF3E0', color: '#EF6C00', label: 'احتياج' },
-  };
-
-  const accommodationColors: Record<string, { bg: string; color: string }> = {
-    VIP: { bg: '#FFF3E0', color: '#EF6C00' },
-    مكتمل: { bg: '#E8F5E9', color: '#2E7D32' },
-    مساعد: { bg: '#E3F2FD', color: '#1976D2' },
-    جيد: { bg: '#E8F5E9', color: '#2E7D32' },
   };
 
   const packageColors: Record<string, { bg: string; color: string }> = {
@@ -739,13 +784,90 @@ export default function PilgrimsView() {
                   })}
                 </Menu>
               </Box>
-              <TableBulkActions<Pilgrim>
-                label={t('Label.bulk_actions')}
-                selectedIds={table.selected}
-                selectedRows={selectedPilgrims}
-                actions={bulkActions}
-                onAfterAction={() => table.setSelected([])}
-              />
+              {/* Custom Bulk Actions Button that opens dialog */}
+              <Button
+                variant={table.selected.length > 0 ? 'contained' : 'outlined'}
+                onClick={bulkDialog.onOpen}
+                disabled={table.selected.length === 0}
+                sx={{
+                  bgcolor:
+                    table.selected.length === 0
+                      ? '#fff'
+                      : table.selected.length > 0
+                        ? '#0b0b0b'
+                        : '#fff',
+                  color:
+                    table.selected.length === 0
+                      ? '#333'
+                      : table.selected.length > 0
+                        ? '#fff'
+                        : '#333',
+                  borderRadius: 1,
+                  height: 44,
+                  paddingInlineStart: 2,
+                  paddingInlineEnd: 5,
+                  minWidth: 200,
+                  position: 'relative',
+                  boxShadow: 'none',
+                  border:
+                    table.selected.length === 0 || table.selected.length === 0
+                      ? '1px solid #dce5ef'
+                      : 'none',
+                  '&:hover': {
+                    bgcolor:
+                      table.selected.length === 0
+                        ? '#fff'
+                        : table.selected.length > 0
+                          ? '#1c1c1c'
+                          : '#fff',
+                    boxShadow: 'none',
+                  },
+                  '&.Mui-disabled': {
+                    bgcolor: '#fff !important',
+                    color: '#333 !important',
+                    border: '1px solid #dce5ef !important',
+                    opacity: 1,
+                  },
+                }}
+              >
+                <Box
+                  component="span"
+                  sx={{
+                    position: 'absolute',
+                    top: '50%',
+                    insetInlineEnd: 12,
+                    transform: 'translateY(-50%)',
+                    bgcolor: '#dc3545',
+                    color: 'white',
+                    borderRadius: '50%',
+                    width: 24,
+                    height: 24,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: 12,
+                    fontWeight: 700,
+                  }}
+                >
+                  {table.selected.length}
+                </Box>
+
+                <Stack direction="row" alignItems="center" spacing={1} sx={{ marginInlineEnd: 3 }}>
+                  <Image
+                    src={
+                      table.selected.length > 0
+                        ? '/assets/images/pilgrims/bulk-actions.svg'
+                        : '/assets/images/pilgrims/bulk-actions-dark.svg'
+                    }
+                    alt="bulk actions"
+                    width={20}
+                    height={20}
+                  />
+                  <Box component="span" sx={{ fontWeight: 600, fontSize: 14 }}>
+                    {t('Label.bulk_actions')}
+                  </Box>
+                </Stack>
+              </Button>
             </Stack>
 
             <Stack direction="row" spacing={1.25} alignItems="center">
@@ -836,6 +958,82 @@ export default function PilgrimsView() {
           />
         </Card>
       </Box>
+
+      {/* Bulk Actions Dialog */}
+      <Dialog
+        open={bulkDialog.open}
+        onClose={bulkDialog.onClose}
+        maxWidth="sm"
+        fullWidth
+        PaperProps={{
+          sx: {
+            borderRadius: 3,
+            p: 2,
+          },
+        }}
+      >
+        <DialogTitle sx={{ p: 1, mb: 2 }}>
+          <Stack direction="row" alignItems="flex-start" justifyContent="space-between" spacing={2}>
+            <Box sx={{ flex: 1 }}>
+              <Typography variant="h6" sx={{ fontWeight: 700, fontSize: 18 }}>
+                {t('Title.group_actions')}
+              </Typography>
+              <Typography variant="body2" sx={{ color: 'text.secondary', mt: 1, fontSize: 13 }}>
+                {t('Description.group_actions_description')}
+              </Typography>
+            </Box>
+            <IconButton
+              onClick={bulkDialog.onClose}
+              sx={{
+                color: 'text.secondary',
+                mt: -1,
+                mr: -1,
+                border: '1px solid #e5e7eb',
+
+                p: 0.5,
+                '&:hover': {
+                  bgcolor: '#f9fafb',
+                  borderColor: '#d1d5db',
+                },
+              }}
+            >
+              <Iconify icon="mdi:close" width={24} />
+            </IconButton>
+          </Stack>
+        </DialogTitle>
+        <Divider sx={{ my: 2 }} />
+        <DialogContent sx={{ p: 0.5 }}>
+          <Stack spacing={1.5}>
+            {/* Other Options */}
+            {bulkDialogOptions.map((option) => (
+              <Button
+                key={option.key}
+                fullWidth
+                variant="outlined"
+                onClick={() => handleDialogOptionClick(option)}
+                sx={{
+                  bgcolor: '#fff',
+                  borderColor: '#e5e7eb',
+                  color: '#1f2937',
+                  borderRadius: 1,
+                  py: 0.5,
+                  fontSize: 14,
+                  fontWeight: 500,
+                 justifyContent: 'flex-start',
+                  gap: 1,
+                  '&:hover': {
+                    bgcolor: '#f3f7ff',
+                    borderColor: '#0d6efd',
+                  },
+                }}
+              >
+                <Image src={option.icon} alt={option.label} width={20} height={20} />
+                <Box component="span">{option.label}</Box>
+              </Button>
+            ))}
+          </Stack>
+        </DialogContent>
+      </Dialog>
     </Container>
   );
 }

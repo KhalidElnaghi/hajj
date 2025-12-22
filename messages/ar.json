@@ -97,7 +97,8 @@
     "day_name": "اسم اليوم",
     "students": "الطلاب",
     "teachers": "المعلمون",
-    "main_page": "الصفحة الرئيسية"
+    "main_page": "الصفحة الرئيسية",
+    "group_actions": "إجراءات جماعية"
   },
   "Label": {
     "language_arabic": "العربية",
@@ -316,7 +317,17 @@
     "gathering_point_type": "نوع نقطة التجمع",
     "destination": "الوجهة",
     "bus_number": "رقم الباص",
-    "gathering_point": "نقطة التجمع"
+    "gathering_point": "نقطة التجمع",
+    "send_emergency_message": "رسائل نصية للحجاج",
+    "today": "اليوسوم",
+    "accommodation_needs_in_rituals": "تسكين الحجاج في المشاعر",
+    "transportation_vehicles": "سيارات النقل",
+    "camp": "المخيم",
+    "gathering_points": "نقاط التجمع",
+    "link_supervisors": "ربط المشرفين",
+    "arrival_time": "توقيت الوصول",
+    "shipping_management": "إدارة شحن",
+    "send_receipt_notification": "إرسال تنبية استلام"
   },
   "Button": {
     "send_request": "إرسال الطلب",
@@ -410,7 +421,8 @@
     "countries": "إدارة الدول المدعومة وحالة تفعيلها.",
     "nationalities": "إدارة الجنسيات المدعومة وحالة تفعيلها.",
     "students": "إدارة الطلاب وتفاصيلهم.",
-    "teachers": "إدارة المعلمين وتفاصيلهم."
+    "teachers": "إدارة المعلمين وتفاصيلهم.",
+    "group_actions_description": "تشمل عمليات متعددة وفعالة وتوجيه رصيد للمعتمرين بما يتضمن رسائل وإشعالات وخدمات توصيل متعلقات وشحنات تنظيم الرحلاة بسهولة"
   },
   "Helper": {
     "drop_or_select": "اسحب أو {browse} الملف هنا"

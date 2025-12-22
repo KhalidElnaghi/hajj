@@ -97,7 +97,8 @@
     "day_name": "Day Name",
     "students": "Students",
     "teachers": "Teachers",
-    "main_page": "Main Page"
+    "main_page": "Main Page",
+    "group_actions": "Group Actions"
   },
   "Label": {
     "language_arabic": "Arabic",
@@ -316,7 +317,17 @@
     "gathering_point_type": "Gathering Point Type",
     "destination": "Destination",
     "bus_number": "Bus Number",
-    "gathering_point": "Gathering Point"
+    "gathering_point": "Gathering Point",
+    "send_emergency_message": "Send SMS Messages to Pilgrims",
+    "today": "Today",
+    "accommodation_needs_in_rituals": "Accommodation of Pilgrims in Rituals",
+    "transportation_vehicles": "Transportation Vehicles",
+    "camp": "Camp",
+    "gathering_points": "Gathering Points",
+    "link_supervisors": "Link Supervisors",
+    "arrival_time": "Arrival Time",
+    "shipping_management": "Shipping Management",
+    "send_receipt_notification": "Send Receipt Notification"
   },
   "Button": {
     "send_request": "Send Request",
@@ -410,7 +421,8 @@
     "countries": "Manage supported countries and their activation state.",
     "nationalities": "Manage supported nationalities and their activation state.",
     "students": "Manage students and their details.",
-    "teachers": "Manage teachers and their details."
+    "teachers": "Manage teachers and their details.",
+    "group_actions_description": "Includes multiple and effective operations and guidance for pilgrims, including messages, notifications, and delivery services for belongings and shipments to easily organize the trip"
   },
   "Helper": {
     "drop_or_select": "Drop or {browse} file here"
