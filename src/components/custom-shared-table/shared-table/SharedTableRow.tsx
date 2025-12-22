@@ -9,6 +9,7 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import Checkbox from '@mui/material/Checkbox';
 
 import Iconify from 'src/components/iconify';
 
@@ -20,6 +21,9 @@ export default function SharedTableRow<T extends { id: string | number }>({
   customRender,
   headIds,
   index = 0,
+  selectionEnabled,
+  selected,
+  onSelectRow,
 }: SharedTableRowProps<T>) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const menuOpen = Boolean(anchorEl);
@@ -45,6 +49,7 @@ export default function SharedTableRow<T extends { id: string | number }>({
   return (
     <TableRow
       hover
+      selected={selected}
       sx={{
         ...rowStyle,
         borderBottom: '1px solid',
@@ -55,6 +60,17 @@ export default function SharedTableRow<T extends { id: string | number }>({
         },
       }}
     >
+      {selectionEnabled && (
+        <TableCell align="center" padding="checkbox" sx={{ width: 52 }}>
+          <Checkbox
+            color="primary"
+            checked={!!selected}
+            onChange={() => onSelectRow?.(String(row.id))}
+            inputProps={{ 'aria-label': 'select row' }}
+          />
+        </TableCell>
+      )}
+
       {headIds.map((x, cellIdx) => (
         <TableCell key={cellIdx} sx={{ whiteSpace: 'nowrap', color: 'info.dark' }}>
           {x === ('auto_index' as unknown as keyof T)

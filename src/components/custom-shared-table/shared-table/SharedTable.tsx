@@ -26,8 +26,10 @@ export default function SharedTable<T extends { id: string | number }>({
   headColor,
   emptyIcon,
   order,
+  enableSelection = false,
+  table: tableProp,
 }: SharedTableProps<T>) {
-  const table = useTable();
+  const table = tableProp ?? useTable();
   const searchParams = useSearchParams();
   const skipCountParam = searchParams.get('SkipCount');
 
@@ -36,8 +38,13 @@ export default function SharedTable<T extends { id: string | number }>({
   const page = Math.max((Number(searchParams.get('page')) || 1) - 1, 0);
 
   const showOrder = order !== false;
+  const selectedIds = table.selected ?? [];
+  const rowCount = data?.length ?? 0;
 
   const headLabel = [
+    ...(enableSelection
+      ? [{ id: 'select', label: '', align: cellAlignment.center, width: 52 }]
+      : []),
     ...(showOrder ? [{ id: 'auto_index', label: '#', width: 40 }] : []),
     ...tableHead,
     ...(actions?.length
@@ -49,6 +56,12 @@ export default function SharedTable<T extends { id: string | number }>({
     ...(showOrder ? ['auto_index' as unknown as keyof T] : []),
     ...(tableHead.map((x) => x.id).filter((x) => x !== '' && x !== 'rowsActions') as (keyof T)[]),
   ];
+
+  const handleSelectAllRows = (checked: boolean) => {
+    if (!table.onSelectAllRows) return;
+    const newSelecteds = data?.map((row) => String(row.id)) ?? [];
+    table.onSelectAllRows(checked, newSelecteds);
+  };
 
   return (
     <Box>
@@ -87,7 +100,14 @@ export default function SharedTable<T extends { id: string | number }>({
             }}
           >
             {/* Inject auto "No" column at the beginning */}
-            <TableHeadCustom headLabel={headLabel} headColor={headColor} />
+            <TableHeadCustom
+              headLabel={headLabel}
+              headColor={headColor}
+              enableSelection={enableSelection}
+              numSelected={selectedIds.length}
+              rowCount={rowCount}
+              onSelectAllRows={handleSelectAllRows}
+            />
 
             <TableBody>
               {data?.length ? (
@@ -99,6 +119,9 @@ export default function SharedTable<T extends { id: string | number }>({
                     customRender={customRender}
                     index={page * limit + rowIdx + 1}
                     headIds={bodyHeadIds}
+                    selectionEnabled={enableSelection}
+                    selected={selectedIds.includes(String(row.id))}
+                    onSelectRow={table.onSelectRow}
                   />
                 ))
               ) : (
@@ -114,7 +137,7 @@ export default function SharedTable<T extends { id: string | number }>({
           count={count}
           page={page}
           rowsPerPage={limit}
-          onPageChange={table.onChangePage!}
+          onPageChange={table.onChangePage}
           onRowsPerPageChange={table.onChangeRowsPerPage}
         />
       )}

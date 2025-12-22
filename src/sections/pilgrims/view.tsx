@@ -19,7 +19,13 @@ import {
 import { useTranslations } from 'next-intl';
 
 import SharedTable from 'src/components/custom-shared-table/shared-table/SharedTable';
-import { headCellType, Action } from 'src/components/custom-shared-table/shared-table/types';
+import TableBulkActions from 'src/components/custom-shared-table/shared-table/TableBulkActions';
+import useTable from 'src/components/custom-shared-table/shared-table/use-table';
+import {
+  headCellType,
+  Action,
+  TableBulkAction,
+} from 'src/components/custom-shared-table/shared-table/types';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs/custom-breadcrumbs';
 import Iconify from 'src/components/iconify';
 import Image from 'next/image';
@@ -215,6 +221,7 @@ const dummyPilgrims: Pilgrim[] = [
 
 export default function PilgrimsView() {
   const t = useTranslations();
+  const table = useTable();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [genderFilter, setGenderFilter] = useState<string>('all');
@@ -283,6 +290,27 @@ export default function PilgrimsView() {
       label: t('Label.delete'),
       icon: '/assets/icons/table/delete.svg',
       onClick: (row) => console.log('delete pilgrim', row.id),
+    },
+  ];
+
+  const bulkActions: TableBulkAction<Pilgrim>[] = [
+    {
+      key: 'bulk-message',
+      label: t('Label.message'),
+      icon: '/assets/icons/table/sms.svg',
+      onClick: (selectedIds, rows) => console.log('message pilgrims', selectedIds, rows),
+    },
+    {
+      key: 'bulk-view',
+      label: t('Label.view'),
+      icon: '/assets/icons/table/view.svg',
+      onClick: (selectedIds, rows) => console.log('view pilgrims', selectedIds, rows),
+    },
+    {
+      key: 'bulk-delete',
+      label: t('Label.delete'),
+      icon: '/assets/icons/table/delete.svg',
+      onClick: (selectedIds, rows) => console.log('delete pilgrims', selectedIds, rows),
     },
   ];
 
@@ -432,6 +460,11 @@ export default function PilgrimsView() {
       return matchesSearch && matchesStatus && matchesGender;
     });
   }, [genderFilter, searchTerm, statusFilter]);
+
+  const selectedPilgrims = useMemo(
+    () => filteredPilgrims.filter((pilgrim) => (table.selected ?? []).includes(String(pilgrim.id))),
+    [filteredPilgrims, table.selected]
+  );
 
   const stats = [
     {
@@ -706,56 +739,13 @@ export default function PilgrimsView() {
                   })}
                 </Menu>
               </Box>
-              {/* Bulk Actions Button */}
-              <Button
-                variant="contained"
-                sx={{
-                  bgcolor: '#0b0b0b',
-                  color: '#fff',
-                  borderRadius: 1,
-                  height: 44,
-                  paddingInlineStart: 2,
-                  paddingInlineEnd: 5,
-                  minWidth: 200,
-                  position: 'relative',
-                  boxShadow: 'none',
-                  '&:hover': { bgcolor: '#1c1c1c', boxShadow: 'none' },
-                }}
-              >
-                {/* Badge at the end */}
-                <Box
-                  component="span"
-                  sx={{
-                    position: 'absolute',
-                    top: '50%',
-                    insetInlineEnd: 12,
-                    transform: 'translateY(-50%)',
-                    bgcolor: '#17a2b8',
-                    color: 'white',
-                    borderRadius: '50%',
-                    width: 24,
-                    height: 24,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: 12,
-                    fontWeight: 700,
-                  }}
-                >
-                  23
-                </Box>
-                <Stack direction="row" alignItems="center" spacing={1} sx={{ marginInlineEnd: 3 }}>
-                  <Image
-                    src="/assets/images/pilgrims/bulk-actions.svg"
-                    alt="bulk actions"
-                    width={20}
-                    height={20}
-                  />
-                  <Box component="span" sx={{ fontWeight: 600, fontSize: 14 }}>
-                    {t('Label.bulk_actions')}
-                  </Box>
-                </Stack>
-              </Button>
+              <TableBulkActions<Pilgrim>
+                label={t('Label.bulk_actions')}
+                selectedIds={table.selected}
+                selectedRows={selectedPilgrims}
+                actions={bulkActions}
+                onAfterAction={() => table.setSelected([])}
+              />
             </Stack>
 
             <Stack direction="row" spacing={1.25} alignItems="center">
@@ -771,7 +761,7 @@ export default function PilgrimsView() {
                 }
                 sx={{
                   height: 44,
-                  px: 2,
+                  px: 4,
                   borderRadius: 1,
                   borderColor: '#dce5ef',
                   bgcolor: '#fff',
@@ -796,7 +786,7 @@ export default function PilgrimsView() {
                 }
                 sx={{
                   height: 44,
-                  px: 2,
+                  px: 4,
                   borderRadius: 1,
                   borderColor: '#dce5ef',
                   bgcolor: '#fff',
@@ -841,6 +831,8 @@ export default function PilgrimsView() {
             customRender={customRender}
             disablePagination={false}
             order={false}
+            enableSelection
+            table={table}
           />
         </Card>
       </Box>
