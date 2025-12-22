@@ -25,6 +25,7 @@ export default function SharedTable<T extends { id: string | number }>({
   count,
   headColor,
   emptyIcon,
+  order,
 }: SharedTableProps<T>) {
   const table = useTable();
   const searchParams = useSearchParams();
@@ -34,16 +35,18 @@ export default function SharedTable<T extends { id: string | number }>({
   const skipCount = Number(skipCountParam) || 0;
   const page = Math.max((Number(searchParams.get('page')) || 1) - 1, 0);
 
+  const showOrder = order !== false;
+
   const headLabel = [
-    { id: 'auto_index', label: '#', width: 40 },
+    ...(showOrder ? [{ id: 'auto_index', label: '#', width: 40 }] : []),
     ...tableHead,
     ...(actions?.length
-      ? [{ id: 'rowsActions', label: '', align: cellAlignment.center, width: 140 }]
+      ? [{ id: 'rowsActions', label: '', align: cellAlignment.center, width: 60 }]
       : []),
   ];
 
   const bodyHeadIds = [
-    'auto_index' as unknown as keyof T,
+    ...(showOrder ? ['auto_index' as unknown as keyof T] : []),
     ...(tableHead.map((x) => x.id).filter((x) => x !== '' && x !== 'rowsActions') as (keyof T)[]),
   ];
 

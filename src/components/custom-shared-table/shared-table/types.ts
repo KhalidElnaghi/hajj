@@ -30,6 +30,8 @@ export interface SharedTableProps<T extends { id: string | number }> {
   count: number;
   headColor?: string;
   emptyIcon?: string;
+  /** Whether to display the order/index (#) column. Defaults to true */
+  order?: boolean;
 }
 export interface SharedTableRowProps<T extends { id: string | number }> {
   row: T;

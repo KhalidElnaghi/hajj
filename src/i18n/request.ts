@@ -17,7 +17,9 @@ export default getRequestConfig(async ({ requestLocale }) => {
     value && routing.locales.includes(value as any) ? value : undefined;
 
   const locale =
-    normalizeLocale(cookieLocale) ?? normalizeLocale(resolvedRequestLocale) ?? routing.defaultLocale;
+    normalizeLocale(cookieLocale) ??
+    normalizeLocale(resolvedRequestLocale) ??
+    routing.defaultLocale;
 
   // Dynamically import messages with webpack optimization
   // This allows bundling both locales but only loads the needed one
