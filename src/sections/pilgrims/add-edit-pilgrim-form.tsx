@@ -14,7 +14,6 @@ import {
   Divider,
   Chip,
   Grid,
-  InputAdornment,
 } from '@mui/material';
 
 import { paths } from 'src/routes/paths';
@@ -29,11 +28,9 @@ import {
   RHFDatePicker,
   RHFTextarea,
   RHFMultiSelect,
-  RHFUpload,
 } from 'src/components/hook-form';
 
 import { Controller } from 'react-hook-form';
-
 import Iconify from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
@@ -114,12 +111,9 @@ export default function AddEditPilgrimForm() {
     defaultValues,
   });
 
-  const {
-    handleSubmit,
-    setValue,
-    watch,
-    reset,
-  } = methods;
+  const { handleSubmit, setValue, watch, reset } = useForm<PilgrimFormValues>({
+    defaultValues,
+  });
 
   const onSubmit = handleSubmit(async (data) => {
     try {
@@ -247,7 +241,15 @@ export default function AddEditPilgrimForm() {
         />
 
         <FormProvider methods={methods} onSubmit={onSubmit}>
-          <Card sx={{ mt: 4, p: 4, borderRadius: 2, boxShadow: (theme) => theme.customShadows.card, width: '100%' }}>
+          <Card
+            sx={{
+              mt: 4,
+              p: 4,
+              borderRadius: 2,
+              boxShadow: (theme) => theme.customShadows.card,
+              width: '100%',
+            }}
+          >
             {/* Location Tabs */}
             <Box sx={{ mb: 4 }}>
               <Stack direction="row" spacing={1}>
@@ -346,86 +348,72 @@ export default function AddEditPilgrimForm() {
                   {/* Row 1: Name Arabic & English - 2 fields */}
                   <Grid size={{ xs: 12, md: 6 }}>
                     <Box sx={{ width: '100%' }}>
-                      <Typography 
-                        variant="body2" 
-                        sx={{ 
-                          fontWeight: 500, 
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          fontWeight: 500,
                           mb: 1.5,
                           color: 'text.secondary',
                         }}
                       >
                         {t('Label.name_in_arabic')}
                       </Typography>
-                      <RHFTextField
-                        name="nameAr"
-                        required
-                        placeholder=""
-                      />
+                      <RHFTextField name="nameAr" required placeholder="" />
                     </Box>
                   </Grid>
                   <Grid size={{ xs: 12, md: 6 }}>
                     <Box sx={{ width: '100%' }}>
-                      <Typography 
-                        variant="body2" 
-                        sx={{ 
-                          fontWeight: 500, 
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          fontWeight: 500,
                           mb: 1.5,
                           color: 'text.secondary',
                         }}
                       >
                         {t('Label.name_in_english')}
                       </Typography>
-                      <RHFTextField
-                        name="nameEn"
-                        required
-                        placeholder=""
-                      />
+                      <RHFTextField name="nameEn" required placeholder="" />
                     </Box>
                   </Grid>
-                  
+
                   {/* Row 2: Booking Number, ID Number, City - 3 fields */}
                   <Grid size={{ xs: 12, md: 4 }}>
                     <Box sx={{ width: '100%' }}>
-                      <Typography 
-                        variant="body2" 
-                        sx={{ 
-                          fontWeight: 500, 
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          fontWeight: 500,
                           mb: 1.5,
                           color: 'text.secondary',
                         }}
                       >
                         {t('Label.booking_number')}
                       </Typography>
-                      <RHFTextField
-                        name="bookingNumber"
-                        placeholder=""
-                      />
+                      <RHFTextField name="bookingNumber" placeholder="" />
                     </Box>
                   </Grid>
                   <Grid size={{ xs: 12, md: 4 }}>
                     <Box sx={{ width: '100%' }}>
-                      <Typography 
-                        variant="body2" 
-                        sx={{ 
-                          fontWeight: 500, 
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          fontWeight: 500,
                           mb: 1.5,
                           color: 'text.secondary',
                         }}
                       >
                         {t('Label.id_number')}
                       </Typography>
-                      <RHFTextField
-                        name="idNumber"
-                        placeholder=""
-                      />
+                      <RHFTextField name="idNumber" placeholder="" />
                     </Box>
                   </Grid>
                   <Grid size={{ xs: 12, md: 4 }}>
                     <Box sx={{ width: '100%' }}>
-                      <Typography 
-                        variant="body2" 
-                        sx={{ 
-                          fontWeight: 500, 
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          fontWeight: 500,
                           mb: 1.5,
                           color: 'text.secondary',
                         }}
@@ -442,14 +430,14 @@ export default function AddEditPilgrimForm() {
                       </RHFSelect>
                     </Box>
                   </Grid>
-                  
+
                   {/* Row 3: Package Name, Nationality, Gender - 3 fields */}
                   <Grid size={{ xs: 12, md: 4 }}>
                     <Box sx={{ width: '100%' }}>
-                      <Typography 
-                        variant="body2" 
-                        sx={{ 
-                          fontWeight: 500, 
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          fontWeight: 500,
                           mb: 1.5,
                           color: 'text.secondary',
                         }}
@@ -468,10 +456,10 @@ export default function AddEditPilgrimForm() {
                   </Grid>
                   <Grid size={{ xs: 12, md: 4 }}>
                     <Box sx={{ width: '100%' }}>
-                      <Typography 
-                        variant="body2" 
-                        sx={{ 
-                          fontWeight: 500, 
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          fontWeight: 500,
                           mb: 1.5,
                           color: 'text.secondary',
                         }}
@@ -490,10 +478,10 @@ export default function AddEditPilgrimForm() {
                   </Grid>
                   <Grid size={{ xs: 12, md: 4 }}>
                     <Box sx={{ width: '100%' }}>
-                      <Typography 
-                        variant="body2" 
-                        sx={{ 
-                          fontWeight: 500, 
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          fontWeight: 500,
                           mb: 1.5,
                           color: 'text.secondary',
                         }}
@@ -510,48 +498,44 @@ export default function AddEditPilgrimForm() {
                       </RHFSelect>
                     </Box>
                   </Grid>
-                  
+
                   {/* Row 4: Arrival Date, Departure Date, Permit - 3 fields */}
                   <Grid size={{ xs: 12, md: 4 }}>
                     <Box sx={{ width: '100%' }}>
-                      <Typography 
-                        variant="body2" 
-                        sx={{ 
-                          fontWeight: 500, 
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          fontWeight: 500,
                           mb: 1.5,
                           color: 'text.secondary',
                         }}
                       >
                         {t('Label.arrival_date')}
                       </Typography>
-                      <RHFDatePicker
-                        name="arrivalDate"
-                      />
+                      <RHFDatePicker name="arrivalDate" />
                     </Box>
                   </Grid>
                   <Grid size={{ xs: 12, md: 4 }}>
                     <Box sx={{ width: '100%' }}>
-                      <Typography 
-                        variant="body2" 
-                        sx={{ 
-                          fontWeight: 500, 
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          fontWeight: 500,
                           mb: 1.5,
                           color: 'text.secondary',
                         }}
                       >
                         {t('Label.departure_date')}
                       </Typography>
-                      <RHFDatePicker
-                        name="departureDate"
-                      />
+                      <RHFDatePicker name="departureDate" />
                     </Box>
                   </Grid>
                   <Grid size={{ xs: 12, md: 4 }}>
                     <Box sx={{ width: '100%' }}>
-                      <Typography 
-                        variant="body2" 
-                        sx={{ 
-                          fontWeight: 500, 
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          fontWeight: 500,
                           mb: 1.5,
                           color: 'text.secondary',
                         }}
@@ -568,31 +552,29 @@ export default function AddEditPilgrimForm() {
                       </RHFSelect>
                     </Box>
                   </Grid>
-                  
+
                   {/* Row 5: Date of Birth, Hijri Date of Birth, Age - 3 fields */}
                   <Grid size={{ xs: 12, md: 4 }}>
                     <Box sx={{ width: '100%' }}>
-                      <Typography 
-                        variant="body2" 
-                        sx={{ 
-                          fontWeight: 500, 
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          fontWeight: 500,
                           mb: 1.5,
                           color: 'text.secondary',
                         }}
                       >
                         {t('Label.gregorian_birth_date')}
                       </Typography>
-                      <RHFDatePicker
-                        name="gregorianBirthDate"
-                      />
+                      <RHFDatePicker name="gregorianBirthDate" />
                     </Box>
                   </Grid>
                   <Grid size={{ xs: 12, md: 4 }}>
                     <Box sx={{ width: '100%' }}>
-                      <Typography 
-                        variant="body2" 
-                        sx={{ 
-                          fontWeight: 500, 
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          fontWeight: 500,
                           mb: 1.5,
                           color: 'text.secondary',
                         }}
@@ -611,66 +593,56 @@ export default function AddEditPilgrimForm() {
                   </Grid>
                   <Grid size={{ xs: 12, md: 4 }}>
                     <Box sx={{ width: '100%' }}>
-                      <Typography 
-                        variant="body2" 
-                        sx={{ 
-                          fontWeight: 500, 
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          fontWeight: 500,
                           mb: 1.5,
                           color: 'text.secondary',
                         }}
                       >
                         {t('Label.age')}
                       </Typography>
-                      <RHFTextField
-                        name="age"
-                        type="number"
-                        placeholder=""
-                      />
+                      <RHFTextField name="age" type="number" placeholder="" />
                     </Box>
                   </Grid>
-                  
+
                   <Grid size={{ xs: 12, md: 4 }}>
                     <Box sx={{ width: '100%' }}>
-                      <Typography 
-                        variant="body2" 
-                        sx={{ 
-                          fontWeight: 500, 
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          fontWeight: 500,
                           mb: 1.5,
                           color: 'text.secondary',
                         }}
                       >
                         {t('Label.mobile_number')}
                       </Typography>
-                      <RHFTextField
-                        name="mobileNumber"
-                        placeholder=""
-                      />
+                      <RHFTextField name="mobileNumber" placeholder="" />
                     </Box>
                   </Grid>
                   <Grid size={{ xs: 12, md: 4 }}>
                     <Box sx={{ width: '100%' }}>
-                      <Typography 
-                        variant="body2" 
-                        sx={{ 
-                          fontWeight: 500, 
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          fontWeight: 500,
                           mb: 1.5,
                           color: 'text.secondary',
                         }}
                       >
                         {t('Label.another_mobile_number')}
                       </Typography>
-                      <RHFTextField
-                        name="anotherMobileNumber"
-                        placeholder=""
-                      />
+                      <RHFTextField name="anotherMobileNumber" placeholder="" />
                     </Box>
                   </Grid>
                   <Grid size={{ xs: 12, md: 4 }}>
                     <Box sx={{ width: '100%' }}>
-                      <Typography 
-                        variant="body2" 
-                        sx={{ 
-                          fontWeight: 500, 
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          fontWeight: 500,
                           mb: 1.5,
                           color: 'text.secondary',
                         }}
@@ -719,16 +691,16 @@ export default function AddEditPilgrimForm() {
                                 }
                               }}
                             />
-                            <Iconify 
-                              icon="solar:alt-arrow-down-linear" 
-                              width={20} 
-                              sx={{ color: 'grey.500', mr: 1 }} 
+                            <Iconify
+                              icon="solar:alt-arrow-down-linear"
+                              width={20}
+                              sx={{ color: 'grey.500', mr: 1 }}
                             />
                             <Box sx={{ flex: 1 }} />
-                            <Iconify 
-                              icon="solar:gallery-add-bold" 
-                              width={24} 
-                              sx={{ color: 'grey.500' }} 
+                            <Iconify
+                              icon="solar:gallery-add-bold"
+                              width={24}
+                              sx={{ color: 'grey.500' }}
                             />
                           </Box>
                         )}
@@ -786,32 +758,32 @@ export default function AddEditPilgrimForm() {
 
               {/* Accommodation Section */}
               <Box>
-                {renderSectionHeader('solar:home-angle-outline', t('Label.accommodation_residence'))}
+                {renderSectionHeader(
+                  'solar:home-angle-outline',
+                  t('Label.accommodation_residence')
+                )}
                 <Grid container spacing={3}>
                   <Grid size={{ xs: 12, md: 6 }}>
                     <Box sx={{ width: '100%' }}>
-                      <Typography 
-                        variant="body2" 
-                        sx={{ 
-                          fontWeight: 500, 
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          fontWeight: 500,
                           mb: 1.5,
                           color: 'text.secondary',
                         }}
                       >
                         {t('Label.tent_room_number')}
                       </Typography>
-                      <RHFTextField
-                        name="tentRoomNumber"
-                        placeholder=""
-                      />
+                      <RHFTextField name="tentRoomNumber" placeholder="" />
                     </Box>
                   </Grid>
                   <Grid size={{ xs: 12, md: 6 }}>
                     <Box sx={{ width: '100%' }}>
-                      <Typography 
-                        variant="body2" 
-                        sx={{ 
-                          fontWeight: 500, 
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          fontWeight: 500,
                           mb: 1.5,
                           color: 'text.secondary',
                         }}
@@ -839,38 +811,32 @@ export default function AddEditPilgrimForm() {
                 <Grid container spacing={3}>
                   <Grid size={{ xs: 12, md: 6 }}>
                     <Box sx={{ width: '100%' }}>
-                      <Typography 
-                        variant="body2" 
-                        sx={{ 
-                          fontWeight: 500, 
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          fontWeight: 500,
                           mb: 1.5,
                           color: 'text.secondary',
                         }}
                       >
                         {t('Label.bus_number')}
                       </Typography>
-                      <RHFTextField
-                        name="busNumber"
-                        placeholder=""
-                      />
+                      <RHFTextField name="busNumber" placeholder="" />
                     </Box>
                   </Grid>
                   <Grid size={{ xs: 12, md: 6 }}>
                     <Box sx={{ width: '100%' }}>
-                      <Typography 
-                        variant="body2" 
-                        sx={{ 
-                          fontWeight: 500, 
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          fontWeight: 500,
                           mb: 1.5,
                           color: 'text.secondary',
                         }}
                       >
                         {t('Label.seat_number')}
                       </Typography>
-                      <RHFTextField
-                        name="seatNumber"
-                        placeholder=""
-                      />
+                      <RHFTextField name="seatNumber" placeholder="" />
                     </Box>
                   </Grid>
                 </Grid>
@@ -884,10 +850,10 @@ export default function AddEditPilgrimForm() {
                 <Grid container spacing={3}>
                   <Grid size={{ xs: 12, md: 6 }}>
                     <Box sx={{ width: '100%' }}>
-                      <Typography 
-                        variant="body2" 
-                        sx={{ 
-                          fontWeight: 500, 
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          fontWeight: 500,
                           mb: 1.5,
                           color: 'text.secondary',
                         }}
@@ -923,7 +889,10 @@ export default function AddEditPilgrimForm() {
 
               {/* Supervision Section */}
               <Box>
-                {renderSectionHeader('solar:users-group-rounded-outline', t('Label.supervision_organization'))}
+                {renderSectionHeader(
+                  'solar:users-group-rounded-outline',
+                  t('Label.supervision_organization')
+                )}
                 <Grid container spacing={3}>
                   <Grid size={{ xs: 12 }}>
                     <RHFMultiSelect
@@ -950,7 +919,12 @@ export default function AddEditPilgrimForm() {
               </Box>
 
               {/* Action Buttons */}
-              <Stack direction="row" spacing={2} justifyContent="flex-end" sx={{ pt: 4, borderTop: 1, borderColor: 'divider' }}>
+              <Stack
+                direction="row"
+                spacing={2}
+                justifyContent="flex-end"
+                sx={{ pt: 4, borderTop: 1, borderColor: 'divider' }}
+              >
                 <Button
                   variant="outlined"
                   color="error"
