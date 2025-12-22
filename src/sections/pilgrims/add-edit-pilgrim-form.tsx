@@ -13,8 +13,9 @@ import {
   Typography,
   Divider,
   Chip,
+  Grid,
+  InputAdornment,
 } from '@mui/material';
-import Grid from '@mui/material/GridLegacy';
 
 import { paths } from 'src/routes/paths';
 
@@ -343,150 +344,394 @@ export default function AddEditPilgrimForm() {
                 {renderSectionHeader('solar:user-bold', t('Label.personal_information'))}
                 <Grid container spacing={3} sx={{ width: '100%' }}>
                   {/* Row 1: Name Arabic & English - 2 fields */}
-                  <Grid item xs={12} md={6}>
-                    <RHFTextField
-                      name="nameAr"
-                      label={t('Label.name_in_arabic')}
-                      required
-                    />
+                  <Grid size={{ xs: 12, md: 6 }}>
+                    <Box sx={{ width: '100%' }}>
+                      <Typography 
+                        variant="body2" 
+                        sx={{ 
+                          fontWeight: 500, 
+                          mb: 1.5,
+                          color: 'text.secondary',
+                        }}
+                      >
+                        {t('Label.name_in_arabic')}
+                      </Typography>
+                      <RHFTextField
+                        name="nameAr"
+                        required
+                        placeholder=""
+                      />
+                    </Box>
                   </Grid>
-                  <Grid item xs={12} md={6}>
-                    <RHFTextField
-                      name="nameEn"
-                      label={t('Label.name_in_english')}
-                      required
-                    />
+                  <Grid size={{ xs: 12, md: 6 }}>
+                    <Box sx={{ width: '100%' }}>
+                      <Typography 
+                        variant="body2" 
+                        sx={{ 
+                          fontWeight: 500, 
+                          mb: 1.5,
+                          color: 'text.secondary',
+                        }}
+                      >
+                        {t('Label.name_in_english')}
+                      </Typography>
+                      <RHFTextField
+                        name="nameEn"
+                        required
+                        placeholder=""
+                      />
+                    </Box>
                   </Grid>
                   
                   {/* Row 2: Booking Number, ID Number, City - 3 fields */}
-                  <Grid item xs={12} md={4}>
-                    <RHFTextField
-                      name="bookingNumber"
-                      label={t('Label.booking_number')}
-                    />
+                  <Grid size={{ xs: 12, md: 4 }}>
+                    <Box sx={{ width: '100%' }}>
+                      <Typography 
+                        variant="body2" 
+                        sx={{ 
+                          fontWeight: 500, 
+                          mb: 1.5,
+                          color: 'text.secondary',
+                        }}
+                      >
+                        {t('Label.booking_number')}
+                      </Typography>
+                      <RHFTextField
+                        name="bookingNumber"
+                        placeholder=""
+                      />
+                    </Box>
                   </Grid>
-                  <Grid item xs={12} md={4}>
-                    <RHFTextField
-                      name="idNumber"
-                      label={t('Label.id_number')}
-                    />
+                  <Grid size={{ xs: 12, md: 4 }}>
+                    <Box sx={{ width: '100%' }}>
+                      <Typography 
+                        variant="body2" 
+                        sx={{ 
+                          fontWeight: 500, 
+                          mb: 1.5,
+                          color: 'text.secondary',
+                        }}
+                      >
+                        {t('Label.id_number')}
+                      </Typography>
+                      <RHFTextField
+                        name="idNumber"
+                        placeholder=""
+                      />
+                    </Box>
                   </Grid>
-                  <Grid item xs={12} md={4}>
-                    <RHFSelect name="city" label={t('Label.city')}>
-                      <option value="" />
-                      {cities.map((city) => (
-                        <option key={city.value} value={city.value}>
-                          {city.label}
-                        </option>
-                      ))}
-                    </RHFSelect>
+                  <Grid size={{ xs: 12, md: 4 }}>
+                    <Box sx={{ width: '100%' }}>
+                      <Typography 
+                        variant="body2" 
+                        sx={{ 
+                          fontWeight: 500, 
+                          mb: 1.5,
+                          color: 'text.secondary',
+                        }}
+                      >
+                        {t('Label.city')}
+                      </Typography>
+                      <RHFSelect name="city">
+                        <option value="" />
+                        {cities.map((city) => (
+                          <option key={city.value} value={city.value}>
+                            {city.label}
+                          </option>
+                        ))}
+                      </RHFSelect>
+                    </Box>
                   </Grid>
                   
                   {/* Row 3: Package Name, Nationality, Gender - 3 fields */}
-                  <Grid item xs={12} md={4}>
-                    <RHFSelect name="packageName" label={t('Label.package_name')}>
-                      <option value="" />
-                      {packages.map((pkg) => (
-                        <option key={pkg.value} value={pkg.value}>
-                          {pkg.label}
-                        </option>
-                      ))}
-                    </RHFSelect>
+                  <Grid size={{ xs: 12, md: 4 }}>
+                    <Box sx={{ width: '100%' }}>
+                      <Typography 
+                        variant="body2" 
+                        sx={{ 
+                          fontWeight: 500, 
+                          mb: 1.5,
+                          color: 'text.secondary',
+                        }}
+                      >
+                        {t('Label.package_name')}
+                      </Typography>
+                      <RHFSelect name="packageName">
+                        <option value="" />
+                        {packages.map((pkg) => (
+                          <option key={pkg.value} value={pkg.value}>
+                            {pkg.label}
+                          </option>
+                        ))}
+                      </RHFSelect>
+                    </Box>
                   </Grid>
-                  <Grid item xs={12} md={4}>
-                    <RHFSelect name="nationality" label={t('Label.nationality')}>
-                      <option value="" />
-                      {nationalities.map((nat) => (
-                        <option key={nat.value} value={nat.value}>
-                          {nat.label}
-                        </option>
-                      ))}
-                    </RHFSelect>
+                  <Grid size={{ xs: 12, md: 4 }}>
+                    <Box sx={{ width: '100%' }}>
+                      <Typography 
+                        variant="body2" 
+                        sx={{ 
+                          fontWeight: 500, 
+                          mb: 1.5,
+                          color: 'text.secondary',
+                        }}
+                      >
+                        {t('Label.nationality')}
+                      </Typography>
+                      <RHFSelect name="nationality">
+                        <option value="" />
+                        {nationalities.map((nat) => (
+                          <option key={nat.value} value={nat.value}>
+                            {nat.label}
+                          </option>
+                        ))}
+                      </RHFSelect>
+                    </Box>
                   </Grid>
-                  <Grid item xs={12} md={4}>
-                    <RHFSelect name="gender" label={t('Label.gender')}>
-                      <option value="" />
-                      {genders.map((gender) => (
-                        <option key={gender.value} value={gender.value}>
-                          {gender.label}
-                        </option>
-                      ))}
-                    </RHFSelect>
+                  <Grid size={{ xs: 12, md: 4 }}>
+                    <Box sx={{ width: '100%' }}>
+                      <Typography 
+                        variant="body2" 
+                        sx={{ 
+                          fontWeight: 500, 
+                          mb: 1.5,
+                          color: 'text.secondary',
+                        }}
+                      >
+                        {t('Label.gender')}
+                      </Typography>
+                      <RHFSelect name="gender">
+                        <option value="" />
+                        {genders.map((gender) => (
+                          <option key={gender.value} value={gender.value}>
+                            {gender.label}
+                          </option>
+                        ))}
+                      </RHFSelect>
+                    </Box>
                   </Grid>
                   
                   {/* Row 4: Arrival Date, Departure Date, Permit - 3 fields */}
-                  <Grid item xs={12} md={4}>
-                    <RHFDatePicker
-                      name="arrivalDate"
-                      label={t('Label.arrival_date')}
-                    />
+                  <Grid size={{ xs: 12, md: 4 }}>
+                    <Box sx={{ width: '100%' }}>
+                      <Typography 
+                        variant="body2" 
+                        sx={{ 
+                          fontWeight: 500, 
+                          mb: 1.5,
+                          color: 'text.secondary',
+                        }}
+                      >
+                        {t('Label.arrival_date')}
+                      </Typography>
+                      <RHFDatePicker
+                        name="arrivalDate"
+                      />
+                    </Box>
                   </Grid>
-                  <Grid item xs={12} md={4}>
-                    <RHFDatePicker
-                      name="departureDate"
-                      label={t('Label.departure_date')}
-                    />
+                  <Grid size={{ xs: 12, md: 4 }}>
+                    <Box sx={{ width: '100%' }}>
+                      <Typography 
+                        variant="body2" 
+                        sx={{ 
+                          fontWeight: 500, 
+                          mb: 1.5,
+                          color: 'text.secondary',
+                        }}
+                      >
+                        {t('Label.departure_date')}
+                      </Typography>
+                      <RHFDatePicker
+                        name="departureDate"
+                      />
+                    </Box>
                   </Grid>
-                  <Grid item xs={12} md={4}>
-                    <RHFSelect name="permit" label={t('Label.permit')}>
-                      <option value="" />
-                      {permits.map((permit) => (
-                        <option key={permit.value} value={permit.value}>
-                          {permit.label}
-                        </option>
-                      ))}
-                    </RHFSelect>
+                  <Grid size={{ xs: 12, md: 4 }}>
+                    <Box sx={{ width: '100%' }}>
+                      <Typography 
+                        variant="body2" 
+                        sx={{ 
+                          fontWeight: 500, 
+                          mb: 1.5,
+                          color: 'text.secondary',
+                        }}
+                      >
+                        {t('Label.permit')}
+                      </Typography>
+                      <RHFSelect name="permit">
+                        <option value="" />
+                        {permits.map((permit) => (
+                          <option key={permit.value} value={permit.value}>
+                            {permit.label}
+                          </option>
+                        ))}
+                      </RHFSelect>
+                    </Box>
                   </Grid>
                   
                   {/* Row 5: Date of Birth, Hijri Date of Birth, Age - 3 fields */}
-                  <Grid item xs={12} md={4}>
-                    <RHFDatePicker
-                      name="gregorianBirthDate"
-                      label={t('Label.gregorian_birth_date')}
-                    />
+                  <Grid size={{ xs: 12, md: 4 }}>
+                    <Box sx={{ width: '100%' }}>
+                      <Typography 
+                        variant="body2" 
+                        sx={{ 
+                          fontWeight: 500, 
+                          mb: 1.5,
+                          color: 'text.secondary',
+                        }}
+                      >
+                        {t('Label.gregorian_birth_date')}
+                      </Typography>
+                      <RHFDatePicker
+                        name="gregorianBirthDate"
+                      />
+                    </Box>
                   </Grid>
-                  <Grid item xs={12} md={4}>
-                    <RHFSelect name="hijriBirthDate" label={t('Label.hijri_birth_date')}>
-                      <option value="" />
-                      {hijriDates.map((date) => (
-                        <option key={date.value} value={date.value}>
-                          {date.label}
-                        </option>
-                      ))}
-                    </RHFSelect>
+                  <Grid size={{ xs: 12, md: 4 }}>
+                    <Box sx={{ width: '100%' }}>
+                      <Typography 
+                        variant="body2" 
+                        sx={{ 
+                          fontWeight: 500, 
+                          mb: 1.5,
+                          color: 'text.secondary',
+                        }}
+                      >
+                        {t('Label.hijri_birth_date')}
+                      </Typography>
+                      <RHFSelect name="hijriBirthDate">
+                        <option value="" />
+                        {hijriDates.map((date) => (
+                          <option key={date.value} value={date.value}>
+                            {date.label}
+                          </option>
+                        ))}
+                      </RHFSelect>
+                    </Box>
                   </Grid>
-                  <Grid item xs={12} md={4}>
-                    <RHFTextField
-                      name="age"
-                      label={t('Label.age')}
-                      type="number"
-                    />
+                  <Grid size={{ xs: 12, md: 4 }}>
+                    <Box sx={{ width: '100%' }}>
+                      <Typography 
+                        variant="body2" 
+                        sx={{ 
+                          fontWeight: 500, 
+                          mb: 1.5,
+                          color: 'text.secondary',
+                        }}
+                      >
+                        {t('Label.age')}
+                      </Typography>
+                      <RHFTextField
+                        name="age"
+                        type="number"
+                        placeholder=""
+                      />
+                    </Box>
                   </Grid>
                   
-                  {/* Row 6: Mobile Number, Another Mobile Number, Add Photo - 3 fields */}
-                  <Grid item xs={12} md={4}>
-                    <RHFTextField
-                      name="mobileNumber"
-                      label={t('Label.mobile_number')}
-                    />
-                  </Grid>
-                  <Grid item xs={12} md={4}>
-                    <RHFTextField
-                      name="anotherMobileNumber"
-                      label={t('Label.another_mobile_number')}
-                    />
-                  </Grid>
-                  <Grid item xs={12} md={4}>
+                  <Grid size={{ xs: 12, md: 4 }}>
                     <Box sx={{ width: '100%' }}>
-                      <Typography variant="body2" sx={{ fontWeight: 500, mb: 1 }}>
+                      <Typography 
+                        variant="body2" 
+                        sx={{ 
+                          fontWeight: 500, 
+                          mb: 1.5,
+                          color: 'text.secondary',
+                        }}
+                      >
+                        {t('Label.mobile_number')}
+                      </Typography>
+                      <RHFTextField
+                        name="mobileNumber"
+                        placeholder=""
+                      />
+                    </Box>
+                  </Grid>
+                  <Grid size={{ xs: 12, md: 4 }}>
+                    <Box sx={{ width: '100%' }}>
+                      <Typography 
+                        variant="body2" 
+                        sx={{ 
+                          fontWeight: 500, 
+                          mb: 1.5,
+                          color: 'text.secondary',
+                        }}
+                      >
+                        {t('Label.another_mobile_number')}
+                      </Typography>
+                      <RHFTextField
+                        name="anotherMobileNumber"
+                        placeholder=""
+                      />
+                    </Box>
+                  </Grid>
+                  <Grid size={{ xs: 12, md: 4 }}>
+                    <Box sx={{ width: '100%' }}>
+                      <Typography 
+                        variant="body2" 
+                        sx={{ 
+                          fontWeight: 500, 
+                          mb: 1.5,
+                          color: 'text.secondary',
+                        }}
+                      >
                         {t('Label.add_photo')}
                       </Typography>
-                      <RHFUpload
+                      <Controller
                         name="photo"
-                        thumbnail
-                        maxSize={3145728}
-                        onDrop={handleDropPhoto}
-                        helperText={t('Label.image_helper')}
+                        control={methods.control}
+                        render={({ field, fieldState: { error } }) => (
+                          <Box
+                            component="label"
+                            sx={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              width: '100%',
+                              height: 56,
+                              px: 2,
+                              borderRadius: 1.5,
+                              border: '1px solid',
+                              borderColor: error ? 'error.main' : 'grey.300',
+                              bgcolor: 'background.paper',
+                              cursor: 'pointer',
+                              transition: 'all 0.2s',
+                              '&:hover': {
+                                borderColor: error ? 'error.main' : 'grey.400',
+                              },
+                              '&:focus-within': {
+                                borderColor: error ? 'error.main' : 'primary.main',
+                                borderWidth: 2,
+                              },
+                            }}
+                          >
+                            <input
+                              type="file"
+                              accept="image/*"
+                              style={{ display: 'none' }}
+                              onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) {
+                                  const newFile = Object.assign(file, {
+                                    preview: URL.createObjectURL(file),
+                                  });
+                                  field.onChange(newFile);
+                                  handleDropPhoto([newFile]);
+                                }
+                              }}
+                            />
+                            <Iconify 
+                              icon="solar:alt-arrow-down-linear" 
+                              width={20} 
+                              sx={{ color: 'grey.500', mr: 1 }} 
+                            />
+                            <Box sx={{ flex: 1 }} />
+                            <Iconify 
+                              icon="solar:gallery-add-bold" 
+                              width={24} 
+                              sx={{ color: 'grey.500' }} 
+                            />
+                          </Box>
+                        )}
                       />
                     </Box>
                   </Grid>
@@ -543,21 +788,45 @@ export default function AddEditPilgrimForm() {
               <Box>
                 {renderSectionHeader('solar:home-angle-outline', t('Label.accommodation_residence'))}
                 <Grid container spacing={3}>
-                  <Grid item xs={12} md={6}>
-                    <RHFTextField
-                      name="tentRoomNumber"
-                      label={t('Label.tent_room_number')}
-                    />
+                  <Grid size={{ xs: 12, md: 6 }}>
+                    <Box sx={{ width: '100%' }}>
+                      <Typography 
+                        variant="body2" 
+                        sx={{ 
+                          fontWeight: 500, 
+                          mb: 1.5,
+                          color: 'text.secondary',
+                        }}
+                      >
+                        {t('Label.tent_room_number')}
+                      </Typography>
+                      <RHFTextField
+                        name="tentRoomNumber"
+                        placeholder=""
+                      />
+                    </Box>
                   </Grid>
-                  <Grid item xs={12} md={6}>
-                    <RHFSelect name="campStatus" label={t('Label.camp_status')}>
-                      <option value="" />
-                      {campStatuses.map((status) => (
-                        <option key={status.value} value={status.value}>
-                          {status.label}
-                        </option>
-                      ))}
-                    </RHFSelect>
+                  <Grid size={{ xs: 12, md: 6 }}>
+                    <Box sx={{ width: '100%' }}>
+                      <Typography 
+                        variant="body2" 
+                        sx={{ 
+                          fontWeight: 500, 
+                          mb: 1.5,
+                          color: 'text.secondary',
+                        }}
+                      >
+                        {t('Label.camp_status')}
+                      </Typography>
+                      <RHFSelect name="campStatus">
+                        <option value="" />
+                        {campStatuses.map((status) => (
+                          <option key={status.value} value={status.value}>
+                            {status.label}
+                          </option>
+                        ))}
+                      </RHFSelect>
+                    </Box>
                   </Grid>
                 </Grid>
               </Box>
@@ -568,17 +837,41 @@ export default function AddEditPilgrimForm() {
               <Box>
                 {renderSectionHeader('solar:bus-outline', t('Label.transportation_data'))}
                 <Grid container spacing={3}>
-                  <Grid item xs={12} md={6}>
-                    <RHFTextField
-                      name="busNumber"
-                      label={t('Label.bus_number')}
-                    />
+                  <Grid size={{ xs: 12, md: 6 }}>
+                    <Box sx={{ width: '100%' }}>
+                      <Typography 
+                        variant="body2" 
+                        sx={{ 
+                          fontWeight: 500, 
+                          mb: 1.5,
+                          color: 'text.secondary',
+                        }}
+                      >
+                        {t('Label.bus_number')}
+                      </Typography>
+                      <RHFTextField
+                        name="busNumber"
+                        placeholder=""
+                      />
+                    </Box>
                   </Grid>
-                  <Grid item xs={12} md={6}>
-                    <RHFTextField
-                      name="seatNumber"
-                      label={t('Label.seat_number')}
-                    />
+                  <Grid size={{ xs: 12, md: 6 }}>
+                    <Box sx={{ width: '100%' }}>
+                      <Typography 
+                        variant="body2" 
+                        sx={{ 
+                          fontWeight: 500, 
+                          mb: 1.5,
+                          color: 'text.secondary',
+                        }}
+                      >
+                        {t('Label.seat_number')}
+                      </Typography>
+                      <RHFTextField
+                        name="seatNumber"
+                        placeholder=""
+                      />
+                    </Box>
                   </Grid>
                 </Grid>
               </Box>
@@ -589,15 +882,27 @@ export default function AddEditPilgrimForm() {
               <Box>
                 {renderSectionHeader('solar:heart-pulse-outline', t('Label.health_status_data'))}
                 <Grid container spacing={3}>
-                  <Grid item xs={12} md={6}>
-                    <RHFSelect name="generalHealthStatus" label={t('Label.general_health_status')}>
-                      <option value="" />
-                      {healthStatuses.map((status) => (
-                        <option key={status.value} value={status.value}>
-                          {status.label}
-                        </option>
-                      ))}
-                    </RHFSelect>
+                  <Grid size={{ xs: 12, md: 6 }}>
+                    <Box sx={{ width: '100%' }}>
+                      <Typography 
+                        variant="body2" 
+                        sx={{ 
+                          fontWeight: 500, 
+                          mb: 1.5,
+                          color: 'text.secondary',
+                        }}
+                      >
+                        {t('Label.general_health_status')}
+                      </Typography>
+                      <RHFSelect name="generalHealthStatus">
+                        <option value="" />
+                        {healthStatuses.map((status) => (
+                          <option key={status.value} value={status.value}>
+                            {status.label}
+                          </option>
+                        ))}
+                      </RHFSelect>
+                    </Box>
                   </Grid>
                 </Grid>
               </Box>
@@ -620,7 +925,7 @@ export default function AddEditPilgrimForm() {
               <Box>
                 {renderSectionHeader('solar:users-group-rounded-outline', t('Label.supervision_organization'))}
                 <Grid container spacing={3}>
-                  <Grid item xs={12}>
+                  <Grid size={{ xs: 12 }}>
                     <RHFMultiSelect
                       name="supervisors"
                       label={t('Label.supervisors')}

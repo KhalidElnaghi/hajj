@@ -42,6 +42,8 @@ export default function RHFDatePicker({ name, helperText, rules, ...other }: RHF
                 fullWidth: true,
                 error: !!error,
                 helperText: error ? error?.message : helperText,
+                placeholder: '',
+                label: undefined,
               },
             }}
           />
