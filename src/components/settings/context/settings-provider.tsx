@@ -36,9 +36,8 @@ export function SettingsProvider({ children, defaultSettings }: SettingsProvider
     let finalLang = storedLang;
 
     if (!finalLang) {
-      const browserLang = navigator.language.split('-')[0];
-      // Default to Arabic if no language is stored and browser is not English
-      finalLang = browserLang === 'en' ? 'en' : 'ar';
+      // Default to Arabic on first render
+      finalLang = 'ar';
 
       Cookies.set('Language', finalLang, { path: '/' });
     }
