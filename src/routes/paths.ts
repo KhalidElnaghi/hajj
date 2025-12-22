@@ -21,6 +21,7 @@ export const paths = {
       new: `${ROOTS.DASHBOARD}pilgrims/new`,
       edit: (id: string) => `${ROOTS.DASHBOARD}pilgrims/${id}/edit`,
       view: (id: string) => `${ROOTS.DASHBOARD}pilgrims/${id}`,
+      addEdit: `${ROOTS.DASHBOARD}pilgrims/add-edit-pilgrim`,
     },
     supervisors: {
       root: `${ROOTS.DASHBOARD}supervisors`,
