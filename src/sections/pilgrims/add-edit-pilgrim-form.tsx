@@ -14,6 +14,7 @@ import {
   Divider,
   Chip,
   Grid,
+  MenuItem,
 } from '@mui/material';
 
 import { paths } from 'src/routes/paths';
@@ -21,7 +22,6 @@ import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
 
 import FormProvider from 'src/components/hook-form/form-provider';
-import { CustomPageHeadding } from 'src/components/custom-page-headding';
 import {
   RHFTextField,
   RHFSelect,
@@ -32,8 +32,7 @@ import {
 
 import { Controller } from 'react-hook-form';
 import Iconify from 'src/components/iconify';
-
-// ----------------------------------------------------------------------
+import { PageHeader } from 'src/components/custom-page-headding';
 
 type PilgrimFormValues = {
   nameAr: string;
@@ -66,12 +65,9 @@ type PilgrimFormValues = {
   supervisorNotes: string;
 };
 
-// ----------------------------------------------------------------------
-
 export default function AddEditPilgrimForm() {
   const t = useTranslations();
   const router = useRouter();
-  const [locationTab, setLocationTab] = useState(0);
 
   const defaultValues = useMemo<PilgrimFormValues>(
     () => ({
@@ -111,9 +107,7 @@ export default function AddEditPilgrimForm() {
     defaultValues,
   });
 
-  const { handleSubmit, setValue, watch, reset } = useForm<PilgrimFormValues>({
-    defaultValues,
-  });
+  const { handleSubmit, setValue, reset } = methods;
 
   const onSubmit = handleSubmit(async (data) => {
     try {
@@ -139,9 +133,6 @@ export default function AddEditPilgrimForm() {
     reset(defaultValues);
   };
 
-  const photoValue = watch('photo');
-
-  // Dummy data for dropdowns - replace with actual API calls
   const cities = [
     { value: 'makkah', label: 'مكة المكرمة' },
     { value: 'madinah', label: 'المدينة المنورة' },
@@ -234,10 +225,10 @@ export default function AddEditPilgrimForm() {
   return (
     <Container maxWidth="xl" sx={{ width: '100%' }}>
       <Box sx={{ py: 4, width: '100%' }}>
-        <CustomPageHeadding
+        <PageHeader
           headding={t('Label.add_new_pilgrim')}
           subHeadding={t('Label.add_new_pilgrim_description')}
-          backTo={paths.dashboard.pilgrims.list}
+          backTo={'/pilgrims'}
         />
 
         <FormProvider methods={methods} onSubmit={onSubmit}>
@@ -245,101 +236,11 @@ export default function AddEditPilgrimForm() {
             sx={{
               mt: 4,
               p: 4,
-              borderRadius: 2,
+              borderRadius: 1,
               boxShadow: (theme) => theme.customShadows.card,
               width: '100%',
             }}
           >
-            {/* Location Tabs */}
-            <Box sx={{ mb: 4 }}>
-              <Stack direction="row" spacing={1}>
-                <Button
-                  variant={locationTab === 0 ? 'contained' : 'outlined'}
-                  onClick={() => setLocationTab(0)}
-                  sx={{
-                    borderRadius: 3,
-                    px: 3,
-                    py: 1,
-                    textTransform: 'none',
-                    fontWeight: 600,
-                    ...(locationTab === 0 && {
-                      bgcolor: 'primary.main',
-                      color: 'primary.contrastText',
-                      '&:hover': {
-                        bgcolor: 'primary.dark',
-                      },
-                    }),
-                    ...(locationTab !== 0 && {
-                      bgcolor: 'grey.100',
-                      color: 'text.primary',
-                      border: 'none',
-                      '&:hover': {
-                        bgcolor: 'grey.200',
-                      },
-                    }),
-                  }}
-                >
-                  {t('Label.muzdalifah')}
-                </Button>
-                <Button
-                  variant={locationTab === 1 ? 'contained' : 'outlined'}
-                  onClick={() => setLocationTab(1)}
-                  sx={{
-                    borderRadius: 3,
-                    px: 3,
-                    py: 1,
-                    textTransform: 'none',
-                    fontWeight: 600,
-                    ...(locationTab === 1 && {
-                      bgcolor: 'primary.main',
-                      color: 'primary.contrastText',
-                      '&:hover': {
-                        bgcolor: 'primary.dark',
-                      },
-                    }),
-                    ...(locationTab !== 1 && {
-                      bgcolor: 'grey.100',
-                      color: 'text.primary',
-                      border: 'none',
-                      '&:hover': {
-                        bgcolor: 'grey.200',
-                      },
-                    }),
-                  }}
-                >
-                  {t('Label.arafat')}
-                </Button>
-                <Button
-                  variant={locationTab === 2 ? 'contained' : 'outlined'}
-                  onClick={() => setLocationTab(2)}
-                  sx={{
-                    borderRadius: 3,
-                    px: 3,
-                    py: 1,
-                    textTransform: 'none',
-                    fontWeight: 600,
-                    ...(locationTab === 2 && {
-                      bgcolor: 'primary.main',
-                      color: 'primary.contrastText',
-                      '&:hover': {
-                        bgcolor: 'primary.dark',
-                      },
-                    }),
-                    ...(locationTab !== 2 && {
-                      bgcolor: 'grey.100',
-                      color: 'text.primary',
-                      border: 'none',
-                      '&:hover': {
-                        bgcolor: 'grey.200',
-                      },
-                    }),
-                  }}
-                >
-                  {t('Label.mina')}
-                </Button>
-              </Stack>
-            </Box>
-
             <Stack spacing={6}>
               {/* Personal Information Section */}
               <Box>
@@ -421,11 +322,13 @@ export default function AddEditPilgrimForm() {
                         {t('Label.city')}
                       </Typography>
                       <RHFSelect name="city">
-                        <option value="" />
+                        <MenuItem value="">
+                          <em>None</em>
+                        </MenuItem>
                         {cities.map((city) => (
-                          <option key={city.value} value={city.value}>
+                          <MenuItem key={city.value} value={city.value}>
                             {city.label}
-                          </option>
+                          </MenuItem>
                         ))}
                       </RHFSelect>
                     </Box>
@@ -445,11 +348,13 @@ export default function AddEditPilgrimForm() {
                         {t('Label.package_name')}
                       </Typography>
                       <RHFSelect name="packageName">
-                        <option value="" />
+                        <MenuItem value="">
+                          <em>None</em>
+                        </MenuItem>
                         {packages.map((pkg) => (
-                          <option key={pkg.value} value={pkg.value}>
+                          <MenuItem key={pkg.value} value={pkg.value}>
                             {pkg.label}
-                          </option>
+                          </MenuItem>
                         ))}
                       </RHFSelect>
                     </Box>
@@ -467,11 +372,13 @@ export default function AddEditPilgrimForm() {
                         {t('Label.nationality')}
                       </Typography>
                       <RHFSelect name="nationality">
-                        <option value="" />
+                        <MenuItem value="">
+                          <em>None</em>
+                        </MenuItem>
                         {nationalities.map((nat) => (
-                          <option key={nat.value} value={nat.value}>
+                          <MenuItem key={nat.value} value={nat.value}>
                             {nat.label}
-                          </option>
+                          </MenuItem>
                         ))}
                       </RHFSelect>
                     </Box>
@@ -489,11 +396,13 @@ export default function AddEditPilgrimForm() {
                         {t('Label.gender')}
                       </Typography>
                       <RHFSelect name="gender">
-                        <option value="" />
+                        <MenuItem value="">
+                          <em>None</em>
+                        </MenuItem>
                         {genders.map((gender) => (
-                          <option key={gender.value} value={gender.value}>
+                          <MenuItem key={gender.value} value={gender.value}>
                             {gender.label}
-                          </option>
+                          </MenuItem>
                         ))}
                       </RHFSelect>
                     </Box>
@@ -543,11 +452,13 @@ export default function AddEditPilgrimForm() {
                         {t('Label.permit')}
                       </Typography>
                       <RHFSelect name="permit">
-                        <option value="" />
+                        <MenuItem value="">
+                          <em>None</em>
+                        </MenuItem>
                         {permits.map((permit) => (
-                          <option key={permit.value} value={permit.value}>
+                          <MenuItem key={permit.value} value={permit.value}>
                             {permit.label}
-                          </option>
+                          </MenuItem>
                         ))}
                       </RHFSelect>
                     </Box>
@@ -582,11 +493,13 @@ export default function AddEditPilgrimForm() {
                         {t('Label.hijri_birth_date')}
                       </Typography>
                       <RHFSelect name="hijriBirthDate">
-                        <option value="" />
+                        <MenuItem value="">
+                          <em>None</em>
+                        </MenuItem>
                         {hijriDates.map((date) => (
-                          <option key={date.value} value={date.value}>
+                          <MenuItem key={date.value} value={date.value}>
                             {date.label}
-                          </option>
+                          </MenuItem>
                         ))}
                       </RHFSelect>
                     </Box>
@@ -791,11 +704,13 @@ export default function AddEditPilgrimForm() {
                         {t('Label.camp_status')}
                       </Typography>
                       <RHFSelect name="campStatus">
-                        <option value="" />
+                        <MenuItem value="">
+                          <em>None</em>
+                        </MenuItem>
                         {campStatuses.map((status) => (
-                          <option key={status.value} value={status.value}>
+                          <MenuItem key={status.value} value={status.value}>
                             {status.label}
-                          </option>
+                          </MenuItem>
                         ))}
                       </RHFSelect>
                     </Box>
@@ -861,11 +776,13 @@ export default function AddEditPilgrimForm() {
                         {t('Label.general_health_status')}
                       </Typography>
                       <RHFSelect name="generalHealthStatus">
-                        <option value="" />
+                        <MenuItem value="">
+                          <em>None</em>
+                        </MenuItem>
                         {healthStatuses.map((status) => (
-                          <option key={status.value} value={status.value}>
+                          <MenuItem key={status.value} value={status.value}>
                             {status.label}
-                          </option>
+                          </MenuItem>
                         ))}
                       </RHFSelect>
                     </Box>
@@ -895,13 +812,16 @@ export default function AddEditPilgrimForm() {
                 )}
                 <Grid container spacing={3}>
                   <Grid size={{ xs: 12 }}>
-                    <RHFMultiSelect
-                      name="supervisors"
-                      label={t('Label.supervisors')}
-                      options={supervisorOptions}
-                      chip
-                      placeholder={t('Label.supervisors')}
-                    />
+                    <Box sx={{ width: '100%' }}>
+                      <RHFMultiSelect
+                        name="supervisors"
+                        label={t('Label.supervisors')}
+                        options={supervisorOptions}
+                        chip
+                        placeholder={t('Label.supervisors')}
+                        sx={{ width: '100%' }}
+                      />
+                    </Box>
                   </Grid>
                 </Grid>
               </Box>

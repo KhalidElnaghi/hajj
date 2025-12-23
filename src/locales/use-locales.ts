@@ -11,9 +11,11 @@ export default function useLocales() {
   // Get locale settings with translated labels
   const translatedLocalesSettings = getLocalesSettings(t);
   const currentLang = translatedLocalesSettings[locale as keyof typeof translatedLocalesSettings];
+  const isRTL = currentLang?.dir === 'rtl';
 
   return {
     allLangs: getAllLocales(t),
     currentLang,
+    isRTL,
   };
 }
