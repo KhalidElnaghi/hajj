@@ -572,18 +572,14 @@ export default function PilgrimsView() {
     <Container maxWidth="xl">
       <Box sx={{ py: 4 }}>
         <CustomBreadcrumbs
-          heading={t('Title.pilgrims_management')}
           links={[
             {
-              name: t('Label.pilgrims_management'),
+              name: t('Label.breadcrumb_home'),
               href: '/',
             },
+            { name: t('Label.pilgrims_management') },
           ]}
-          action={
-            <Button variant="contained" color="primary" sx={{ borderRadius: 1, px: 2.5, py: 1 }}>
-              {t('Button.add')}
-            </Button>
-          }
+          sx={{ mb: 3 }}
         />
 
         <Card
