@@ -28,6 +28,7 @@ interface BulkActionsDialogProps {
   selectedCount: number;
   selectedPilgrims?: any[];
   allPilgrims?: any[];
+  onClearSelection?: () => void;
 }
 
 export default function BulkActionsDialog({
@@ -36,6 +37,7 @@ export default function BulkActionsDialog({
   selectedCount,
   selectedPilgrims,
   allPilgrims,
+  onClearSelection,
 }: BulkActionsDialogProps) {
   const t = useTranslations();
   const [currentView, setCurrentView] = useState<DialogView>('menu');
@@ -60,6 +62,7 @@ export default function BulkActionsDialog({
       selectedCount,
       selectedPilgrims,
       allPilgrims,
+      onClearSelection,
     };
 
     switch (currentView) {

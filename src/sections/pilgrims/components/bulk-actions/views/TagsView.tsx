@@ -24,7 +24,7 @@ interface TagOption {
 
 const filter = createFilterOptions<TagOption>();
 
-export default function TagsView({ onBack, onClose, selectedCount }: BulkActionViewProps) {
+export default function TagsView({ onBack, onClose, selectedCount, onClearSelection }: BulkActionViewProps) {
   const t = useTranslations();
   const [inputValue, setInputValue] = useState('');
   const [selectedTag, setSelectedTag] = useState<TagOption | null>(null);
@@ -131,6 +131,9 @@ export default function TagsView({ onBack, onClose, selectedCount }: BulkActionV
 
   const handleSave = () => {
     console.log('Saving tag:', selectedTag);
+    if (onClearSelection) {
+      onClearSelection();
+    }
     onClose();
   };
 

@@ -6,12 +6,15 @@ import { useState } from 'react';
 
 import { BulkActionViewProps } from '../shared/types';
 
-export default function ArrivalView({ onBack, onClose, selectedCount }: BulkActionViewProps) {
+export default function ArrivalView({ onBack, onClose, selectedCount, onClearSelection }: BulkActionViewProps) {
   const t = useTranslations();
   const [arrivalType, setArrivalType] = useState<'early' | 'late'>('early');
 
   const handleSave = () => {
     console.log('Saving arrival type:', arrivalType);
+    if (onClearSelection) {
+      onClearSelection();
+    }
     onClose();
   };
 

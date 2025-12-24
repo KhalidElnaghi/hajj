@@ -18,12 +18,16 @@ export default function AccommodationView({
   onBack,
   onClose,
   selectedCount,
+  onClearSelection,
 }: BulkActionViewProps) {
   const t = useTranslations();
   const [housingLocation, setHousingLocation] = useState('');
 
   const handleSave = () => {
     console.log('Saving accommodation:', housingLocation);
+    if (onClearSelection) {
+      onClearSelection();
+    }
     onClose();
   };
 

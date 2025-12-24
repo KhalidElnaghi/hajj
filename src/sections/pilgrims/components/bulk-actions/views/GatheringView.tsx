@@ -6,7 +6,7 @@ import { useState } from 'react';
 
 import { BulkActionViewProps } from '../shared/types';
 
-export default function GatheringView({ onBack, onClose, selectedCount }: BulkActionViewProps) {
+export default function GatheringView({ onBack, onClose, selectedCount, onClearSelection }: BulkActionViewProps) {
   const t = useTranslations();
   const [tripType, setTripType] = useState<'departure' | 'return'>('return');
   const [gatheringPoint, setGatheringPoint] = useState('');
@@ -15,6 +15,9 @@ export default function GatheringView({ onBack, onClose, selectedCount }: BulkAc
 
   const handleSave = () => {
     console.log('Saving gathering:', { tripType, gatheringPoint, destination, nationality });
+    if (onClearSelection) {
+      onClearSelection();
+    }
     onClose();
   };
 

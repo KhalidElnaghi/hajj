@@ -997,6 +997,7 @@ export default function PilgrimsView() {
         selectedCount={table.selected.length}
         selectedPilgrims={selectedPilgrims}
         allPilgrims={filteredPilgrims}
+        onClearSelection={() => table.setSelected([])}
       />
 
       {/* Filter Dialog */}

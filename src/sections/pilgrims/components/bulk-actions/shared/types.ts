@@ -17,6 +17,7 @@ export interface BulkActionViewProps {
   selectedCount: number;
   selectedPilgrims?: any[];
   allPilgrims?: any[];
+  onClearSelection?: () => void;
 }
 
 export interface BulkActionOption {
