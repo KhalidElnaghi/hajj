@@ -2,6 +2,7 @@ import { useTranslate } from 'src/locales';
 import TableRow from '@mui/material/TableRow';
 import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
+import Checkbox from '@mui/material/Checkbox';
 import Box from '@mui/material/Box';
 
 import { headCellType } from './types';
@@ -11,9 +12,20 @@ import { headCellType } from './types';
 type Props = {
   headLabel: headCellType[];
   headColor?: string;
+  enableSelection?: boolean;
+  numSelected?: number;
+  rowCount?: number;
+  onSelectAllRows?: (checked: boolean) => void;
 };
 
-export default function TableHeadCustom({ headLabel, headColor }: Props) {
+export default function TableHeadCustom({
+  headLabel,
+  headColor,
+  enableSelection,
+  numSelected = 0,
+  rowCount = 0,
+  onSelectAllRows,
+}: Props) {
   const { t } = useTranslate();
   return (
     <TableHead>
@@ -43,7 +55,14 @@ export default function TableHeadCustom({ headLabel, headColor }: Props) {
               padding: '12px 16px',
             }}
           >
-            {headCell.id === 'rowsActions' ? (
+            {headCell.id === 'select' && enableSelection ? (
+              <Checkbox
+                indeterminate={numSelected > 0 && numSelected < rowCount}
+                checked={rowCount > 0 && numSelected === rowCount}
+                onChange={(event) => onSelectAllRows?.(event.target.checked)}
+                inputProps={{ 'aria-label': 'select all rows' }}
+              />
+            ) : headCell.id === 'rowsActions' ? (
               <Box
                 component="img"
                 src="/assets/icons/table/actions.svg"

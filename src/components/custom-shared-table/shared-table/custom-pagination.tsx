@@ -105,6 +105,7 @@ export default function CustomPagination({
         borderColor: 'divider',
         flexWrap: 'nowrap',
         minHeight: 52,
+        flexDirection: { xs: 'column', sm: 'row' },
       }}
     >
       {/* Page info */}
@@ -183,7 +184,7 @@ export default function CustomPagination({
           alignItems: 'stretch',
           gap: 0,
           flexShrink: 0,
-          ml: 'auto',
+          ml: { xs: 0, sm: 'auto' },
           borderRadius: 1.5,
           overflow: 'hidden',
           border: '1px solid',
