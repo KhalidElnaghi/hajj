@@ -7,7 +7,7 @@ import { useState } from 'react';
 import { BulkActionViewProps } from '../shared/types';
 
 export default function GatheringView({ onBack, onClose, selectedCount, onClearSelection }: BulkActionViewProps) {
-  const t = useTranslations();
+  const t = useTranslations('Pilgrims');
   const [tripType, setTripType] = useState<'departure' | 'return'>('return');
   const [gatheringPoint, setGatheringPoint] = useState('');
   const [destination, setDestination] = useState('');
@@ -26,10 +26,10 @@ export default function GatheringView({ onBack, onClose, selectedCount, onClearS
       {/* Section Header */}
       <Box>
         <Typography variant="h6" sx={{ fontWeight: 700, fontSize: 16 }}>
-          {t('Pilgrims.Label.gathering_points')}
+          {t('Label.gathering_points')}
         </Typography>
         <Typography variant="body2" sx={{ color: 'text.secondary', mt: 0.5, fontSize: 13 }}>
-          {t('Pilgrims.Description.gathering_points_description')}
+          {t('Description.gathering_points_description')}
         </Typography>
       </Box>
 
@@ -53,7 +53,7 @@ export default function GatheringView({ onBack, onClose, selectedCount, onClearS
             },
           }}
         >
-          {t('Pilgrims.Label.trip_return')}
+          {t('Label.trip_return')}
         </Button>
         <Button
           onClick={() => setTripType('departure')}
@@ -73,14 +73,14 @@ export default function GatheringView({ onBack, onClose, selectedCount, onClearS
             },
           }}
         >
-          {t('Pilgrims.Label.trip_departure')}
+          {t('Label.trip_departure')}
         </Button>
       </Stack>
 
       {/* Gathering Point */}
       <Box>
         <Typography variant="subtitle2" sx={{ mb: 1.5, fontWeight: 600, fontSize: 14 }}>
-          {t('Pilgrims.Label.gathering_point')}
+          {t('Label.gathering_point')}
         </Typography>
         <FormControl fullWidth>
           <Select
@@ -94,11 +94,11 @@ export default function GatheringView({ onBack, onClose, selectedCount, onClearS
             }}
           >
             <MenuItem value="" disabled>
-              {t('Pilgrims.Placeholder.select_gathering_point')}
+              {t('Placeholder.select_gathering_point')}
             </MenuItem>
-            <MenuItem value="jeddah">{t('Pilgrims.Label.city_jeddah')}</MenuItem>
-            <MenuItem value="riyadh">{t('Pilgrims.Label.city_riyadh')}</MenuItem>
-            <MenuItem value="dammam">{t('Pilgrims.Label.city_dammam')}</MenuItem>
+            <MenuItem value="jeddah">{t('Label.city_jeddah')}</MenuItem>
+            <MenuItem value="riyadh">{t('Label.city_riyadh')}</MenuItem>
+            <MenuItem value="dammam">{t('Label.city_dammam')}</MenuItem>
           </Select>
         </FormControl>
       </Box>
@@ -106,7 +106,7 @@ export default function GatheringView({ onBack, onClose, selectedCount, onClearS
       {/* Destination */}
       <Box>
         <Typography variant="subtitle2" sx={{ mb: 1.5, fontWeight: 600, fontSize: 14 }}>
-          {t('Pilgrims.Label.destination')}
+          {t('Label.destination')}
         </Typography>
         <FormControl fullWidth>
           <Select
@@ -120,10 +120,10 @@ export default function GatheringView({ onBack, onClose, selectedCount, onClearS
             }}
           >
             <MenuItem value="" disabled>
-              {t('Pilgrims.Placeholder.select_destination')}
+              {t('Placeholder.select_destination')}
             </MenuItem>
-            <MenuItem value="makkah">{t('Pilgrims.Label.city_makkah')}</MenuItem>
-            <MenuItem value="madinah">{t('Pilgrims.Label.city_madinah')}</MenuItem>
+            <MenuItem value="makkah">{t('Label.city_makkah')}</MenuItem>
+            <MenuItem value="madinah">{t('Label.city_madinah')}</MenuItem>
           </Select>
         </FormControl>
       </Box>
@@ -131,7 +131,7 @@ export default function GatheringView({ onBack, onClose, selectedCount, onClearS
       {/* Nationality */}
       <Box>
         <Typography variant="subtitle2" sx={{ mb: 1.5, fontWeight: 600, fontSize: 14 }}>
-          {t('Pilgrims.Label.nationality')}
+          {t('Label.nationality')}
         </Typography>
         <FormControl fullWidth>
           <Select
@@ -145,12 +145,12 @@ export default function GatheringView({ onBack, onClose, selectedCount, onClearS
             }}
           >
             <MenuItem value="" disabled>
-              {t('Pilgrims.Placeholder.select_nationality')}
+              {t('Placeholder.select_nationality')}
             </MenuItem>
-            <MenuItem value="saudi">{t('Pilgrims.Label.nationality_saudi')}</MenuItem>
-            <MenuItem value="egypt">{t('Pilgrims.Label.nationality_egypt')}</MenuItem>
-            <MenuItem value="pakistan">{t('Pilgrims.Label.nationality_pakistan')}</MenuItem>
-            <MenuItem value="indonesia">{t('Pilgrims.Label.nationality_indonesia')}</MenuItem>
+            <MenuItem value="saudi">{t('Label.nationality_saudi')}</MenuItem>
+            <MenuItem value="egypt">{t('Label.nationality_egypt')}</MenuItem>
+            <MenuItem value="pakistan">{t('Label.nationality_pakistan')}</MenuItem>
+            <MenuItem value="indonesia">{t('Label.nationality_indonesia')}</MenuItem>
           </Select>
         </FormControl>
       </Box>
@@ -171,7 +171,7 @@ export default function GatheringView({ onBack, onClose, selectedCount, onClearS
             },
           }}
         >
-          {t('Pilgrims.Button.cancel')}
+          {t('Button.cancel')}
         </Button>
         <Button
           variant="contained"
@@ -186,7 +186,7 @@ export default function GatheringView({ onBack, onClose, selectedCount, onClearS
             },
           }}
         >
-          {t('Pilgrims.Button.save')}
+          {t('Button.save')}
         </Button>
       </Stack>
     </Stack>

@@ -23,7 +23,7 @@ export default function SMSView({
   selectedPilgrims,
   allPilgrims,
 }: BulkActionViewProps) {
-  const t = useTranslations();
+  const t = useTranslations('Pilgrims');
   const normalizeId = (pilgrim: any) => {
     if (!pilgrim) return '';
     return String(pilgrim.id ?? pilgrim.pilgrimId ?? '');
@@ -39,15 +39,15 @@ export default function SMSView({
   );
 
   const templates = [
-    { key: 'welcome', label: t('Pilgrims.Label.sms_template_welcome') },
-    { key: 'instructions', label: t('Pilgrims.Label.sms_template_instructions') },
-    { key: 'arrival', label: t('Pilgrims.Label.sms_template_arrival_days') },
-    { key: 'gathering', label: t('Pilgrims.Label.sms_template_gathering_point') },
-    { key: 'housing', label: t('Pilgrims.Label.sms_template_housing_description') },
-    { key: 'emergency', label: t('Pilgrims.Label.sms_template_emergency') },
-    { key: 'daily_program', label: t('Pilgrims.Label.sms_template_daily_program') },
-    { key: 'reminder', label: t('Pilgrims.Label.sms_template_new_phase_reminder') },
-    { key: 'greeting', label: t('Pilgrims.Label.sms_template_greetings') },
+    { key: 'welcome', label: t('Label.sms_template_welcome') },
+    { key: 'instructions', label: t('Label.sms_template_instructions') },
+    { key: 'arrival', label: t('Label.sms_template_arrival_days') },
+    { key: 'gathering', label: t('Label.sms_template_gathering_point') },
+    { key: 'housing', label: t('Label.sms_template_housing_description') },
+    { key: 'emergency', label: t('Label.sms_template_emergency') },
+    { key: 'daily_program', label: t('Label.sms_template_daily_program') },
+    { key: 'reminder', label: t('Label.sms_template_new_phase_reminder') },
+    { key: 'greeting', label: t('Label.sms_template_greetings') },
   ];
 
   const handleTemplateToggle = (templateKey: string) => {
@@ -113,17 +113,17 @@ export default function SMSView({
       {/* Section Header */}
       <Box>
         <Typography variant="h6" sx={{ fontWeight: 700, fontSize: 16 }}>
-          {t('Pilgrims.Label.send_emergency_message')}
+          {t('Label.send_emergency_message')}
         </Typography>
         <Typography variant="body2" sx={{ color: 'text.secondary', mt: 0.5, fontSize: 13 }}>
-          {t('Pilgrims.Description.sms_messages_description')}
+          {t('Description.sms_messages_description')}
         </Typography>
       </Box>
 
       {/* Quick Templates */}
       <Box>
         <Typography variant="subtitle2" sx={{ mb: 1.5, fontWeight: 600, fontSize: 14 }}>
-          {t('Pilgrims.Label.quick_templates')}
+          {t('Label.quick_templates')}
         </Typography>
         <Stack direction="row" flexWrap="wrap" gap={1}>
           {templates.map((template) => (
@@ -160,7 +160,7 @@ export default function SMSView({
         >
           <Stack direction="row" alignItems="center" justifyContent="flex-start" gap={1}>
             <Typography variant="subtitle2" sx={{ fontWeight: 600, fontSize: 14 }}>
-              {t('Pilgrims.Label.total_pilgrims_today')}
+              {t('Label.total_pilgrims_today')}
             </Typography>
             <Box
               sx={{
@@ -195,7 +195,7 @@ export default function SMSView({
                 })
                 .slice(0, 20)}
               getOptionLabel={(option) =>
-                option?.name || option?.bookingNumber || option?.idNumber || t('Pilgrims.Label.name')
+                option?.name || option?.bookingNumber || option?.idNumber || t('Label.name')
               }
               value={null}
               isOptionEqualToValue={(option, value) => normalizeId(option) === normalizeId(value)}
@@ -223,13 +223,13 @@ export default function SMSView({
                     py: 0.5,
                   }}
                 >
-                  {option?.name || option?.bookingNumber || option?.idNumber || t('Pilgrims.Label.name')}
+                  {option?.name || option?.bookingNumber || option?.idNumber || t('Label.name')}
                 </MenuItem>
               )}
               renderInput={(params) => (
                 <TextField
                   {...params}
-                  placeholder={t('Pilgrims.Placeholder.search_and_add_pilgrim')}
+                  placeholder={t('Placeholder.search_and_add_pilgrim')}
                   InputProps={{
                     ...params.InputProps,
                     startAdornment: (
@@ -293,7 +293,7 @@ export default function SMSView({
           fullWidth
           multiline
           rows={4}
-          placeholder={t('Pilgrims.Placeholder.write_message_text')}
+          placeholder={t('Placeholder.write_message_text')}
           value={messageText}
           onChange={(e) => setMessageText(e.target.value)}
           sx={{
@@ -304,7 +304,7 @@ export default function SMSView({
           }}
         />
         <Typography variant="caption" sx={{ color: 'text.secondary', mt: 0.5, display: 'block' }}>
-          {t('Pilgrims.Helper.search_add_new_word')}
+          {t('Helper.search_add_new_word')}
         </Typography>
       </Box>
 
@@ -324,7 +324,7 @@ export default function SMSView({
             },
           }}
         >
-          {t('Pilgrims.Button.cancel')}
+          {t('Button.cancel')}
         </Button>
         <Button
           variant="contained"
@@ -338,7 +338,7 @@ export default function SMSView({
             },
           }}
         >
-          {t('Pilgrims.Button.send')}
+          {t('Button.send')}
         </Button>
       </Stack>
     </Stack>

@@ -21,7 +21,7 @@ export default function TagsView({
   selectedCount,
   onClearSelection,
 }: BulkActionViewProps) {
-  const t = useTranslations();
+  const t = useTranslations('Pilgrims');
   const [inputValue, setInputValue] = useState('');
   const [selectedTag, setSelectedTag] = useState<TagOption | null>(null);
   const [customTags, setCustomTags] = useState<TagOption[]>([]);
@@ -29,18 +29,18 @@ export default function TagsView({
   // All available tags for the dropdown (more options)
   const allTags: TagOption[] = useMemo(
     () => [
-      { key: 'near_bathroom', label: t('Pilgrims.Label.tag_near_bathroom') },
-      { key: 'tent_entrance', label: t('Pilgrims.Label.tag_tent_entrance') },
-      { key: 'tent_middle', label: t('Pilgrims.Label.tag_tent_middle') },
-      { key: 'near_restaurant', label: t('Pilgrims.Label.tag_near_restaurant') },
-      { key: 'fasil_entrance', label: t('Pilgrims.Label.tag_fasil_entrance') },
-      { key: 'near_medical_center', label: t('Pilgrims.Label.tag_near_medical_center') },
-      { key: 'wheelchair_accessible', label: t('Pilgrims.Label.tag_wheelchair_accessible') },
-      { key: 'elderly_priority', label: t('Pilgrims.Label.tag_elderly_priority') },
-      { key: 'family_zone', label: t('Pilgrims.Label.tag_family_zone') },
-      { key: 'quiet_area', label: t('Pilgrims.Label.tag_quiet_area') },
-      { key: 'near_exit', label: t('Pilgrims.Label.tag_near_exit') },
-      { key: 'vip_section', label: t('Pilgrims.Label.tag_vip_section') },
+      { key: 'near_bathroom', label: t('Label.tag_near_bathroom') },
+      { key: 'tent_entrance', label: t('Label.tag_tent_entrance') },
+      { key: 'tent_middle', label: t('Label.tag_tent_middle') },
+      { key: 'near_restaurant', label: t('Label.tag_near_restaurant') },
+      { key: 'fasil_entrance', label: t('Label.tag_fasil_entrance') },
+      { key: 'near_medical_center', label: t('Label.tag_near_medical_center') },
+      { key: 'wheelchair_accessible', label: t('Label.tag_wheelchair_accessible') },
+      { key: 'elderly_priority', label: t('Label.tag_elderly_priority') },
+      { key: 'family_zone', label: t('Label.tag_family_zone') },
+      { key: 'quiet_area', label: t('Label.tag_quiet_area') },
+      { key: 'near_exit', label: t('Label.tag_near_exit') },
+      { key: 'vip_section', label: t('Label.tag_vip_section') },
       ...customTags,
     ],
     [t, customTags]
@@ -49,12 +49,12 @@ export default function TagsView({
   // Quick access tags shown as chips below (subset)
   const quickAccessTags: TagOption[] = useMemo(
     () => [
-      { key: 'near_bathroom', label: t('Pilgrims.Label.tag_near_bathroom') },
-      { key: 'tent_entrance', label: t('Pilgrims.Label.tag_tent_entrance') },
-      { key: 'tent_middle', label: t('Pilgrims.Label.tag_tent_middle') },
-      { key: 'near_restaurant', label: t('Pilgrims.Label.tag_near_restaurant') },
-      { key: 'fasil_entrance', label: t('Pilgrims.Label.tag_fasil_entrance') },
-      { key: 'near_medical_center', label: t('Pilgrims.Label.tag_near_medical_center') },
+      { key: 'near_bathroom', label: t('Label.tag_near_bathroom') },
+      { key: 'tent_entrance', label: t('Label.tag_tent_entrance') },
+      { key: 'tent_middle', label: t('Label.tag_tent_middle') },
+      { key: 'near_restaurant', label: t('Label.tag_near_restaurant') },
+      { key: 'fasil_entrance', label: t('Label.tag_fasil_entrance') },
+      { key: 'near_medical_center', label: t('Label.tag_near_medical_center') },
     ],
     [t]
   );
@@ -138,10 +138,10 @@ export default function TagsView({
       {/* Section Header */}
       <Box>
         <Typography variant="h6" sx={{ fontWeight: 700, fontSize: 16 }}>
-          {t('Pilgrims.Label.tags')}
+          {t('Label.tags')}
         </Typography>
         <Typography variant="body2" sx={{ color: 'text.secondary', mt: 0.5, fontSize: 13 }}>
-          {t('Pilgrims.Description.tags_description')}
+          {t('Description.tags_description')}
         </Typography>
       </Box>
 
@@ -208,7 +208,7 @@ export default function TagsView({
           renderInput={(params) => (
             <TextField
               {...params}
-              placeholder={t('Pilgrims.Placeholder.search_or_add_new_tag')}
+              placeholder={t('Placeholder.search_or_add_new_tag')}
               InputProps={{
                 ...params.InputProps,
                 startAdornment: (
@@ -255,14 +255,14 @@ export default function TagsView({
             },
           }}
         >
-          {t('Pilgrims.Button.add')}
+          {t('Button.add')}
         </Button>
       </Stack>
 
       {/* Quick Access Tags */}
       <Box>
         <Typography variant="body2" sx={{ color: 'text.secondary', mb: 1, fontSize: 12 }}>
-          {t('Pilgrims.Label.quick_access')}
+          {t('Label.quick_access')}
         </Typography>
         <Stack direction="row" flexWrap="wrap" gap={1}>
           {quickAccessTags.map((tag) => (
@@ -300,7 +300,7 @@ export default function TagsView({
             },
           }}
         >
-          {t('Pilgrims.Button.cancel')}
+          {t('Button.cancel')}
         </Button>
 
         <Button
@@ -316,7 +316,7 @@ export default function TagsView({
             },
           }}
         >
-          {t('Pilgrims.Button.save')}
+          {t('Button.save')}
         </Button>
       </Stack>
     </Stack>

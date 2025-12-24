@@ -39,7 +39,7 @@ export default function BulkActionsDialog({
   allPilgrims,
   onClearSelection,
 }: BulkActionsDialogProps) {
-  const t = useTranslations();
+  const t = useTranslations('Pilgrims');
   const [currentView, setCurrentView] = useState<DialogView>('menu');
 
   const handleClose = () => {
@@ -121,7 +121,7 @@ export default function BulkActionsDialog({
             )}
             <Stack direction="row" alignItems="center" spacing={1}>
               <Typography variant="h4" sx={{ fontWeight: 700, fontSize: 30 }}>
-                {t('Pilgrims.Title.group_actions')}
+                {t('Title.group_actions')}
               </Typography>
             </Stack>
             <Typography
@@ -133,7 +133,7 @@ export default function BulkActionsDialog({
                 mr: currentView !== 'menu' ? 5 : 0,
               }}
             >
-              {t('Pilgrims.Description.group_actions_description')}
+              {t('Description.group_actions_description')}
             </Typography>
           </Box>
           <IconButton

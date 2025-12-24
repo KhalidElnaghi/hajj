@@ -7,7 +7,7 @@ import { useState } from 'react';
 import { BulkActionViewProps } from '../shared/types';
 
 export default function ArrivalView({ onBack, onClose, selectedCount, onClearSelection }: BulkActionViewProps) {
-  const t = useTranslations();
+  const t = useTranslations('Pilgrims');
   const [arrivalType, setArrivalType] = useState<'early' | 'late'>('early');
 
   const handleSave = () => {
@@ -23,10 +23,10 @@ export default function ArrivalView({ onBack, onClose, selectedCount, onClearSel
       {/* Section Header */}
       <Box>
         <Typography variant="h6" sx={{ fontWeight: 700, fontSize: 16 }}>
-          {t('Pilgrims.Label.arrival_time')}
+          {t('Label.arrival_time')}
         </Typography>
         <Typography variant="body2" sx={{ color: 'text.secondary', mt: 0.5, fontSize: 13 }}>
-          {t('Pilgrims.Description.arrival_time_description')}
+          {t('Description.arrival_time_description')}
         </Typography>
       </Box>
 
@@ -59,7 +59,7 @@ export default function ArrivalView({ onBack, onClose, selectedCount, onClearSel
             },
           }}
         >
-          {t('Pilgrims.Label.arrival_early')}
+          {t('Label.arrival_early')}
         </Button>
         <Button
           onClick={() => setArrivalType('late')}
@@ -78,7 +78,7 @@ export default function ArrivalView({ onBack, onClose, selectedCount, onClearSel
             },
           }}
         >
-          {t('Pilgrims.Label.arrival_late')}
+          {t('Label.arrival_late')}
         </Button>
       </Box>
 
@@ -98,7 +98,7 @@ export default function ArrivalView({ onBack, onClose, selectedCount, onClearSel
             },
           }}
         >
-          {t('Pilgrims.Button.cancel')}
+          {t('Button.cancel')}
         </Button>
         <Button
           variant="contained"
@@ -112,7 +112,7 @@ export default function ArrivalView({ onBack, onClose, selectedCount, onClearSel
             },
           }}
         >
-          {t('Pilgrims.Button.save')}
+          {t('Button.save')}
         </Button>
       </Stack>
     </Stack>

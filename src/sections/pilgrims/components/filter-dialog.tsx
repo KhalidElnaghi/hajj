@@ -44,7 +44,7 @@ export default function FilterDialog({
   onApplyFilters,
   externalFilters,
 }: FilterDialogProps) {
-  const t = useTranslations();
+  const t = useTranslations('Pilgrims');
   const [searchTerm, setSearchTerm] = useState('');
   const [expandedSections, setExpandedSections] = useState<string[]>([]);
   const searchValue = searchTerm.trim().toLowerCase();
@@ -53,34 +53,34 @@ export default function FilterDialog({
 
   const sectionKeywords = {
     personal: [
-      t('Pilgrims.Label.personal_information'),
-      t('Pilgrims.Label.nationality'),
-      t('Pilgrims.Label.city'),
-      t('Pilgrims.Label.package_name'),
-      t('Pilgrims.Label.tags'),
-      t('Pilgrims.Label.gender'),
-      t('Pilgrims.Label.early_late'),
-      t('Pilgrims.Label.booking_status'),
+      t('Label.personal_information'),
+      t('Label.nationality'),
+      t('Label.city'),
+      t('Label.package_name'),
+      t('Label.tags'),
+      t('Label.gender'),
+      t('Label.early_late'),
+      t('Label.booking_status'),
     ],
     gathering: [
-      t('Pilgrims.Label.gathering_points'),
-      t('Pilgrims.Label.gathering_point_type'),
-      t('Pilgrims.Label.gathering_point'),
-      t('Pilgrims.Label.destination'),
+      t('Label.gathering_points'),
+      t('Label.gathering_point_type'),
+      t('Label.gathering_point'),
+      t('Label.destination'),
     ],
     accommodation: [
-      t('Pilgrims.Label.accommodation'),
-      t('Pilgrims.Label.room_number'),
-      t('Pilgrims.Label.accommodation_destination'),
-      t('Pilgrims.Label.camp_status'),
+      t('Label.accommodation'),
+      t('Label.room_number'),
+      t('Label.accommodation_destination'),
+      t('Label.camp_status'),
     ],
-    transportation: [t('Pilgrims.Label.transportation'), t('Pilgrims.Label.bus_number')],
-    health: [t('Pilgrims.Label.health_status')],
-    supervision: [t('Pilgrims.Label.supervision'), t('Pilgrims.Label.supervisors'), t('Pilgrims.Label.upload_file')],
+    transportation: [t('Label.transportation'), t('Label.bus_number')],
+    health: [t('Label.health_status')],
+    supervision: [t('Label.supervision'), t('Label.supervisors'), t('Label.upload_file')],
     shipping: [
-      t('Pilgrims.Label.shipping_operations'),
-      t('Pilgrims.Label.shipping_management'),
-      t('Pilgrims.Label.shipment_status'),
+      t('Label.shipping_operations'),
+      t('Label.shipping_management'),
+      t('Label.shipment_status'),
     ],
   };
 
@@ -297,7 +297,7 @@ export default function FilterDialog({
                 mb: 0.5,
               }}
             >
-              {t('Pilgrims.Title.filter_pilgrim_data')}
+              {t('Title.filter_pilgrim_data')}
             </Typography>
             <Typography
               sx={{
@@ -307,7 +307,7 @@ export default function FilterDialog({
                 lineHeight: '18px',
               }}
             >
-              {t('Pilgrims.Description.filter_pilgrim_subtitle')}
+              {t('Description.filter_pilgrim_subtitle')}
             </Typography>
           </Box>
           <IconButton onClick={onClose} sx={{ color: 'text.secondary' }}>
@@ -322,7 +322,7 @@ export default function FilterDialog({
         <Box sx={{ py: 3 }}>
           <TextField
             fullWidth
-            placeholder={t('Pilgrims.Placeholder.search_by_nationality_gathering')}
+            placeholder={t('Placeholder.search_by_nationality_gathering')}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             sx={{
@@ -407,7 +407,7 @@ export default function FilterDialog({
                     lineHeight: '23px',
                   }}
                 >
-                  {t('Pilgrims.Label.personal_information')}
+                  {t('Label.personal_information')}
                 </Typography>
               </AccordionSummary>
               <AccordionDetails sx={{ px: 3, pt: 3, pb: 3, bgcolor: 'transparent' }}>
@@ -424,7 +424,7 @@ export default function FilterDialog({
                           textTransform: 'capitalize',
                         }}
                       >
-                        {t('Pilgrims.Label.nationality')}
+                        {t('Label.nationality')}
                       </Typography>
                       <Select
                         value={filters.nationality}
@@ -432,7 +432,7 @@ export default function FilterDialog({
                         displayEmpty
                         sx={{ borderRadius: 1 }}
                       >
-                        <MenuItem value="">{t('Pilgrims.Label.select')}</MenuItem>
+                        <MenuItem value="">{t('Label.select')}</MenuItem>
                         <MenuItem value="yemen">اليمن</MenuItem>
                         <MenuItem value="egypt">مصر</MenuItem>
                         <MenuItem value="saudi">السعودية</MenuItem>
@@ -449,7 +449,7 @@ export default function FilterDialog({
                           textTransform: 'capitalize',
                         }}
                       >
-                        {t('Pilgrims.Label.city')}
+                        {t('Label.city')}
                       </Typography>
                       <Select
                         value={filters.city}
@@ -457,7 +457,7 @@ export default function FilterDialog({
                         displayEmpty
                         sx={{ borderRadius: 1 }}
                       >
-                        <MenuItem value="">{t('Pilgrims.Label.select')}</MenuItem>
+                        <MenuItem value="">{t('Label.select')}</MenuItem>
                         <MenuItem value="jeddah">جدة</MenuItem>
                         <MenuItem value="riyadh">الرياض</MenuItem>
                         <MenuItem value="mecca">مكة</MenuItem>
@@ -477,7 +477,7 @@ export default function FilterDialog({
                           textTransform: 'capitalize',
                         }}
                       >
-                        {t('Pilgrims.Label.package_name')}
+                        {t('Label.package_name')}
                       </Typography>
                       <Select
                         value={filters.package}
@@ -485,7 +485,7 @@ export default function FilterDialog({
                         displayEmpty
                         sx={{ borderRadius: 1 }}
                       >
-                        <MenuItem value="">{t('Pilgrims.Label.select')}</MenuItem>
+                        <MenuItem value="">{t('Label.select')}</MenuItem>
                         <MenuItem value="vip">VIP</MenuItem>
                         <MenuItem value="premium">مميزة</MenuItem>
                         <MenuItem value="economic">اقتصادية</MenuItem>
@@ -502,7 +502,7 @@ export default function FilterDialog({
                           textTransform: 'capitalize',
                         }}
                       >
-                        {t('Pilgrims.Label.tags')}
+                        {t('Label.tags')}
                       </Typography>
                       <Select
                         value={filters.badge}
@@ -510,7 +510,7 @@ export default function FilterDialog({
                         displayEmpty
                         sx={{ borderRadius: 1 }}
                       >
-                        <MenuItem value="">{t('Pilgrims.Label.select')}</MenuItem>
+                        <MenuItem value="">{t('Label.select')}</MenuItem>
                         <MenuItem value="near_bathroom">قريب من دورة مياة</MenuItem>
                         <MenuItem value="central">قريب من مركز طبي</MenuItem>
                         <MenuItem value="near_mosque">قريب من مسجد</MenuItem>
@@ -532,7 +532,7 @@ export default function FilterDialog({
                           textTransform: 'capitalize',
                         }}
                       >
-                        {t('Pilgrims.Label.gender')}
+                        {t('Label.gender')}
                       </Typography>
                       <ToggleButtonGroup
                         value={filters.gender}
@@ -552,8 +552,8 @@ export default function FilterDialog({
                           },
                         }}
                       >
-                        <ToggleButton value="male">{t('Pilgrims.Label.male')}</ToggleButton>
-                        <ToggleButton value="female">{t('Pilgrims.Label.female')}</ToggleButton>
+                        <ToggleButton value="male">{t('Label.male')}</ToggleButton>
+                        <ToggleButton value="female">{t('Label.female')}</ToggleButton>
                       </ToggleButtonGroup>
                     </Box>
 
@@ -568,7 +568,7 @@ export default function FilterDialog({
                           textTransform: 'capitalize',
                         }}
                       >
-                        {t('Pilgrims.Label.early_late')}
+                        {t('Label.early_late')}
                       </Typography>
                       <ToggleButtonGroup
                         value={filters.marriedLate}
@@ -588,8 +588,8 @@ export default function FilterDialog({
                           },
                         }}
                       >
-                        <ToggleButton value="early">{t('Pilgrims.Label.early')}</ToggleButton>
-                        <ToggleButton value="late">{t('Pilgrims.Label.late')}</ToggleButton>
+                        <ToggleButton value="early">{t('Label.early')}</ToggleButton>
+                        <ToggleButton value="late">{t('Label.late')}</ToggleButton>
                       </ToggleButtonGroup>
                     </Box>
                   </Stack>
@@ -604,7 +604,7 @@ export default function FilterDialog({
                         textTransform: 'capitalize',
                       }}
                     >
-                      {t('Pilgrims.Label.booking_status')}
+                      {t('Label.booking_status')}
                     </Typography>
                     <Select
                       value={filters.bookingStatus}
@@ -612,7 +612,7 @@ export default function FilterDialog({
                       displayEmpty
                       sx={{ borderRadius: 1 }}
                     >
-                      <MenuItem value="">{t('Pilgrims.Label.select')}</MenuItem>
+                      <MenuItem value="">{t('Label.select')}</MenuItem>
                       <MenuItem value="completed">مكتمل</MenuItem>
                       <MenuItem value="pending">مؤكد</MenuItem>
                       <MenuItem value="confirmed">قيد التأكيد</MenuItem>
@@ -680,7 +680,7 @@ export default function FilterDialog({
                     lineHeight: '23px',
                   }}
                 >
-                  {t('Pilgrims.Label.gathering_points')}
+                  {t('Label.gathering_points')}
                 </Typography>
               </AccordionSummary>
               <AccordionDetails sx={{ px: 3, pt: 3, pb: 3, bgcolor: 'transparent' }}>
@@ -697,7 +697,7 @@ export default function FilterDialog({
                           textTransform: 'capitalize',
                         }}
                       >
-                        {t('Pilgrims.Label.gathering_point_type')}
+                        {t('Label.gathering_point_type')}
                       </Typography>
                       <Select
                         value={filters.gatheringPointType}
@@ -707,7 +707,7 @@ export default function FilterDialog({
                         displayEmpty
                         sx={{ borderRadius: 1 }}
                       >
-                        <MenuItem value="">{t('Pilgrims.Label.select')}</MenuItem>
+                        <MenuItem value="">{t('Label.select')}</MenuItem>
                         <MenuItem value="jeddah">جدة</MenuItem>
                         <MenuItem value="riyadh">الرياض</MenuItem>
                         <MenuItem value="dammam">الدمام</MenuItem>
@@ -724,7 +724,7 @@ export default function FilterDialog({
                           textTransform: 'capitalize',
                         }}
                       >
-                        {t('Pilgrims.Label.gathering_point')}
+                        {t('Label.gathering_point')}
                       </Typography>
                       <Select
                         value={filters.gatheringPoint}
@@ -732,7 +732,7 @@ export default function FilterDialog({
                         displayEmpty
                         sx={{ borderRadius: 1 }}
                       >
-                        <MenuItem value="">{t('Pilgrims.Label.select')}</MenuItem>
+                        <MenuItem value="">{t('Label.select')}</MenuItem>
                       </Select>
                     </FormControl>
                   </Stack>
@@ -748,7 +748,7 @@ export default function FilterDialog({
                         textTransform: 'capitalize',
                       }}
                     >
-                      {t('Pilgrims.Label.destination')}
+                      {t('Label.destination')}
                     </Typography>
                     <Select
                       value={filters.destination}
@@ -756,7 +756,7 @@ export default function FilterDialog({
                       displayEmpty
                       sx={{ borderRadius: 1 }}
                     >
-                      <MenuItem value="">{t('Pilgrims.Label.select')}</MenuItem>
+                      <MenuItem value="">{t('Label.select')}</MenuItem>
                     </Select>
                   </FormControl>
                 </Stack>
@@ -821,7 +821,7 @@ export default function FilterDialog({
                     lineHeight: '23px',
                   }}
                 >
-                  {t('Pilgrims.Label.accommodation')}
+                  {t('Label.accommodation')}
                 </Typography>
               </AccordionSummary>
               <AccordionDetails sx={{ px: 3, pt: 3, pb: 3, bgcolor: 'transparent' }}>
@@ -838,7 +838,7 @@ export default function FilterDialog({
                           textTransform: 'capitalize',
                         }}
                       >
-                        {t('Pilgrims.Label.room_group_number')}
+                        {t('Label.room_group_number')}
                       </Typography>
                       <TextField
                         value={filters.roomNumber}
@@ -858,7 +858,7 @@ export default function FilterDialog({
                           textTransform: 'capitalize',
                         }}
                       >
-                        {t('Pilgrims.Label.destination')}
+                        {t('Label.destination')}
                       </Typography>
                       <Select
                         value={filters.accommodationDestination}
@@ -868,7 +868,7 @@ export default function FilterDialog({
                         displayEmpty
                         sx={{ borderRadius: 1 }}
                       >
-                        <MenuItem value="">{t('Pilgrims.Label.select')}</MenuItem>
+                        <MenuItem value="">{t('Label.select')}</MenuItem>
                       </Select>
                     </FormControl>
                   </Stack>
@@ -884,7 +884,7 @@ export default function FilterDialog({
                         textTransform: 'capitalize',
                       }}
                     >
-                      {t('Pilgrims.Label.camp_status')}
+                      {t('Label.camp_status')}
                     </Typography>
                     <Select
                       value={filters.campStatus}
@@ -892,7 +892,7 @@ export default function FilterDialog({
                       displayEmpty
                       sx={{ borderRadius: 1 }}
                     >
-                      <MenuItem value="">{t('Pilgrims.Label.select')}</MenuItem>
+                      <MenuItem value="">{t('Label.select')}</MenuItem>
                     </Select>
                   </FormControl>
                 </Stack>
@@ -957,7 +957,7 @@ export default function FilterDialog({
                     lineHeight: '23px',
                   }}
                 >
-                  {t('Pilgrims.Label.transportation_data')}
+                  {t('Label.transportation_data')}
                 </Typography>
               </AccordionSummary>
               <AccordionDetails sx={{ px: 3, pt: 3, pb: 3, bgcolor: 'transparent' }}>
@@ -972,7 +972,7 @@ export default function FilterDialog({
                       textTransform: 'capitalize',
                     }}
                   >
-                    {t('Pilgrims.Label.bus_number')}
+                    {t('Label.bus_number')}
                   </Typography>
                   <Select
                     value={filters.busNumber}
@@ -980,7 +980,7 @@ export default function FilterDialog({
                     displayEmpty
                     sx={{ borderRadius: 1 }}
                   >
-                    <MenuItem value="">{t('Pilgrims.Label.select')}</MenuItem>
+                    <MenuItem value="">{t('Label.select')}</MenuItem>
                     <MenuItem value="1">الأولى</MenuItem>
                     <MenuItem value="2">الثانية</MenuItem>
                     <MenuItem value="3">الثالثة</MenuItem>
@@ -1046,7 +1046,7 @@ export default function FilterDialog({
                     lineHeight: '23px',
                   }}
                 >
-                  {t('Pilgrims.Label.health_status_data')}
+                  {t('Label.health_status_data')}
                 </Typography>
               </AccordionSummary>
               <AccordionDetails sx={{ px: 3, pt: 3, pb: 3, bgcolor: 'transparent' }}>
@@ -1061,7 +1061,7 @@ export default function FilterDialog({
                       textTransform: 'capitalize',
                     }}
                   >
-                    {t('Pilgrims.Label.general_health_status')}
+                    {t('Label.general_health_status')}
                   </Typography>
                   <Select
                     value={filters.healthStatus}
@@ -1069,7 +1069,7 @@ export default function FilterDialog({
                     displayEmpty
                     sx={{ borderRadius: 1 }}
                   >
-                    <MenuItem value="">{t('Pilgrims.Label.select')}</MenuItem>
+                    <MenuItem value="">{t('Label.select')}</MenuItem>
                     <MenuItem value="good">جيد</MenuItem>
                     <MenuItem value="attention">يحتاج عناية</MenuItem>
                   </Select>
@@ -1135,7 +1135,7 @@ export default function FilterDialog({
                     lineHeight: '23px',
                   }}
                 >
-                  {t('Pilgrims.Label.supervision_organization')}
+                  {t('Label.supervision_organization')}
                 </Typography>
               </AccordionSummary>
               <AccordionDetails sx={{ px: 3, pt: 3, pb: 3, bgcolor: 'transparent' }}>
@@ -1152,7 +1152,7 @@ export default function FilterDialog({
                           textTransform: 'capitalize',
                         }}
                       >
-                        {t('Pilgrims.Label.supervisors')}
+                        {t('Label.supervisors')}
                       </Typography>
                       <Autocomplete
                         multiple
@@ -1168,7 +1168,7 @@ export default function FilterDialog({
                         renderInput={(params) => (
                           <TextField
                             {...params}
-                            placeholder={t('Pilgrims.Label.select')}
+                            placeholder={t('Label.select')}
                             sx={{
                               '& .MuiOutlinedInput-root': {
                                 borderRadius: 1,
@@ -1204,7 +1204,7 @@ export default function FilterDialog({
                           textTransform: 'capitalize',
                         }}
                       >
-                        {t('Pilgrims.Label.import_file')}
+                        {t('Label.import_file')}
                       </Typography>
                       <Select
                         value={filters.importFile}
@@ -1212,7 +1212,7 @@ export default function FilterDialog({
                         displayEmpty
                         sx={{ borderRadius: 1 }}
                       >
-                        <MenuItem value="">{t('Pilgrims.Label.select')}</MenuItem>
+                        <MenuItem value="">{t('Label.select')}</MenuItem>
                       </Select>
                     </FormControl>
                   </Stack>
@@ -1277,7 +1277,7 @@ export default function FilterDialog({
                     lineHeight: '23px',
                   }}
                 >
-                  {t('Pilgrims.Label.shipping_operations')}
+                  {t('Label.shipping_operations')}
                 </Typography>
               </AccordionSummary>
               <AccordionDetails sx={{ px: 3, pt: 3, pb: 3, bgcolor: 'transparent' }}>
@@ -1294,7 +1294,7 @@ export default function FilterDialog({
                           textTransform: 'capitalize',
                         }}
                       >
-                        {t('Pilgrims.Label.shipping_tool')}
+                        {t('Label.shipping_tool')}
                       </Typography>
                       <Select
                         value={filters.shippingManagement}
@@ -1304,7 +1304,7 @@ export default function FilterDialog({
                         displayEmpty
                         sx={{ borderRadius: 1 }}
                       >
-                        <MenuItem value="">{t('Pilgrims.Label.select')}</MenuItem>
+                        <MenuItem value="">{t('Label.select')}</MenuItem>
                       </Select>
                     </FormControl>
                     <FormControl fullWidth>
@@ -1318,7 +1318,7 @@ export default function FilterDialog({
                           textTransform: 'capitalize',
                         }}
                       >
-                        {t('Pilgrims.Label.shipment_status')}
+                        {t('Label.shipment_status')}
                       </Typography>
                       <Select
                         value={filters.shipmentStatus}
@@ -1326,7 +1326,7 @@ export default function FilterDialog({
                         displayEmpty
                         sx={{ borderRadius: 1 }}
                       >
-                        <MenuItem value="">{t('Pilgrims.Label.select')}</MenuItem>
+                        <MenuItem value="">{t('Label.select')}</MenuItem>
                       </Select>
                     </FormControl>
                   </Stack>
@@ -1360,7 +1360,7 @@ export default function FilterDialog({
             },
           }}
         >
-          {t('Pilgrims.Button.filter')}
+          {t('Button.filter')}
         </Button>
         <Button
           variant="outlined"
@@ -1377,7 +1377,7 @@ export default function FilterDialog({
             },
           }}
         >
-          {t('Pilgrims.Button.clear_fields')}
+          {t('Button.clear_fields')}
         </Button>
         <Button
           variant="text"
@@ -1393,7 +1393,7 @@ export default function FilterDialog({
             },
           }}
         >
-          {t('Pilgrims.Button.cancel')}
+          {t('Button.cancel')}
         </Button>
       </DialogActions>
     </Dialog>
