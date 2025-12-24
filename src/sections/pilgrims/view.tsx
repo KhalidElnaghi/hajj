@@ -220,7 +220,7 @@ const dummyPilgrims: Pilgrim[] = [
 // ----------------------------------------------------------------------
 
 export default function PilgrimsView() {
-  const t = useTranslations();
+  const t = useTranslations('Pilgrims');
   const table = useTable();
   const bulkDialog = useDisclosure();
   const filterDialog = useDisclosure();
@@ -359,18 +359,18 @@ export default function PilgrimsView() {
   const activeFilterCount = activeFilterSections.length;
 
   const tableHead: headCellType[] = [
-    { id: 'name', label: 'Label.name' },
-    { id: 'idNumber', label: 'Label.identity_number' },
-    { id: 'bookingNumber', label: 'Label.booking_number' },
-    { id: 'phone', label: 'Label.phone' },
-    { id: 'registrationStatus', label: 'Label.status' },
-    { id: 'gatheringPointType', label: 'Label.gathering_point' },
-    { id: 'nationality', label: 'Label.nationality' },
-    { id: 'gender', label: 'Label.gender' },
-    { id: 'city', label: 'Label.city' },
-    { id: 'package', label: 'Label.package' },
-    { id: 'bus', label: 'Label.bus' },
-    { id: 'accommodation', label: 'Label.housing' },
+    { id: 'name', label: 'Pilgrims.Label.name' },
+    { id: 'idNumber', label: 'Pilgrims.Label.identity_number' },
+    { id: 'bookingNumber', label: 'Pilgrims.Label.booking_number' },
+    { id: 'phone', label: 'Pilgrims.Label.phone' },
+    { id: 'registrationStatus', label: 'Pilgrims.Label.status' },
+    { id: 'gatheringPointType', label: 'Pilgrims.Label.gathering_point' },
+    { id: 'nationality', label: 'Pilgrims.Label.nationality' },
+    { id: 'gender', label: 'Pilgrims.Label.gender' },
+    { id: 'city', label: 'Pilgrims.Label.city' },
+    { id: 'package', label: 'Pilgrims.Label.package' },
+    { id: 'bus', label: 'Pilgrims.Label.bus' },
+    { id: 'accommodation', label: 'Pilgrims.Label.housing' },
   ];
 
   const actions: Action<Pilgrim>[] = [
@@ -575,7 +575,7 @@ export default function PilgrimsView() {
           heading={t('Title.pilgrims_management')}
           links={[
             {
-              name: t('Nav.main'),
+              name: t('Label.pilgrims_management'),
               href: '/',
             },
           ]}

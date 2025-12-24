@@ -121,7 +121,7 @@ export default function BulkActionsDialog({
             )}
             <Stack direction="row" alignItems="center" spacing={1}>
               <Typography variant="h4" sx={{ fontWeight: 700, fontSize: 30 }}>
-                {t('Title.group_actions')}
+                {t('Pilgrims.Title.group_actions')}
               </Typography>
             </Stack>
             <Typography
@@ -133,7 +133,7 @@ export default function BulkActionsDialog({
                 mr: currentView !== 'menu' ? 5 : 0,
               }}
             >
-              {t('Description.group_actions_description')}
+              {t('Pilgrims.Description.group_actions_description')}
             </Typography>
           </Box>
           <IconButton

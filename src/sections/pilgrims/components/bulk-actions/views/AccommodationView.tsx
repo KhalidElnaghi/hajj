@@ -40,17 +40,17 @@ export default function AccommodationView({
       {/* Section Header */}
       <Box>
         <Typography variant="h6" sx={{ fontWeight: 700, fontSize: 16 }}>
-          {t('Label.accommodation_needs_in_rituals')}
+          {t('Pilgrims.Label.accommodation_needs_in_rituals')}
         </Typography>
         <Typography variant="body2" sx={{ color: 'text.secondary', mt: 0.5, fontSize: 13 }}>
-          {t('Description.accommodation_description')}
+          {t('Pilgrims.Description.accommodation_description')}
         </Typography>
       </Box>
 
       {/* Housing Location Dropdown */}
       <Box>
         <Typography variant="subtitle2" sx={{ mb: 1.5, fontWeight: 600, fontSize: 14 }}>
-          {t('Label.housing_location_in_rituals')}
+          {t('Pilgrims.Label.housing_location_in_rituals')}
         </Typography>
         <FormControl fullWidth>
           <Select
@@ -67,12 +67,12 @@ export default function AccommodationView({
           >
             <MenuItem value="" disabled>
               <Typography variant="body2" color="text.secondary">
-                {t('Placeholder.select_location')}
+                {t('Pilgrims.Placeholder.select_location')}
               </Typography>
             </MenuItem>
-            <MenuItem value="mina">{t('Label.location_mina')}</MenuItem>
-            <MenuItem value="arafat">{t('Label.location_arafat')}</MenuItem>
-            <MenuItem value="muzdalifah">{t('Label.location_muzdalifah')}</MenuItem>
+            <MenuItem value="mina">{t('Pilgrims.Label.location_mina')}</MenuItem>
+            <MenuItem value="arafat">{t('Pilgrims.Label.location_arafat')}</MenuItem>
+            <MenuItem value="muzdalifah">{t('Pilgrims.Label.location_muzdalifah')}</MenuItem>
           </Select>
         </FormControl>
       </Box>
@@ -91,7 +91,7 @@ export default function AccommodationView({
             },
           }}
         >
-          {t('Button.cancel')}
+          {t('Pilgrims.Button.cancel')}
         </Button>
         <Button
           variant="contained"
@@ -106,7 +106,7 @@ export default function AccommodationView({
             },
           }}
         >
-          {t('Button.save')}
+          {t('Pilgrims.Button.save')}
         </Button>
       </Stack>
     </Stack>

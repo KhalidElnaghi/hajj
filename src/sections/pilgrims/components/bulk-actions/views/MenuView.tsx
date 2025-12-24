@@ -17,52 +17,52 @@ export default function MenuView({ onClose, onOptionSelect }: MenuViewProps) {
   const options: BulkActionOption[] = [
     {
       key: 'sms',
-      label: t('Label.send_emergency_message'),
+      label: t('Pilgrims.Label.send_emergency_message'),
       icon: '/assets/images/pilgrims/bulk-action/sms.svg',
     },
     {
       key: 'tags',
-      label: t('Label.tags'),
+      label: t('Pilgrims.Label.tags'),
       icon: '/assets/images/pilgrims/bulk-action/tags.svg',
     },
     {
       key: 'accommodation',
-      label: t('Label.accommodation_needs_in_rituals'),
+      label: t('Pilgrims.Label.accommodation_needs_in_rituals'),
       icon: '/assets/images/pilgrims/bulk-action/accommodation.svg',
     },
     {
       key: 'transportation',
-      label: t('Label.transportation_vehicles'),
+      label: t('Pilgrims.Label.transportation_vehicles'),
       icon: '/assets/images/pilgrims/bulk-action/transport.svg',
     },
     {
       key: 'camp',
-      label: t('Label.camp'),
+      label: t('Pilgrims.Label.camp'),
       icon: '/assets/images/pilgrims/bulk-action/tents.svg',
     },
     {
       key: 'gathering',
-      label: t('Label.gathering_points'),
+      label: t('Pilgrims.Label.gathering_points'),
       icon: '/assets/images/pilgrims/bulk-action/location.svg',
     },
     {
       key: 'supervisors',
-      label: t('Label.link_supervisors'),
+      label: t('Pilgrims.Label.link_supervisors'),
       icon: '/assets/images/pilgrims/bulk-action/link.svg',
     },
     {
       key: 'arrival',
-      label: t('Label.arrival_time'),
+      label: t('Pilgrims.Label.arrival_time'),
       icon: '/assets/images/pilgrims/bulk-action/time.svg',
     },
     {
       key: 'shipping',
-      label: t('Label.shipping_management'),
+      label: t('Pilgrims.Label.shipping_management'),
       icon: '/assets/images/pilgrims/bulk-action/shipping.svg',
     },
     {
       key: 'receipt',
-      label: t('Label.send_receipt_notification'),
+      label: t('Pilgrims.Label.send_receipt_notification'),
       icon: '/assets/images/pilgrims/bulk-action/receive.svg',
     },
   ];

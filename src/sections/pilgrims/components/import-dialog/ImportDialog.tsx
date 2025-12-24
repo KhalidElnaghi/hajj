@@ -64,42 +64,42 @@ export default function ImportDialog({ open, onClose }: ImportDialogProps) {
   // Mock statistics data
   const statistics: StatCard[] = [
     {
-      label: t('Label.total_records_stat'),
+      label: t('Pilgrims.Label.total_records_stat'),
       value: 42,
       icon: '/assets/images/pilgrims/statiscits/total.svg',
       color: '#1570EF',
       bgColor: '#F0F7FF',
     },
     {
-      label: t('Label.added_records'),
+      label: t('Pilgrims.Label.added_records'),
       value: 42,
       icon: '/assets/images/pilgrims/statiscits/added.svg',
       color: '#34C759',
       bgColor: '#F0FDF4',
     },
     {
-      label: t('Label.updated_records'),
+      label: t('Pilgrims.Label.updated_records'),
       value: 42,
       icon: '/assets/images/pilgrims/statiscits/updated.svg',
       color: '#FF9500',
       bgColor: '#FFF8E1',
     },
     {
-      label: t('Label.accommodation_deleted'),
+      label: t('Pilgrims.Label.accommodation_deleted'),
       value: 42,
       icon: '/assets/images/pilgrims/statiscits/accommodation-deleted.svg',
       color: '#9333EA',
       bgColor: '#F3E8FF',
     },
     {
-      label: t('Label.bus_deleted'),
+      label: t('Pilgrims.Label.bus_deleted'),
       value: 42,
       icon: '/assets/images/pilgrims/statiscits/bus-deleted.svg',
       color: '#EC4899',
       bgColor: '#FCE7F3',
     },
     {
-      label: t('Label.cancelled_records'),
+      label: t('Pilgrims.Label.cancelled_records'),
       value: 42,
       icon: '/assets/images/pilgrims/statiscits/canceled.svg',
       color: '#A2845E',
@@ -301,31 +301,31 @@ export default function ImportDialog({ open, onClose }: ImportDialogProps) {
         <TableHead>
           <TableRow>
             <TableCell sx={{ bgcolor: '#fafafa', fontWeight: 600, fontSize: 12 }}>
-              {t('Label.table_name')}
+              {t('Pilgrims.Label.table_name')}
             </TableCell>
             <TableCell sx={{ bgcolor: '#fafafa', fontWeight: 600, fontSize: 12 }}>
-              {t('Label.table_source')}
+              {t('Pilgrims.Label.table_source')}
             </TableCell>
             <TableCell sx={{ bgcolor: '#fafafa', fontWeight: 600, fontSize: 12 }}>
-              {t('Label.table_import_date')}
+              {t('Pilgrims.Label.table_import_date')}
             </TableCell>
             <TableCell sx={{ bgcolor: '#fafafa', fontWeight: 600, fontSize: 12 }}>
-              {t('Label.table_created')}
+              {t('Pilgrims.Label.table_created')}
             </TableCell>
             <TableCell sx={{ bgcolor: '#fafafa', fontWeight: 600, fontSize: 12 }}>
-              {t('Label.table_updated')}
+              {t('Pilgrims.Label.table_updated')}
             </TableCell>
             <TableCell sx={{ bgcolor: '#fafafa', fontWeight: 600, fontSize: 12 }}>
-              {t('Label.table_removed_from_accommodation')}
+              {t('Pilgrims.Label.table_removed_from_accommodation')}
             </TableCell>
             <TableCell sx={{ bgcolor: '#fafafa', fontWeight: 600, fontSize: 12 }}>
-              {t('Label.table_removed_from_buses')}
+              {t('Pilgrims.Label.table_removed_from_buses')}
             </TableCell>
             <TableCell sx={{ bgcolor: '#fafafa', fontWeight: 600, fontSize: 12 }}>
-              {t('Label.table_updated_pilgrims')}
+              {t('Pilgrims.Label.table_updated_pilgrims')}
             </TableCell>
             <TableCell sx={{ bgcolor: '#fafafa', fontWeight: 600, fontSize: 12 }}>
-              {t('Label.table_cancelled_pilgrims')}
+              {t('Pilgrims.Label.table_cancelled_pilgrims')}
             </TableCell>
           </TableRow>
         </TableHead>
@@ -406,7 +406,7 @@ export default function ImportDialog({ open, onClose }: ImportDialogProps) {
             },
           }}
         >
-          {t('Button.import_from_excel')}
+          {t('Pilgrims.Button.import_from_excel')}
         </Button>
       </Box> */}
 
@@ -451,10 +451,10 @@ export default function ImportDialog({ open, onClose }: ImportDialogProps) {
             sx={{ width: 45, height: 45, mx: 'auto', mb: 2, opacity: 0.7 }}
           />
           <Typography variant="body2" sx={{ color: 'text.secondary', fontSize: 14, mb: 0.5 }}>
-            {t('Label.drag_file_or_click')}
+            {t('Pilgrims.Label.drag_file_or_click')}
           </Typography>
           <Typography variant="caption" sx={{ color: 'text.disabled', fontSize: 12 }}>
-            {t('Label.download_excel_file')}
+            {t('Pilgrims.Label.download_excel_file')}
           </Typography>
           {selectedFile && (
             <Box
@@ -488,7 +488,7 @@ export default function ImportDialog({ open, onClose }: ImportDialogProps) {
             },
           }}
         >
-          {t('Button.cancel')}
+          {t('Pilgrims.Button.cancel')}
         </Button>
         <Button
           variant="contained"
@@ -503,7 +503,7 @@ export default function ImportDialog({ open, onClose }: ImportDialogProps) {
             },
           }}
         >
-          {isLoading ? t('Label.loading_upload') : t('Button.import_data')}
+          {isLoading ? t('Pilgrims.Label.loading_upload') : t('Pilgrims.Button.import_data')}
         </Button>
       </Stack>
 
@@ -533,7 +533,7 @@ export default function ImportDialog({ open, onClose }: ImportDialogProps) {
             },
           }}
         >
-          {showImportLog === 'yes' ? t('Label.hide_import_log') : t('Label.view_import_log')}
+          {showImportLog === 'yes' ? t('Pilgrims.Label.hide_import_log') : t('Pilgrims.Label.view_import_log')}
         </Button>
       </Box>
 
@@ -553,14 +553,14 @@ export default function ImportDialog({ open, onClose }: ImportDialogProps) {
         <Stack direction="row" justifyContent="space-between" alignItems="center" mb={2}>
           <Box>
             <Typography variant="h6" sx={{ fontWeight: 600, fontSize: 16, mb: 0.5 }}>
-              {t('Label.import_statistics_title')}
+              {t('Pilgrims.Label.import_statistics_title')}
             </Typography>
             <Typography variant="body2" sx={{ color: '#5D6679', fontSize: 13 }}>
-              {t('Label.import_statistics_subtitle')}
+              {t('Pilgrims.Label.import_statistics_subtitle')}
             </Typography>
           </Box>
           <Typography variant="body2" sx={{ color: '#5D6679', fontSize: 13 }}>
-            {t('Label.number_of_rows')} (8)
+            {t('Pilgrims.Label.number_of_rows')} (8)
           </Typography>
         </Stack>
 
@@ -638,7 +638,7 @@ export default function ImportDialog({ open, onClose }: ImportDialogProps) {
             },
           }}
         >
-          {showImportLog === 'yes' ? t('Label.hide_import_log') : t('Label.view_import_log')}
+          {showImportLog === 'yes' ? t('Pilgrims.Label.hide_import_log') : t('Pilgrims.Label.view_import_log')}
         </Button>
       </Box>
 
@@ -659,7 +659,7 @@ export default function ImportDialog({ open, onClose }: ImportDialogProps) {
             },
           }}
         >
-          {t('Button.cancel')}
+          {t('Pilgrims.Button.cancel')}
         </Button>
         <Button
           variant="contained"
@@ -674,7 +674,7 @@ export default function ImportDialog({ open, onClose }: ImportDialogProps) {
             },
           }}
         >
-          {isLoading ? t('Label.loading_processing') : t('Button.import_data')}
+          {isLoading ? t('Pilgrims.Label.loading_processing') : t('Pilgrims.Button.import_data')}
         </Button>
       </Stack>
     </Stack>
@@ -708,10 +708,10 @@ export default function ImportDialog({ open, onClose }: ImportDialogProps) {
             },
           }}
         >
-          {showImportLog === 'yes' ? t('Label.hide_import_log') : t('Label.view_import_log')}
+          {showImportLog === 'yes' ? t('Pilgrims.Label.hide_import_log') : t('Pilgrims.Label.view_import_log')}
         </Button>
         <Typography variant="body2" sx={{ color: '#5D6679', fontSize: 14 }}>
-          {t('Label.total_records')} (8)
+          {t('Pilgrims.Label.total_records')} (8)
         </Typography>
       </Stack>
 
@@ -732,7 +732,7 @@ export default function ImportDialog({ open, onClose }: ImportDialogProps) {
             },
           }}
         >
-          {t('Button.cancel')}
+          {t('Pilgrims.Button.cancel')}
         </Button>
         <Button
           variant="contained"
@@ -746,7 +746,7 @@ export default function ImportDialog({ open, onClose }: ImportDialogProps) {
             },
           }}
         >
-          {t('Button.import_data')}
+          {t('Pilgrims.Button.import_data')}
         </Button>
       </Stack>
     </Stack>
@@ -769,10 +769,10 @@ export default function ImportDialog({ open, onClose }: ImportDialogProps) {
         <Stack direction="row" alignItems="flex-start" justifyContent="space-between">
           <Box sx={{ flex: 1 }}>
             <Typography variant="h4" sx={{ fontWeight: 700, fontSize: 24, mb: 1 }}>
-              {t('Title.import_pilgrim_data')}
+              {t('Pilgrims.Title.import_pilgrim_data')}
             </Typography>
             <Typography variant="body2" sx={{ color: 'text.secondary', fontSize: 13 }}>
-              {t('Description.import_pilgrim_data_description')}
+              {t('Pilgrims.Description.import_pilgrim_data_description')}
             </Typography>
           </Box>
           <IconButton
