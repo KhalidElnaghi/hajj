@@ -89,7 +89,6 @@ export default function Header({ onOpenNav }: Props) {
               gap: 0.75,
               px: 1.25,
               py: 0.75,
-              mt:4,
               bgcolor: 'background.paper',
               borderRadius: 2,
               border: '1px solid #E2E8F0',
