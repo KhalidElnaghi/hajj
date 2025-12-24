@@ -590,6 +590,7 @@
     },
     "Button": {
       "add": "Add",
+      "add_pilgrim": "Add Pilgrim",
       "cancel": "Cancel",
       "clear_fields": "Clear Fields",
       "filter": "Filter",

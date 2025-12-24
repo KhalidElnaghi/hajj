@@ -590,6 +590,7 @@
     },
     "Button": {
       "add": "إضافة",
+      "add_pilgrim": "إضافة حاج",
       "cancel": "إلغاء",
       "clear_fields": "تفريغ الحقول",
       "filter": "فلتر",

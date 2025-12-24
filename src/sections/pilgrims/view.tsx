@@ -579,7 +579,12 @@ export default function PilgrimsView() {
             },
             { name: t('Label.pilgrims_management') },
           ]}
-          sx={{ mb: 3 }}
+          action={
+            <Button variant="contained" color="primary" onClick={() => console.log('add pilgrim')}>
+              {t('Button.add')}
+            </Button>
+          }
+          sx={{ mb: 2 }}
         />
 
         <Card
