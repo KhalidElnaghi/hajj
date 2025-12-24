@@ -330,6 +330,7 @@
     "shipping_management": "Shipping Management",
     "send_receipt_notification": "Send Receipt Notification",
     "quick_templates": "Quick Templates",
+    "additional_recipients": "Add other pilgrims",
     "total_pilgrims_today": "Total Pilgrims Today",
     "sms_template_welcome": "Welcome Message",
     "sms_template_instructions": "Instructions Messages",
@@ -475,6 +476,7 @@
   },
   "Placeholder": {
     "write_message_text": "Write message text...",
+    "search_and_add_pilgrim": "Search and add a pilgrim",
     "search_or_add_new_tag": "Search or add new tag",
     "select_location": "Select Location",
     "select_gathering_point": "Select Gathering Point",

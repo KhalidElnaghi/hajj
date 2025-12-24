@@ -335,6 +335,7 @@
     "shipping_management": "إدارة شحن",
     "send_receipt_notification": "إرسال تنبية استلام",
     "quick_templates": "القوالب النصّية",
+    "additional_recipients": "إضافة حجاج آخرين",
     "total_pilgrims_today": "إجمالي الحجاج المُرسَل إليهم",
     "sms_template_welcome": "رسالة ترحيب",
     "sms_template_instructions": "رسائل التعليمات",
@@ -474,6 +475,7 @@
   },
   "Placeholder": {
     "write_message_text": "اكتب نص الرسالة...",
+    "search_and_add_pilgrim": "ابحث وأضف حاج جديد",
     "search_or_add_new_tag": "ابحث عن أو ضع وسم جديد",
     "select_location": "اختر الموقع",
     "select_gathering_point": "اختر نقطة التجمع",

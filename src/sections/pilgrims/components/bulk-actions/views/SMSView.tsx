@@ -1,15 +1,31 @@
 'use client';
 
-import { Box, Button, Chip, Stack, TextField, Typography } from '@mui/material';
+import { Box, Button, Chip, MenuItem, Stack, TextField, Typography } from '@mui/material';
 import { useTranslations } from 'next-intl';
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { BulkActionViewProps } from '../shared/types';
 
-export default function SMSView({ onBack, onClose, selectedCount }: BulkActionViewProps) {
+export default function SMSView({
+  onBack,
+  onClose,
+  selectedCount,
+  selectedPilgrims,
+  allPilgrims,
+}: BulkActionViewProps) {
   const t = useTranslations();
-  const [selectedTemplates, setSelectedTemplates] = useState<string[]>([]);
+  const normalizeId = (pilgrim: any) => {
+    if (!pilgrim) return '';
+    return String(pilgrim.id ?? pilgrim.pilgrimId ?? '');
+  };
+
+  const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
   const [messageText, setMessageText] = useState('');
+  const [recipientIds, setRecipientIds] = useState<string[]>(() =>
+    (selectedPilgrims ?? [])
+      .map((pilgrim) => normalizeId(pilgrim))
+      .filter((id): id is string => !!id)
+  );
 
   const templates = [
     { key: 'welcome', label: t('Label.sms_template_welcome') },
@@ -24,16 +40,49 @@ export default function SMSView({ onBack, onClose, selectedCount }: BulkActionVi
   ];
 
   const handleTemplateToggle = (templateKey: string) => {
-    setSelectedTemplates((prev) =>
-      prev.includes(templateKey)
-        ? prev.filter((key) => key !== templateKey)
-        : [...prev, templateKey]
-    );
+    setSelectedTemplate((prev) => (prev === templateKey ? null : templateKey));
   };
 
+  useEffect(() => {
+    setRecipientIds(
+      (selectedPilgrims ?? [])
+        .map((pilgrim) => normalizeId(pilgrim))
+        .filter((id): id is string => !!id)
+    );
+  }, [selectedPilgrims]);
+
+  const allPilgrimsList = useMemo(() => allPilgrims ?? [], [allPilgrims]);
+
+  const availablePilgrims = useMemo(
+    () =>
+      allPilgrimsList.filter((pilgrim) => {
+        const id = normalizeId(pilgrim);
+        return id && !recipientIds.includes(id);
+      }),
+    [allPilgrimsList, recipientIds]
+  );
+
+  const recipients = useMemo(
+    () => allPilgrimsList.filter((pilgrim) => recipientIds.includes(normalizeId(pilgrim))),
+    [allPilgrimsList, recipientIds]
+  );
+
+  const handleAddPilgrim = (pilgrim: any) => {
+    const id = normalizeId(pilgrim);
+    if (!id) return;
+    setRecipientIds((prev) => (prev.includes(id) ? prev : [...prev, id]));
+  };
+
+  const handleRemoveRecipient = (recipientId: string) => {
+    setRecipientIds((prev) => prev.filter((id) => id !== recipientId));
+  };
+
+  const totalRecipients = recipientIds.length || selectedCount;
+
   const handleSend = () => {
-    console.log('Sending SMS to:', selectedCount, 'pilgrims');
-    console.log('Templates:', selectedTemplates);
+    console.log('Sending SMS to:', totalRecipients, 'pilgrims');
+    console.log('Template:', selectedTemplate);
+    console.log('Recipients:', recipientIds);
     console.log('Message:', messageText);
     onClose();
   };
@@ -62,15 +111,14 @@ export default function SMSView({ onBack, onClose, selectedCount }: BulkActionVi
               label={template.label}
               onClick={() => handleTemplateToggle(template.key)}
               sx={{
-                bgcolor: selectedTemplates.includes(template.key) ? '#e6f0ff' : '#f5f5f5',
-                color: selectedTemplates.includes(template.key) ? '#0d6efd' : '#666',
-                border: selectedTemplates.includes(template.key)
-                  ? '1px solid #0d6efd'
-                  : '1px solid transparent',
-                fontSize: 13,
+                bgcolor: selectedTemplate === template.key ? '#E6F0FF' : '#F1F5F9',
+                color: selectedTemplate === template.key ? '#0d6efd' : '#99A8BC',
+                border:
+                  selectedTemplate === template.key ? '1px solid #0d6efd' : '1px solid #CBD5E1',
+                fontSize: 12,
                 fontWeight: 500,
                 '&:hover': {
-                  bgcolor: selectedTemplates.includes(template.key) ? '#d6e5ff' : '#ebebeb',
+                  bgcolor: selectedTemplate === template.key ? '#D6E5FF' : '#ececec',
                 },
               }}
             />
@@ -80,28 +128,84 @@ export default function SMSView({ onBack, onClose, selectedCount }: BulkActionVi
 
       {/* Message Input */}
       <Box>
-        <Stack direction="row" alignItems="center" justifyContent="flex-start" gap={1} mb={1}>
-          <Typography variant="subtitle2" sx={{ fontWeight: 600, fontSize: 14 }}>
-            {t('Label.total_pilgrims_today')}
-          </Typography>
-          <Box
-            sx={{
-              bgcolor: '#F0F5FF',
-              color: '#1570EF',
-              width: 20,
-              height: 20,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              borderRadius: '999px',
-              border: '1px solid #1570EF',
-              fontSize: 13,
-              fontWeight: 600,
-            }}
-          >
-            {selectedCount}
+        <Box
+          sx={{
+            display: 'flex',
+            gap: 1,
+            alignItems: 'end',
+            justifyContent: 'space-between',
+            mb: 1,
+          }}
+        >
+          <Stack direction="row" alignItems="center" justifyContent="flex-start" gap={1}>
+            <Typography variant="subtitle2" sx={{ fontWeight: 600, fontSize: 14 }}>
+              {t('Label.total_pilgrims_today')}
+            </Typography>
+            <Box
+              sx={{
+                bgcolor: '#F0F5FF',
+                color: '#1570EF',
+                width: 20,
+                height: 20,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderRadius: '999px',
+                border: '1px solid #1570EF',
+                fontSize: 13,
+                fontWeight: 600,
+              }}
+            >
+              {totalRecipients}
+            </Box>
+          </Stack>
+          {/* Add More Pilgrims */}
+          <Box>
+            <TextField
+              select
+              size="small"
+              fullWidth
+              value=""
+              onChange={(e) => {
+                const selected = availablePilgrims.find(
+                  (pilgrim) => normalizeId(pilgrim) === e.target.value
+                );
+                if (selected) handleAddPilgrim(selected);
+              }}
+              placeholder={t('Placeholder.search_and_add_pilgrim')}
+              SelectProps={{
+                displayEmpty: true,
+                MenuProps: {
+                  PaperProps: { sx: { maxHeight: 320 } },
+                },
+                renderValue: () => t('Placeholder.search_and_add_pilgrim'),
+              }}
+              sx={{
+                maxWidth: 320,
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: 1,
+                  bgcolor: '#fafafa',
+                  height: 36,
+                  '& .MuiSelect-select': { py: 0.5, display: 'flex', alignItems: 'center' },
+                },
+              }}
+            >
+              {availablePilgrims.length === 0 && (
+                <MenuItem value="" disabled>
+                  {t('Label.no_data')}
+                </MenuItem>
+              )}
+              {availablePilgrims.slice(0, 20).map((pilgrim) => {
+                const id = normalizeId(pilgrim);
+                return (
+                  <MenuItem key={id} value={id}>
+                    {pilgrim.name}
+                  </MenuItem>
+                );
+              })}
+            </TextField>
           </Box>
-        </Stack>
+        </Box>
         <TextField
           fullWidth
           multiline

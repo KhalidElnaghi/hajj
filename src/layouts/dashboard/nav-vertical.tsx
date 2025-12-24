@@ -120,7 +120,12 @@ export default function NavVertical({ openNav, onCloseNav }: Props) {
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
-                <Iconify icon="eva:search-fill" sx={{ color: 'text.disabled' }} />
+                <Box
+                  component="img"
+                  src="/assets/images/pilgrims/search.svg"
+                  alt="search"
+                  sx={{ width: 20, height: 20 }}
+                />
               </InputAdornment>
             ),
           }}

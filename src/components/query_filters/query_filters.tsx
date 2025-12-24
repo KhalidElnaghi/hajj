@@ -2,6 +2,7 @@
 
 import { useRef, useMemo, useEffect, useCallback, useState } from 'react';
 import dayjs, { Dayjs } from 'dayjs';
+import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
@@ -191,7 +192,12 @@ export default function QueryFilters({ filters, spacing = 2 }: QueryFiltersProps
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <Iconify icon="mingcute:search-line" />
+                    <Box
+                      component="img"
+                      src="/assets/images/pilgrims/search.svg"
+                      alt="search"
+                      sx={{ width: 20, height: 20 }}
+                    />
                   </InputAdornment>
                 ),
               }}

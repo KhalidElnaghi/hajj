@@ -1,18 +1,9 @@
 'use client';
 
-import {
-  Box,
-  Button,
-  Chip,
-  InputAdornment,
-  Stack,
-  TextField,
-  Typography,
-} from '@mui/material';
+import { Box, Button, Chip, InputAdornment, Stack, TextField, Typography } from '@mui/material';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 
-import Iconify from 'src/components/iconify';
 import { BulkActionViewProps } from '../shared/types';
 
 export default function TagsView({ onBack, onClose, selectedCount }: BulkActionViewProps) {
@@ -79,7 +70,12 @@ export default function TagsView({ onBack, onClose, selectedCount }: BulkActionV
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
-                <Iconify icon="mdi:magnify" width={20} sx={{ color: 'text.secondary' }} />
+                <Box
+                  component="img"
+                  src="/assets/images/pilgrims/search.svg"
+                  alt="search"
+                  sx={{ width: 20, height: 20 }}
+                />
               </InputAdornment>
             ),
           }}
@@ -183,4 +179,3 @@ export default function TagsView({ onBack, onClose, selectedCount }: BulkActionV
     </Stack>
   );
 }
-

@@ -76,12 +76,13 @@ export default function MenuView({ onClose, onOptionSelect }: MenuViewProps) {
           variant="outlined"
           onClick={() => onOptionSelect(option.key)}
           sx={{
+            justifyContent: 'start',
             bgcolor: '#fff',
             borderColor: '#e5e7eb',
             color: '#1f2937',
             borderRadius: 1,
             py: 0.5,
-            fontSize: 14,
+            fontSize: 15,
             fontWeight: 500,
             gap: 1,
             '&:hover': {
@@ -97,4 +98,3 @@ export default function MenuView({ onClose, onOptionSelect }: MenuViewProps) {
     </Stack>
   );
 }
-

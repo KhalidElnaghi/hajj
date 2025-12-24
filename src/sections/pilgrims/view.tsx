@@ -995,6 +995,8 @@ export default function PilgrimsView() {
         open={bulkDialog.open}
         onClose={bulkDialog.onClose}
         selectedCount={table.selected.length}
+        selectedPilgrims={selectedPilgrims}
+        allPilgrims={filteredPilgrims}
       />
 
       {/* Filter Dialog */}

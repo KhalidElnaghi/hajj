@@ -26,12 +26,16 @@ interface BulkActionsDialogProps {
   open: boolean;
   onClose: () => void;
   selectedCount: number;
+  selectedPilgrims?: any[];
+  allPilgrims?: any[];
 }
 
 export default function BulkActionsDialog({
   open,
   onClose,
   selectedCount,
+  selectedPilgrims,
+  allPilgrims,
 }: BulkActionsDialogProps) {
   const t = useTranslations();
   const [currentView, setCurrentView] = useState<DialogView>('menu');
@@ -54,6 +58,8 @@ export default function BulkActionsDialog({
       onBack: handleBack,
       onClose: handleClose,
       selectedCount,
+      selectedPilgrims,
+      allPilgrims,
     };
 
     switch (currentView) {
@@ -105,7 +111,7 @@ export default function BulkActionsDialog({
                   <Iconify icon="mdi:arrow-right" width={24} />
                 </IconButton>
               )}
-              <Typography variant="h6" sx={{ fontWeight: 700, fontSize: 18 }}>
+              <Typography variant="h4" sx={{ fontWeight: 700, fontSize: 30 }}>
                 {t('Title.group_actions')}
               </Typography>
             </Stack>

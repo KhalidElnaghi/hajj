@@ -15,6 +15,8 @@ export interface BulkActionViewProps {
   onBack: () => void;
   onClose: () => void;
   selectedCount: number;
+  selectedPilgrims?: any[];
+  allPilgrims?: any[];
 }
 
 export interface BulkActionOption {
