@@ -1,6 +1,16 @@
 'use client';
 
-import { Box, Button, Chip, MenuItem, Stack, TextField, Typography } from '@mui/material';
+import {
+  Autocomplete,
+  Box,
+  Button,
+  Chip,
+  InputAdornment,
+  MenuItem,
+  Stack,
+  TextField,
+  Typography,
+} from '@mui/material';
 import { useTranslations } from 'next-intl';
 import { useEffect, useMemo, useState } from 'react';
 
@@ -21,6 +31,7 @@ export default function SMSView({
 
   const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
   const [messageText, setMessageText] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
   const [recipientIds, setRecipientIds] = useState<string[]>(() =>
     (selectedPilgrims ?? [])
       .map((pilgrim) => normalizeId(pilgrim))
@@ -62,6 +73,16 @@ export default function SMSView({
     [allPilgrimsList, recipientIds]
   );
 
+  const uniqueAvailablePilgrims = useMemo(() => {
+    const seen = new Set<string>();
+    return availablePilgrims.filter((pilgrim) => {
+      const id = normalizeId(pilgrim);
+      if (!id || seen.has(id)) return false;
+      seen.add(id);
+      return true;
+    });
+  }, [availablePilgrims]);
+
   const recipients = useMemo(
     () => allPilgrimsList.filter((pilgrim) => recipientIds.includes(normalizeId(pilgrim))),
     [allPilgrimsList, recipientIds]
@@ -71,6 +92,7 @@ export default function SMSView({
     const id = normalizeId(pilgrim);
     if (!id) return;
     setRecipientIds((prev) => (prev.includes(id) ? prev : [...prev, id]));
+    setSearchTerm(''); // clear search after adding a pilgrim
   };
 
   const handleRemoveRecipient = (recipientId: string) => {
@@ -80,7 +102,6 @@ export default function SMSView({
   const totalRecipients = recipientIds.length || selectedCount;
 
   const handleSend = () => {
-    console.log('Sending SMS to:', totalRecipients, 'pilgrims');
     console.log('Template:', selectedTemplate);
     console.log('Recipients:', recipientIds);
     console.log('Message:', messageText);
@@ -115,7 +136,7 @@ export default function SMSView({
                 color: selectedTemplate === template.key ? '#0d6efd' : '#99A8BC',
                 border:
                   selectedTemplate === template.key ? '1px solid #0d6efd' : '1px solid #CBD5E1',
-                fontSize: 12,
+                fontSize: 10,
                 fontWeight: 500,
                 '&:hover': {
                   bgcolor: selectedTemplate === template.key ? '#D6E5FF' : '#ececec',
@@ -161,49 +182,111 @@ export default function SMSView({
           </Stack>
           {/* Add More Pilgrims */}
           <Box>
-            <TextField
-              select
+            <Autocomplete
               size="small"
-              fullWidth
-              value=""
-              onChange={(e) => {
-                const selected = availablePilgrims.find(
-                  (pilgrim) => normalizeId(pilgrim) === e.target.value
-                );
-                if (selected) handleAddPilgrim(selected);
+              options={uniqueAvailablePilgrims
+                .filter((pilgrim) => {
+                  const term = searchTerm.trim().toLowerCase();
+                  if (!term) return true;
+                  const name = pilgrim?.name?.toLowerCase?.() ?? '';
+                  const booking = pilgrim?.bookingNumber?.toLowerCase?.() ?? '';
+                  const idNum = pilgrim?.idNumber?.toLowerCase?.() ?? '';
+                  return name.includes(term) || booking.includes(term) || idNum.includes(term);
+                })
+                .slice(0, 20)}
+              getOptionLabel={(option) =>
+                option?.name || option?.bookingNumber || option?.idNumber || t('Label.name')
+              }
+              value={null}
+              isOptionEqualToValue={(option, value) => normalizeId(option) === normalizeId(value)}
+              onChange={(_, value) => value && handleAddPilgrim(value)}
+              inputValue={searchTerm}
+              onInputChange={(_, value, reason) => {
+                if (reason === 'reset') {
+                  // MUI sets the input to the selected option label on select; clear for next search.
+                  setSearchTerm('');
+                  return;
+                }
+                setSearchTerm(value);
               }}
-              placeholder={t('Placeholder.search_and_add_pilgrim')}
-              SelectProps={{
-                displayEmpty: true,
-                MenuProps: {
-                  PaperProps: { sx: { maxHeight: 320 } },
-                },
-                renderValue: () => t('Placeholder.search_and_add_pilgrim'),
-              }}
-              sx={{
-                maxWidth: 320,
-                '& .MuiOutlinedInput-root': {
-                  borderRadius: 1,
-                  bgcolor: '#fafafa',
-                  height: 36,
-                  '& .MuiSelect-select': { py: 0.5, display: 'flex', alignItems: 'center' },
-                },
-              }}
-            >
-              {availablePilgrims.length === 0 && (
-                <MenuItem value="" disabled>
-                  {t('Label.no_data')}
+              forcePopupIcon={false}
+              renderOption={(props, option) => (
+                <MenuItem
+                  {...props}
+                  key={normalizeId(option) || props.id}
+                  sx={{
+                    fontSize: '9px',
+                    fontFamily: '"IBM Plex Sans Arabic", sans-serif',
+                    lineHeight: '16px',
+                    color: '#94A3B8',
+                    minHeight: 28,
+                    py: 0.5,
+                  }}
+                >
+                  {option?.name || option?.bookingNumber || option?.idNumber || t('Label.name')}
                 </MenuItem>
               )}
-              {availablePilgrims.slice(0, 20).map((pilgrim) => {
-                const id = normalizeId(pilgrim);
-                return (
-                  <MenuItem key={id} value={id}>
-                    {pilgrim.name}
-                  </MenuItem>
-                );
-              })}
-            </TextField>
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  placeholder={t('Placeholder.search_and_add_pilgrim')}
+                  InputProps={{
+                    ...params.InputProps,
+                    startAdornment: (
+                      <InputAdornment position="start" sx={{ mr: 0.5 }}>
+                        <Box
+                          component="img"
+                          src="/assets/images/pilgrims/search.svg"
+                          alt="search"
+                          sx={{ width: 18, height: 18 }}
+                        />
+                      </InputAdornment>
+                    ),
+                  }}
+                  sx={{
+                    '& .MuiOutlinedInput-root': {
+                      borderRadius: 1,
+                      bgcolor: '#F4F7FB',
+                      height: '27.451px',
+                      padding: 0,
+                      '& .MuiOutlinedInput-input': {
+                        padding: 0,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'flex-end',
+                        gap: '3px',
+                        paddingLeft: '10px',
+                        paddingRight: '6px',
+                        color: '#94A3B8',
+                        fontFamily: '"IBM Plex Sans Arabic", sans-serif',
+                        fontSize: '9px',
+                        fontWeight: 400,
+                        lineHeight: '16px',
+                      },
+                    },
+                  }}
+                />
+              )}
+              sx={{
+                width: 129,
+                maxWidth: 129,
+                '& .MuiAutocomplete-inputRoot': {
+                  padding: 0,
+                },
+              }}
+              slotProps={{
+                paper: {
+                  sx: {
+                    maxHeight: 320,
+                    width: 129,
+                    minWidth: 129,
+                  },
+                },
+                popper: {
+                  sx: { width: 129 },
+                },
+              }}
+            />
           </Box>
         </Box>
         <TextField

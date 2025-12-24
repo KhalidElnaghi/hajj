@@ -95,22 +95,28 @@ export default function BulkActionsDialog({
       }}
     >
       {/* Persistent Header - Shows in all views */}
-      <DialogTitle sx={{ p: 1, mb: 0 }}>
+      <DialogTitle sx={{ p: 0.3, mb: 0 }}>
         <Stack direction="row" alignItems="flex-start" justifyContent="space-between" spacing={2}>
           <Box sx={{ flex: 1 }}>
+            {currentView !== 'menu' && (
+              <IconButton
+                onClick={handleBack}
+                sx={{
+                  color: 'text.secondary',
+                  mt: -1,
+                  mr: -1,
+                  border: '1px solid #e5e7eb',
+                  p: 0.5,
+                  '&:hover': {
+                    bgcolor: '#f9fafb',
+                    borderColor: '#d1d5db',
+                  },
+                }}
+              >
+                <Iconify icon="mdi:arrow-right" width={24} />
+              </IconButton>
+            )}
             <Stack direction="row" alignItems="center" spacing={1}>
-              {currentView !== 'menu' && (
-                <IconButton
-                  onClick={handleBack}
-                  sx={{
-                    color: 'text.primary',
-                    mr: 1,
-                    p: 0.5,
-                  }}
-                >
-                  <Iconify icon="mdi:arrow-right" width={24} />
-                </IconButton>
-              )}
               <Typography variant="h4" sx={{ fontWeight: 700, fontSize: 30 }}>
                 {t('Title.group_actions')}
               </Typography>
