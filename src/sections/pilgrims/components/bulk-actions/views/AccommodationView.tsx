@@ -90,23 +90,6 @@ export default function AccommodationView({
           {t('Button.cancel')}
         </Button>
         <Button
-          variant="outlined"
-          onClick={handleDeleteTags}
-          disabled={!housingLocation}
-          sx={{
-            borderRadius: 1,
-            borderColor: '#e5e7eb',
-            color: '#666',
-            px: 3,
-            '&:hover': {
-              borderColor: '#d1d5db',
-              bgcolor: '#fafafa',
-            },
-          }}
-        >
-          {t('Button.delete_tags')}
-        </Button>
-        <Button
           variant="contained"
           onClick={handleSave}
           disabled={!housingLocation}

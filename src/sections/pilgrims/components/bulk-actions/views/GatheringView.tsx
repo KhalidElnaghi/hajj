@@ -1,16 +1,6 @@
 'use client';
 
-import {
-  Box,
-  Button,
-  FormControl,
-  MenuItem,
-  Select,
-  Stack,
-  ToggleButton,
-  ToggleButtonGroup,
-  Typography,
-} from '@mui/material';
+import { Box, Button, FormControl, MenuItem, Select, Stack, Typography } from '@mui/material';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 
@@ -32,40 +22,57 @@ export default function GatheringView({ onBack, onClose, selectedCount }: BulkAc
     <Stack spacing={3} sx={{ p: 1 }}>
       {/* Section Header */}
       <Box>
-        <Typography variant="h6" sx={{ fontWeight: 700, fontSize: 16, textAlign: 'right' }}>
+        <Typography variant="h6" sx={{ fontWeight: 700, fontSize: 16 }}>
           {t('Label.gathering_points')}
         </Typography>
-        <Typography variant="body2" sx={{ color: 'text.secondary', mt: 0.5, fontSize: 13, textAlign: 'right' }}>
+        <Typography variant="body2" sx={{ color: 'text.secondary', mt: 0.5, fontSize: 13 }}>
           {t('Description.gathering_points_description')}
         </Typography>
       </Box>
 
       {/* Trip Type Toggle */}
-      <Box>
-        <ToggleButtonGroup
-          value={tripType}
-          exclusive
-          onChange={(e, value) => value && setTripType(value)}
-          fullWidth
+      <Stack direction="row" spacing={2} justifyContent="start">
+        <Button
+          onClick={() => setTripType('return')}
           sx={{
-            '& .MuiToggleButton-root': {
-              borderRadius: 1,
-              border: '1px solid #e5e7eb',
-              py: 1,
-              '&.Mui-selected': {
-                bgcolor: '#0d6efd',
-                color: 'white',
-                '&:hover': {
-                  bgcolor: '#0b5ed7',
-                },
-              },
+            borderRadius: '50px',
+            border: tripType === 'return' ? '1px solid #0d6efd' : '1px solid #5D6679',
+            px: 2,
+            py: 1,
+            minWidth: 80,
+            textTransform: 'none',
+            fontSize: 14,
+            fontWeight: 500,
+            bgcolor: tripType === 'return' ? '#E8F1FD' : 'white',
+            color: tripType === 'return' ? '#0d6efd' : '#5D6679',
+            '&:hover': {
+              bgcolor: tripType === 'return' ? '#E8F1FD' : '#f9fafb',
             },
           }}
         >
-          <ToggleButton value="return">{t('Label.trip_return')}</ToggleButton>
-          <ToggleButton value="departure">{t('Label.trip_departure')}</ToggleButton>
-        </ToggleButtonGroup>
-      </Box>
+          {t('Label.trip_return')}
+        </Button>
+        <Button
+          onClick={() => setTripType('departure')}
+          sx={{
+            borderRadius: '50px',
+            border: tripType === 'departure' ? '1px solid #0d6efd' : '1px solid #5D6679',
+            px: 2,
+            py: 1,
+            minWidth: 80,
+            textTransform: 'none',
+            fontSize: 14,
+            fontWeight: 500,
+            bgcolor: tripType === 'departure' ? '#E8F1FD' : 'white',
+            color: tripType === 'departure' ? '#0d6efd' : '#5D6679',
+            '&:hover': {
+              bgcolor: tripType === 'departure' ? '#E8F1FD' : '#f9fafb',
+            },
+          }}
+        >
+          {t('Label.trip_departure')}
+        </Button>
+      </Stack>
 
       {/* Gathering Point */}
       <Box>
@@ -182,4 +189,3 @@ export default function GatheringView({ onBack, onClose, selectedCount }: BulkAc
     </Stack>
   );
 }
-
