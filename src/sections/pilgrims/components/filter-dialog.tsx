@@ -47,6 +47,55 @@ export default function FilterDialog({
   const t = useTranslations();
   const [searchTerm, setSearchTerm] = useState('');
   const [expandedSections, setExpandedSections] = useState<string[]>([]);
+  const searchValue = searchTerm.trim().toLowerCase();
+  const matchesSearch = (texts: (string | undefined)[]) =>
+    !searchValue || texts.some((text) => text?.toLowerCase().includes(searchValue));
+
+  const sectionKeywords = {
+    personal: [
+      t('Label.personal_information'),
+      t('Label.nationality'),
+      t('Label.city'),
+      t('Label.package_name'),
+      t('Label.tags'),
+      t('Label.gender'),
+      t('Label.early_late'),
+      t('Label.booking_status'),
+    ],
+    gathering: [
+      t('Label.gathering_points'),
+      t('Label.gathering_point_type'),
+      t('Label.gathering_point'),
+      t('Label.destination'),
+    ],
+    accommodation: [
+      t('Label.accommodation'),
+      t('Label.room_number'),
+      t('Label.accommodation_destination'),
+      t('Label.camp_status'),
+    ],
+    transportation: [t('Label.transportation'), t('Label.bus_number')],
+    health: [t('Label.health_status')],
+    supervision: [t('Label.supervision'), t('Label.supervisors'), t('Label.upload_file')],
+    shipping: [
+      t('Label.shipping_operations'),
+      t('Label.shipping_management'),
+      t('Label.shipment_status'),
+    ],
+  };
+
+  const showSection = {
+    personal: matchesSearch(sectionKeywords.personal),
+    gathering: matchesSearch(sectionKeywords.gathering),
+    accommodation: matchesSearch(sectionKeywords.accommodation),
+    transportation: matchesSearch(sectionKeywords.transportation),
+    health: matchesSearch(sectionKeywords.health),
+    supervision: matchesSearch(sectionKeywords.supervision),
+    shipping: matchesSearch(sectionKeywords.shipping),
+  };
+
+  const labelColor = (key: string) =>
+    searchValue && t(key)?.toLowerCase().includes(searchValue) ? 'primary.main' : '#64748B';
 
   // Sample supervisors list - replace with actual data from API
   const supervisorsList = [
@@ -294,498 +343,400 @@ export default function FilterDialog({
         {/* Accordion Sections */}
         <Box sx={{ mt: 2 }}>
           {/* Personal Information */}
-          <Accordion
-            expanded={expandedSections.includes('personal')}
-            onChange={handleAccordionChange('personal')}
-            TransitionProps={{ timeout: 300 }}
-            sx={{
-              boxShadow: 'none !important',
-              border: 'none',
-              '&:before': { display: 'none' },
-              '&.Mui-expanded': {
-                margin: 0,
-              },
-              mb: 0,
-            }}
-          >
-            <AccordionSummary
-              expandIcon={
-                expandedSections.includes('personal') ? (
-                  <Iconify icon="mdi:chevron-down" width={20} color="#64748B" />
-                ) : (
-                  <Iconify icon="mdi:plus" width={20} color="#64748B" />
-                )
+          {showSection.personal && (
+            <Accordion
+              expanded={
+                expandedSections.includes('personal') || (!!searchValue && showSection.personal)
               }
+              onChange={handleAccordionChange('personal')}
+              TransitionProps={{ timeout: 300 }}
               sx={{
-                px: 0,
-                minHeight: 56,
-                '& .MuiAccordionSummary-content': { my: 1.5, mx: 3 },
-                '& .MuiAccordionSummary-content.Mui-expanded': { my: 1.5, mx: 3 },
-                '& .MuiAccordionSummary-expandIconWrapper': { mr: 3 },
-                bgcolor: 'transparent',
-                position: 'relative',
-                '&::after': {
-                  content: '""',
-                  position: 'absolute',
-                  bottom: 0,
-                  left: 24,
-                  right: 24,
-                  height: '1px',
-                  bgcolor: 'divider',
-                },
-                '&:hover': {
-                  bgcolor: 'transparent',
-                },
+                boxShadow: 'none !important',
+                border: 'none',
+                '&:before': { display: 'none' },
                 '&.Mui-expanded': {
-                  minHeight: 56,
-                  bgcolor: 'transparent',
+                  margin: 0,
                 },
+                mb: 0,
               }}
             >
-              <Typography
+              <AccordionSummary
+                expandIcon={
+                  expandedSections.includes('personal') ? (
+                    <Iconify icon="mdi:chevron-down" width={20} color="#64748B" />
+                  ) : (
+                    <Iconify icon="mdi:plus" width={20} color="#64748B" />
+                  )
+                }
                 sx={{
-                  color: '#64748B',
-                  fontSize: 18,
-                  fontWeight: 400,
-                  lineHeight: '23px',
+                  px: 0,
+                  minHeight: 56,
+                  '& .MuiAccordionSummary-content': { my: 1.5, mx: 3 },
+                  '& .MuiAccordionSummary-content.Mui-expanded': { my: 1.5, mx: 3 },
+                  '& .MuiAccordionSummary-expandIconWrapper': { mr: 3 },
+                  bgcolor: 'transparent',
+                  position: 'relative',
+                  '&::after': {
+                    content: '""',
+                    position: 'absolute',
+                    bottom: 0,
+                    left: 24,
+                    right: 24,
+                    height: '1px',
+                    bgcolor: 'divider',
+                  },
+                  '&:hover': {
+                    bgcolor: 'transparent',
+                  },
+                  '&.Mui-expanded': {
+                    minHeight: 56,
+                    bgcolor: 'transparent',
+                  },
                 }}
               >
-                {t('Label.personal_information')}
-              </Typography>
-            </AccordionSummary>
-            <AccordionDetails sx={{ px: 3, pt: 3, pb: 3, bgcolor: 'transparent' }}>
-              <Stack spacing={2.5}>
-                <Stack direction="row" spacing={2}>
-                  <FormControl fullWidth>
-                    <Typography
-                      sx={{
-                        mb: 1,
-                        color: '#64748B',
-                        fontSize: 16,
-                        fontWeight: 400,
-                        lineHeight: '22px',
-                        textTransform: 'capitalize',
-                      }}
-                    >
-                      {t('Label.nationality')}
-                    </Typography>
-                    <Select
-                      value={filters.nationality}
-                      onChange={(e) => setFilters({ ...filters, nationality: e.target.value })}
-                      displayEmpty
-                      sx={{ borderRadius: 1 }}
-                    >
-                      <MenuItem value="">{t('Label.select')}</MenuItem>
-                      <MenuItem value="yemen">اليمن</MenuItem>
-                      <MenuItem value="egypt">مصر</MenuItem>
-                      <MenuItem value="saudi">السعودية</MenuItem>
-                    </Select>
-                  </FormControl>
-                  <FormControl fullWidth>
-                    <Typography
-                      sx={{
-                        mb: 1,
-                        color: '#64748B',
-                        fontSize: 16,
-                        fontWeight: 400,
-                        lineHeight: '22px',
-                        textTransform: 'capitalize',
-                      }}
-                    >
-                      {t('Label.city')}
-                    </Typography>
-                    <Select
-                      value={filters.city}
-                      onChange={(e) => setFilters({ ...filters, city: e.target.value })}
-                      displayEmpty
-                      sx={{ borderRadius: 1 }}
-                    >
-                      <MenuItem value="">{t('Label.select')}</MenuItem>
-                      <MenuItem value="jeddah">جدة</MenuItem>
-                      <MenuItem value="riyadh">الرياض</MenuItem>
-                      <MenuItem value="mecca">مكة</MenuItem>
-                    </Select>
-                  </FormControl>
-                </Stack>
+                <Typography
+                  sx={{
+                    color: '#64748B',
+                    fontSize: 18,
+                    fontWeight: 400,
+                    lineHeight: '23px',
+                  }}
+                >
+                  {t('Label.personal_information')}
+                </Typography>
+              </AccordionSummary>
+              <AccordionDetails sx={{ px: 3, pt: 3, pb: 3, bgcolor: 'transparent' }}>
+                <Stack spacing={2.5}>
+                  <Stack direction="row" spacing={2}>
+                    <FormControl fullWidth>
+                      <Typography
+                        sx={{
+                          mb: 1,
+                          color: labelColor('Label.nationality'),
+                          fontSize: 16,
+                          fontWeight: 400,
+                          lineHeight: '22px',
+                          textTransform: 'capitalize',
+                        }}
+                      >
+                        {t('Label.nationality')}
+                      </Typography>
+                      <Select
+                        value={filters.nationality}
+                        onChange={(e) => setFilters({ ...filters, nationality: e.target.value })}
+                        displayEmpty
+                        sx={{ borderRadius: 1 }}
+                      >
+                        <MenuItem value="">{t('Label.select')}</MenuItem>
+                        <MenuItem value="yemen">اليمن</MenuItem>
+                        <MenuItem value="egypt">مصر</MenuItem>
+                        <MenuItem value="saudi">السعودية</MenuItem>
+                      </Select>
+                    </FormControl>
+                    <FormControl fullWidth>
+                      <Typography
+                        sx={{
+                          mb: 1,
+                          color: labelColor('Label.city'),
+                          fontSize: 16,
+                          fontWeight: 400,
+                          lineHeight: '22px',
+                          textTransform: 'capitalize',
+                        }}
+                      >
+                        {t('Label.city')}
+                      </Typography>
+                      <Select
+                        value={filters.city}
+                        onChange={(e) => setFilters({ ...filters, city: e.target.value })}
+                        displayEmpty
+                        sx={{ borderRadius: 1 }}
+                      >
+                        <MenuItem value="">{t('Label.select')}</MenuItem>
+                        <MenuItem value="jeddah">جدة</MenuItem>
+                        <MenuItem value="riyadh">الرياض</MenuItem>
+                        <MenuItem value="mecca">مكة</MenuItem>
+                      </Select>
+                    </FormControl>
+                  </Stack>
 
-                <Stack direction="row" spacing={2}>
-                  <FormControl fullWidth>
-                    <Typography
-                      sx={{
-                        mb: 1,
-                        color: '#64748B',
-                        fontSize: 16,
-                        fontWeight: 400,
-                        lineHeight: '22px',
-                        textTransform: 'capitalize',
-                      }}
-                    >
-                      {t('Label.package_name')}
-                    </Typography>
-                    <Select
-                      value={filters.package}
-                      onChange={(e) => setFilters({ ...filters, package: e.target.value })}
-                      displayEmpty
-                      sx={{ borderRadius: 1 }}
-                    >
-                      <MenuItem value="">{t('Label.select')}</MenuItem>
-                      <MenuItem value="vip">VIP</MenuItem>
-                      <MenuItem value="premium">مميزة</MenuItem>
-                      <MenuItem value="economic">اقتصادية</MenuItem>
-                    </Select>
-                  </FormControl>
-                  <FormControl fullWidth>
-                    <Typography
-                      sx={{
-                        mb: 1,
-                        color: '#64748B',
-                        fontSize: 16,
-                        fontWeight: 400,
-                        lineHeight: '22px',
-                        textTransform: 'capitalize',
-                      }}
-                    >
-                      {t('Label.tags')}
-                    </Typography>
-                    <Select
-                      value={filters.badge}
-                      onChange={(e) => setFilters({ ...filters, badge: e.target.value })}
-                      displayEmpty
-                      sx={{ borderRadius: 1 }}
-                    >
-                      <MenuItem value="">{t('Label.select')}</MenuItem>
-                      <MenuItem value="near_bathroom">قريب من دورة مياة</MenuItem>
-                      <MenuItem value="central">قريب من مركز طبي</MenuItem>
-                      <MenuItem value="near_mosque">قريب من مسجد</MenuItem>
-                      <MenuItem value="near_transport">قريب من خدمة نقل</MenuItem>
-                      <MenuItem value="near_restaurant">قريب من خدمة غسيل</MenuItem>
-                      <MenuItem value="tent_entrance">قريب من مدخل المخيم</MenuItem>
-                    </Select>
-                  </FormControl>
-                </Stack>
-                <Stack direction="row" spacing={2}>
-                  <Box sx={{ width: '100%' }}>
-                    <Typography
-                      sx={{
-                        mb: 1.5,
-                        color: '#64748B',
-                        fontSize: 16,
-                        fontWeight: 400,
-                        lineHeight: '22px',
-                        textTransform: 'capitalize',
-                      }}
-                    >
-                      {t('Label.gender')}
-                    </Typography>
-                    <ToggleButtonGroup
-                      value={filters.gender}
-                      exclusive
-                      onChange={(e, value) => setFilters({ ...filters, gender: value })}
-                      fullWidth
-                      sx={{
-                        '& .MuiToggleButton-root': {
-                          borderRadius: 1,
-                          border: '1px solid #e0e0e0',
-                          py: 1,
-                          '&.Mui-selected': {
-                            bgcolor: '#f3f7ff',
-                            color: '#0d6efd',
-                            borderColor: '#0d6efd',
+                  <Stack direction="row" spacing={2}>
+                    <FormControl fullWidth>
+                      <Typography
+                        sx={{
+                          mb: 1,
+                          color: labelColor('Label.package_name'),
+                          fontSize: 16,
+                          fontWeight: 400,
+                          lineHeight: '22px',
+                          textTransform: 'capitalize',
+                        }}
+                      >
+                        {t('Label.package_name')}
+                      </Typography>
+                      <Select
+                        value={filters.package}
+                        onChange={(e) => setFilters({ ...filters, package: e.target.value })}
+                        displayEmpty
+                        sx={{ borderRadius: 1 }}
+                      >
+                        <MenuItem value="">{t('Label.select')}</MenuItem>
+                        <MenuItem value="vip">VIP</MenuItem>
+                        <MenuItem value="premium">مميزة</MenuItem>
+                        <MenuItem value="economic">اقتصادية</MenuItem>
+                      </Select>
+                    </FormControl>
+                    <FormControl fullWidth>
+                      <Typography
+                        sx={{
+                          mb: 1,
+                          color: labelColor('Label.tags'),
+                          fontSize: 16,
+                          fontWeight: 400,
+                          lineHeight: '22px',
+                          textTransform: 'capitalize',
+                        }}
+                      >
+                        {t('Label.tags')}
+                      </Typography>
+                      <Select
+                        value={filters.badge}
+                        onChange={(e) => setFilters({ ...filters, badge: e.target.value })}
+                        displayEmpty
+                        sx={{ borderRadius: 1 }}
+                      >
+                        <MenuItem value="">{t('Label.select')}</MenuItem>
+                        <MenuItem value="near_bathroom">قريب من دورة مياة</MenuItem>
+                        <MenuItem value="central">قريب من مركز طبي</MenuItem>
+                        <MenuItem value="near_mosque">قريب من مسجد</MenuItem>
+                        <MenuItem value="near_transport">قريب من خدمة نقل</MenuItem>
+                        <MenuItem value="near_restaurant">قريب من خدمة غسيل</MenuItem>
+                        <MenuItem value="tent_entrance">قريب من مدخل المخيم</MenuItem>
+                      </Select>
+                    </FormControl>
+                  </Stack>
+                  <Stack direction="row" spacing={2}>
+                    <Box sx={{ width: '100%' }}>
+                      <Typography
+                        sx={{
+                          mb: 1.5,
+                          color: labelColor('Label.gender'),
+                          fontSize: 16,
+                          fontWeight: 400,
+                          lineHeight: '22px',
+                          textTransform: 'capitalize',
+                        }}
+                      >
+                        {t('Label.gender')}
+                      </Typography>
+                      <ToggleButtonGroup
+                        value={filters.gender}
+                        exclusive
+                        onChange={(e, value) => setFilters({ ...filters, gender: value })}
+                        fullWidth
+                        sx={{
+                          '& .MuiToggleButton-root': {
+                            borderRadius: 1,
+                            border: '1px solid #e0e0e0',
+                            py: 1,
+                            '&.Mui-selected': {
+                              bgcolor: '#f3f7ff',
+                              color: '#0d6efd',
+                              borderColor: '#0d6efd',
+                            },
                           },
-                        },
-                      }}
-                    >
-                      <ToggleButton value="male">{t('Label.male')}</ToggleButton>
-                      <ToggleButton value="female">{t('Label.female')}</ToggleButton>
-                    </ToggleButtonGroup>
-                  </Box>
+                        }}
+                      >
+                        <ToggleButton value="male">{t('Label.male')}</ToggleButton>
+                        <ToggleButton value="female">{t('Label.female')}</ToggleButton>
+                      </ToggleButtonGroup>
+                    </Box>
 
-                  <Box sx={{ width: '100%' }}>
+                    <Box sx={{ width: '100%' }}>
+                      <Typography
+                        sx={{
+                          mb: 1.5,
+                          color: labelColor('Label.early_late'),
+                          fontSize: 16,
+                          fontWeight: 400,
+                          lineHeight: '22px',
+                          textTransform: 'capitalize',
+                        }}
+                      >
+                        {t('Label.early_late')}
+                      </Typography>
+                      <ToggleButtonGroup
+                        value={filters.marriedLate}
+                        exclusive
+                        onChange={(e, value) => setFilters({ ...filters, marriedLate: value })}
+                        fullWidth
+                        sx={{
+                          '& .MuiToggleButton-root': {
+                            borderRadius: 1,
+                            border: '1px solid #e0e0e0',
+                            py: 1,
+                            '&.Mui-selected': {
+                              bgcolor: '#f3f7ff',
+                              color: '#0d6efd',
+                              borderColor: '#0d6efd',
+                            },
+                          },
+                        }}
+                      >
+                        <ToggleButton value="early">{t('Label.early')}</ToggleButton>
+                        <ToggleButton value="late">{t('Label.late')}</ToggleButton>
+                      </ToggleButtonGroup>
+                    </Box>
+                  </Stack>
+                  <FormControl fullWidth>
                     <Typography
                       sx={{
-                        mb: 1.5,
-                        color: '#64748B',
+                        mb: 1,
+                        color: labelColor('Label.booking_status'),
                         fontSize: 16,
                         fontWeight: 400,
                         lineHeight: '22px',
                         textTransform: 'capitalize',
                       }}
                     >
-                      {t('Label.early_late')}
+                      {t('Label.booking_status')}
                     </Typography>
-                    <ToggleButtonGroup
-                      value={filters.marriedLate}
-                      exclusive
-                      onChange={(e, value) => setFilters({ ...filters, marriedLate: value })}
-                      fullWidth
-                      sx={{
-                        '& .MuiToggleButton-root': {
-                          borderRadius: 1,
-                          border: '1px solid #e0e0e0',
-                          py: 1,
-                          '&.Mui-selected': {
-                            bgcolor: '#f3f7ff',
-                            color: '#0d6efd',
-                            borderColor: '#0d6efd',
-                          },
-                        },
-                      }}
+                    <Select
+                      value={filters.bookingStatus}
+                      onChange={(e) => setFilters({ ...filters, bookingStatus: e.target.value })}
+                      displayEmpty
+                      sx={{ borderRadius: 1 }}
                     >
-                      <ToggleButton value="early">{t('Label.early')}</ToggleButton>
-                      <ToggleButton value="late">{t('Label.late')}</ToggleButton>
-                    </ToggleButtonGroup>
-                  </Box>
+                      <MenuItem value="">{t('Label.select')}</MenuItem>
+                      <MenuItem value="completed">مكتمل</MenuItem>
+                      <MenuItem value="pending">مؤكد</MenuItem>
+                      <MenuItem value="confirmed">قيد التأكيد</MenuItem>
+                      <MenuItem value="cancelled">ملغي</MenuItem>
+                    </Select>
+                  </FormControl>
                 </Stack>
-                <FormControl fullWidth>
-                  <Typography
-                    sx={{
-                      mb: 1,
-                      color: '#64748B',
-                      fontSize: 16,
-                      fontWeight: 400,
-                      lineHeight: '22px',
-                      textTransform: 'capitalize',
-                    }}
-                  >
-                    {t('Label.booking_status')}
-                  </Typography>
-                  <Select
-                    value={filters.bookingStatus}
-                    onChange={(e) => setFilters({ ...filters, bookingStatus: e.target.value })}
-                    displayEmpty
-                    sx={{ borderRadius: 1 }}
-                  >
-                    <MenuItem value="">{t('Label.select')}</MenuItem>
-                    <MenuItem value="completed">مكتمل</MenuItem>
-                    <MenuItem value="pending">مؤكد</MenuItem>
-                    <MenuItem value="confirmed">قيد التأكيد</MenuItem>
-                    <MenuItem value="cancelled">ملغي</MenuItem>
-                  </Select>
-                </FormControl>
-              </Stack>
-            </AccordionDetails>
-          </Accordion>
+              </AccordionDetails>
+            </Accordion>
+          )}
 
           {/* Assembly Points */}
-          <Accordion
-            expanded={expandedSections.includes('gathering')}
-            onChange={handleAccordionChange('gathering')}
-            sx={{
-              boxShadow: 'none !important',
-              border: 'none',
-              '&:before': { display: 'none' },
-              mb: 0,
-            }}
-          >
-            <AccordionSummary
-              expandIcon={
-                expandedSections.includes('gathering') ? (
-                  <Iconify icon="mdi:chevron-down" width={20} color="#64748B" />
-                ) : (
-                  <Iconify icon="mdi:plus" width={20} color="#64748B" />
-                )
+          {showSection.gathering && (
+            <Accordion
+              expanded={
+                expandedSections.includes('gathering') || (!!searchValue && showSection.gathering)
               }
+              onChange={handleAccordionChange('gathering')}
               sx={{
-                px: 0,
-                minHeight: 56,
-                '& .MuiAccordionSummary-content': { my: 1.5, mx: 3 },
-                '& .MuiAccordionSummary-content.Mui-expanded': { my: 1.5, mx: 3 },
-                '& .MuiAccordionSummary-expandIconWrapper': { mr: 3 },
-                bgcolor: 'transparent',
-                position: 'relative',
-                '&::after': {
-                  content: '""',
-                  position: 'absolute',
-                  bottom: 0,
-                  left: 24,
-                  right: 24,
-                  height: '1px',
-                  bgcolor: 'divider',
-                },
-                '&:hover': {
-                  bgcolor: 'transparent',
-                },
-                '&.Mui-expanded': {
-                  minHeight: 56,
-                  bgcolor: 'transparent',
-                },
+                boxShadow: 'none !important',
+                border: 'none',
+                '&:before': { display: 'none' },
+                mb: 0,
               }}
             >
-              <Typography
+              <AccordionSummary
+                expandIcon={
+                  expandedSections.includes('gathering') ? (
+                    <Iconify icon="mdi:chevron-down" width={20} color="#64748B" />
+                  ) : (
+                    <Iconify icon="mdi:plus" width={20} color="#64748B" />
+                  )
+                }
                 sx={{
-                  color: '#64748B',
-                  fontSize: 18,
-                  fontWeight: 400,
-                  lineHeight: '23px',
-                }}
-              >
-                {t('Label.gathering_points')}
-              </Typography>
-            </AccordionSummary>
-            <AccordionDetails sx={{ px: 3, pt: 3, pb: 3, bgcolor: 'transparent' }}>
-              <Stack spacing={2.5}>
-                <Stack direction="row" spacing={2}>
-                  <FormControl fullWidth>
-                    <Typography
-                      sx={{
-                        mb: 1,
-                        color: '#64748B',
-                        fontSize: 16,
-                        fontWeight: 400,
-                        lineHeight: '22px',
-                        textTransform: 'capitalize',
-                      }}
-                    >
-                      {t('Label.gathering_point_type')}
-                    </Typography>
-                    <Select
-                      value={filters.gatheringPointType}
-                      onChange={(e) =>
-                        setFilters({ ...filters, gatheringPointType: e.target.value })
-                      }
-                      displayEmpty
-                      sx={{ borderRadius: 1 }}
-                    >
-                      <MenuItem value="">{t('Label.select')}</MenuItem>
-                      <MenuItem value="jeddah">جدة</MenuItem>
-                      <MenuItem value="riyadh">الرياض</MenuItem>
-                      <MenuItem value="dammam">الدمام</MenuItem>
-                    </Select>
-                  </FormControl>
-                  <FormControl fullWidth>
-                    <Typography
-                      sx={{
-                        mb: 1,
-                        color: '#64748B',
-                        fontSize: 16,
-                        fontWeight: 400,
-                        lineHeight: '22px',
-                        textTransform: 'capitalize',
-                      }}
-                    >
-                      {t('Label.gathering_point')}
-                    </Typography>
-                    <Select
-                      value={filters.gatheringPoint}
-                      onChange={(e) => setFilters({ ...filters, gatheringPoint: e.target.value })}
-                      displayEmpty
-                      sx={{ borderRadius: 1 }}
-                    >
-                      <MenuItem value="">{t('Label.select')}</MenuItem>
-                    </Select>
-                  </FormControl>
-                </Stack>
-
-                <FormControl fullWidth>
-                  <Typography
-                    sx={{
-                      mb: 1,
-                      color: '#64748B',
-                      fontSize: 16,
-                      fontWeight: 400,
-                      lineHeight: '22px',
-                      textTransform: 'capitalize',
-                    }}
-                  >
-                    {t('Label.destination')}
-                  </Typography>
-                  <Select
-                    value={filters.destination}
-                    onChange={(e) => setFilters({ ...filters, destination: e.target.value })}
-                    displayEmpty
-                    sx={{ borderRadius: 1 }}
-                  >
-                    <MenuItem value="">{t('Label.select')}</MenuItem>
-                  </Select>
-                </FormControl>
-              </Stack>
-            </AccordionDetails>
-          </Accordion>
-
-          {/* Accommodation */}
-          <Accordion
-            expanded={expandedSections.includes('accommodation')}
-            onChange={handleAccordionChange('accommodation')}
-            sx={{
-              boxShadow: 'none !important',
-              border: 'none',
-              '&:before': { display: 'none' },
-              mb: 0,
-            }}
-          >
-            <AccordionSummary
-              expandIcon={
-                expandedSections.includes('accommodation') ? (
-                  <Iconify icon="mdi:chevron-down" width={20} color="#64748B" />
-                ) : (
-                  <Iconify icon="mdi:plus" width={20} color="#64748B" />
-                )
-              }
-              sx={{
-                px: 0,
-                minHeight: 56,
-                '& .MuiAccordionSummary-content': { my: 1.5, mx: 3 },
-                '& .MuiAccordionSummary-content.Mui-expanded': { my: 1.5, mx: 3 },
-                '& .MuiAccordionSummary-expandIconWrapper': { mr: 3 },
-                bgcolor: 'transparent',
-                position: 'relative',
-                '&::after': {
-                  content: '""',
-                  position: 'absolute',
-                  bottom: 0,
-                  left: 24,
-                  right: 24,
-                  height: '1px',
-                  bgcolor: 'divider',
-                },
-                '&:hover': {
-                  bgcolor: 'transparent',
-                },
-                '&.Mui-expanded': {
+                  px: 0,
                   minHeight: 56,
+                  '& .MuiAccordionSummary-content': { my: 1.5, mx: 3 },
+                  '& .MuiAccordionSummary-content.Mui-expanded': { my: 1.5, mx: 3 },
+                  '& .MuiAccordionSummary-expandIconWrapper': { mr: 3 },
                   bgcolor: 'transparent',
-                },
-              }}
-            >
-              <Typography
-                sx={{
-                  color: '#64748B',
-                  fontSize: 18,
-                  fontWeight: 400,
-                  lineHeight: '23px',
+                  position: 'relative',
+                  '&::after': {
+                    content: '""',
+                    position: 'absolute',
+                    bottom: 0,
+                    left: 24,
+                    right: 24,
+                    height: '1px',
+                    bgcolor: 'divider',
+                  },
+                  '&:hover': {
+                    bgcolor: 'transparent',
+                  },
+                  '&.Mui-expanded': {
+                    minHeight: 56,
+                    bgcolor: 'transparent',
+                  },
                 }}
               >
-                {t('Label.accommodation')}
-              </Typography>
-            </AccordionSummary>
-            <AccordionDetails sx={{ px: 3, pt: 3, pb: 3, bgcolor: 'transparent' }}>
-              <Stack spacing={2.5}>
-                <Stack direction="row" spacing={2}>
+                <Typography
+                  sx={{
+                    color: '#64748B',
+                    fontSize: 18,
+                    fontWeight: 400,
+                    lineHeight: '23px',
+                  }}
+                >
+                  {t('Label.gathering_points')}
+                </Typography>
+              </AccordionSummary>
+              <AccordionDetails sx={{ px: 3, pt: 3, pb: 3, bgcolor: 'transparent' }}>
+                <Stack spacing={2.5}>
+                  <Stack direction="row" spacing={2}>
+                    <FormControl fullWidth>
+                      <Typography
+                        sx={{
+                          mb: 1,
+                          color: labelColor('Label.gathering_point_type'),
+                          fontSize: 16,
+                          fontWeight: 400,
+                          lineHeight: '22px',
+                          textTransform: 'capitalize',
+                        }}
+                      >
+                        {t('Label.gathering_point_type')}
+                      </Typography>
+                      <Select
+                        value={filters.gatheringPointType}
+                        onChange={(e) =>
+                          setFilters({ ...filters, gatheringPointType: e.target.value })
+                        }
+                        displayEmpty
+                        sx={{ borderRadius: 1 }}
+                      >
+                        <MenuItem value="">{t('Label.select')}</MenuItem>
+                        <MenuItem value="jeddah">جدة</MenuItem>
+                        <MenuItem value="riyadh">الرياض</MenuItem>
+                        <MenuItem value="dammam">الدمام</MenuItem>
+                      </Select>
+                    </FormControl>
+                    <FormControl fullWidth>
+                      <Typography
+                        sx={{
+                          mb: 1,
+                          color: labelColor('Label.gathering_point'),
+                          fontSize: 16,
+                          fontWeight: 400,
+                          lineHeight: '22px',
+                          textTransform: 'capitalize',
+                        }}
+                      >
+                        {t('Label.gathering_point')}
+                      </Typography>
+                      <Select
+                        value={filters.gatheringPoint}
+                        onChange={(e) => setFilters({ ...filters, gatheringPoint: e.target.value })}
+                        displayEmpty
+                        sx={{ borderRadius: 1 }}
+                      >
+                        <MenuItem value="">{t('Label.select')}</MenuItem>
+                      </Select>
+                    </FormControl>
+                  </Stack>
+
                   <FormControl fullWidth>
                     <Typography
                       sx={{
                         mb: 1,
-                        color: '#64748B',
-                        fontSize: 16,
-                        fontWeight: 400,
-                        lineHeight: '22px',
-                        textTransform: 'capitalize',
-                      }}
-                    >
-                      {t('Label.room_group_number')}
-                    </Typography>
-                    <TextField
-                      value={filters.roomNumber}
-                      onChange={(e) => setFilters({ ...filters, roomNumber: e.target.value })}
-                      placeholder="A12"
-                      sx={{ '& .MuiOutlinedInput-root': { borderRadius: 1 } }}
-                    />
-                  </FormControl>
-                  <FormControl fullWidth>
-                    <Typography
-                      sx={{
-                        mb: 1,
-                        color: '#64748B',
+                        color: labelColor('Label.destination'),
                         fontSize: 16,
                         fontWeight: 400,
                         lineHeight: '22px',
@@ -795,10 +746,8 @@ export default function FilterDialog({
                       {t('Label.destination')}
                     </Typography>
                     <Select
-                      value={filters.accommodationDestination}
-                      onChange={(e) =>
-                        setFilters({ ...filters, accommodationDestination: e.target.value })
-                      }
+                      value={filters.destination}
+                      onChange={(e) => setFilters({ ...filters, destination: e.target.value })}
                       displayEmpty
                       sx={{ borderRadius: 1 }}
                     >
@@ -806,449 +755,580 @@ export default function FilterDialog({
                     </Select>
                   </FormControl>
                 </Stack>
+              </AccordionDetails>
+            </Accordion>
+          )}
 
+          {/* Accommodation */}
+          {showSection.accommodation && (
+            <Accordion
+              expanded={
+                expandedSections.includes('accommodation') ||
+                (!!searchValue && showSection.accommodation)
+              }
+              onChange={handleAccordionChange('accommodation')}
+              sx={{
+                boxShadow: 'none !important',
+                border: 'none',
+                '&:before': { display: 'none' },
+                mb: 0,
+              }}
+            >
+              <AccordionSummary
+                expandIcon={
+                  expandedSections.includes('accommodation') ? (
+                    <Iconify icon="mdi:chevron-down" width={20} color="#64748B" />
+                  ) : (
+                    <Iconify icon="mdi:plus" width={20} color="#64748B" />
+                  )
+                }
+                sx={{
+                  px: 0,
+                  minHeight: 56,
+                  '& .MuiAccordionSummary-content': { my: 1.5, mx: 3 },
+                  '& .MuiAccordionSummary-content.Mui-expanded': { my: 1.5, mx: 3 },
+                  '& .MuiAccordionSummary-expandIconWrapper': { mr: 3 },
+                  bgcolor: 'transparent',
+                  position: 'relative',
+                  '&::after': {
+                    content: '""',
+                    position: 'absolute',
+                    bottom: 0,
+                    left: 24,
+                    right: 24,
+                    height: '1px',
+                    bgcolor: 'divider',
+                  },
+                  '&:hover': {
+                    bgcolor: 'transparent',
+                  },
+                  '&.Mui-expanded': {
+                    minHeight: 56,
+                    bgcolor: 'transparent',
+                  },
+                }}
+              >
+                <Typography
+                  sx={{
+                    color: '#64748B',
+                    fontSize: 18,
+                    fontWeight: 400,
+                    lineHeight: '23px',
+                  }}
+                >
+                  {t('Label.accommodation')}
+                </Typography>
+              </AccordionSummary>
+              <AccordionDetails sx={{ px: 3, pt: 3, pb: 3, bgcolor: 'transparent' }}>
+                <Stack spacing={2.5}>
+                  <Stack direction="row" spacing={2}>
+                    <FormControl fullWidth>
+                      <Typography
+                        sx={{
+                          mb: 1,
+                          color: labelColor('Label.room_group_number'),
+                          fontSize: 16,
+                          fontWeight: 400,
+                          lineHeight: '22px',
+                          textTransform: 'capitalize',
+                        }}
+                      >
+                        {t('Label.room_group_number')}
+                      </Typography>
+                      <TextField
+                        value={filters.roomNumber}
+                        onChange={(e) => setFilters({ ...filters, roomNumber: e.target.value })}
+                        placeholder="A12"
+                        sx={{ '& .MuiOutlinedInput-root': { borderRadius: 1 } }}
+                      />
+                    </FormControl>
+                    <FormControl fullWidth>
+                      <Typography
+                        sx={{
+                          mb: 1,
+                          color: labelColor('Label.destination'),
+                          fontSize: 16,
+                          fontWeight: 400,
+                          lineHeight: '22px',
+                          textTransform: 'capitalize',
+                        }}
+                      >
+                        {t('Label.destination')}
+                      </Typography>
+                      <Select
+                        value={filters.accommodationDestination}
+                        onChange={(e) =>
+                          setFilters({ ...filters, accommodationDestination: e.target.value })
+                        }
+                        displayEmpty
+                        sx={{ borderRadius: 1 }}
+                      >
+                        <MenuItem value="">{t('Label.select')}</MenuItem>
+                      </Select>
+                    </FormControl>
+                  </Stack>
+
+                  <FormControl fullWidth>
+                    <Typography
+                      sx={{
+                        mb: 1,
+                        color: labelColor('Label.camp_status'),
+                        fontSize: 16,
+                        fontWeight: 400,
+                        lineHeight: '22px',
+                        textTransform: 'capitalize',
+                      }}
+                    >
+                      {t('Label.camp_status')}
+                    </Typography>
+                    <Select
+                      value={filters.campStatus}
+                      onChange={(e) => setFilters({ ...filters, campStatus: e.target.value })}
+                      displayEmpty
+                      sx={{ borderRadius: 1 }}
+                    >
+                      <MenuItem value="">{t('Label.select')}</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Stack>
+              </AccordionDetails>
+            </Accordion>
+          )}
+
+          {/* Transportation */}
+          {showSection.transportation && (
+            <Accordion
+              expanded={
+                expandedSections.includes('transportation') ||
+                (!!searchValue && showSection.transportation)
+              }
+              onChange={handleAccordionChange('transportation')}
+              sx={{
+                boxShadow: 'none !important',
+                border: 'none',
+                '&:before': { display: 'none' },
+                mb: 0,
+              }}
+            >
+              <AccordionSummary
+                expandIcon={
+                  expandedSections.includes('transportation') ? (
+                    <Iconify icon="mdi:chevron-down" width={20} color="#64748B" />
+                  ) : (
+                    <Iconify icon="mdi:plus" width={20} color="#64748B" />
+                  )
+                }
+                sx={{
+                  px: 0,
+                  minHeight: 56,
+                  '& .MuiAccordionSummary-content': { my: 1.5, mx: 3 },
+                  '& .MuiAccordionSummary-content.Mui-expanded': { my: 1.5, mx: 3 },
+                  '& .MuiAccordionSummary-expandIconWrapper': { mr: 3 },
+                  bgcolor: 'transparent',
+                  position: 'relative',
+                  '&::after': {
+                    content: '""',
+                    position: 'absolute',
+                    bottom: 0,
+                    left: 24,
+                    right: 24,
+                    height: '1px',
+                    bgcolor: 'divider',
+                  },
+                  '&:hover': {
+                    bgcolor: 'transparent',
+                  },
+                  '&.Mui-expanded': {
+                    minHeight: 56,
+                    bgcolor: 'transparent',
+                  },
+                }}
+              >
+                <Typography
+                  sx={{
+                    color: '#64748B',
+                    fontSize: 18,
+                    fontWeight: 400,
+                    lineHeight: '23px',
+                  }}
+                >
+                  {t('Label.transportation_data')}
+                </Typography>
+              </AccordionSummary>
+              <AccordionDetails sx={{ px: 3, pt: 3, pb: 3, bgcolor: 'transparent' }}>
                 <FormControl fullWidth>
                   <Typography
                     sx={{
                       mb: 1,
-                      color: '#64748B',
+                      color: labelColor('Label.bus_number'),
                       fontSize: 16,
                       fontWeight: 400,
                       lineHeight: '22px',
                       textTransform: 'capitalize',
                     }}
                   >
-                    {t('Label.camp_status')}
+                    {t('Label.bus_number')}
                   </Typography>
                   <Select
-                    value={filters.campStatus}
-                    onChange={(e) => setFilters({ ...filters, campStatus: e.target.value })}
+                    value={filters.busNumber}
+                    onChange={(e) => setFilters({ ...filters, busNumber: e.target.value })}
                     displayEmpty
                     sx={{ borderRadius: 1 }}
                   >
                     <MenuItem value="">{t('Label.select')}</MenuItem>
+                    <MenuItem value="1">الأولى</MenuItem>
+                    <MenuItem value="2">الثانية</MenuItem>
+                    <MenuItem value="3">الثالثة</MenuItem>
                   </Select>
                 </FormControl>
-              </Stack>
-            </AccordionDetails>
-          </Accordion>
-
-          {/* Transportation */}
-          <Accordion
-            expanded={expandedSections.includes('transportation')}
-            onChange={handleAccordionChange('transportation')}
-            sx={{
-              boxShadow: 'none !important',
-              border: 'none',
-              '&:before': { display: 'none' },
-              mb: 0,
-            }}
-          >
-            <AccordionSummary
-              expandIcon={
-                expandedSections.includes('transportation') ? (
-                  <Iconify icon="mdi:chevron-down" width={20} color="#64748B" />
-                ) : (
-                  <Iconify icon="mdi:plus" width={20} color="#64748B" />
-                )
-              }
-              sx={{
-                px: 0,
-                minHeight: 56,
-                '& .MuiAccordionSummary-content': { my: 1.5, mx: 3 },
-                '& .MuiAccordionSummary-content.Mui-expanded': { my: 1.5, mx: 3 },
-                '& .MuiAccordionSummary-expandIconWrapper': { mr: 3 },
-                bgcolor: 'transparent',
-                position: 'relative',
-                '&::after': {
-                  content: '""',
-                  position: 'absolute',
-                  bottom: 0,
-                  left: 24,
-                  right: 24,
-                  height: '1px',
-                  bgcolor: 'divider',
-                },
-                '&:hover': {
-                  bgcolor: 'transparent',
-                },
-                '&.Mui-expanded': {
-                  minHeight: 56,
-                  bgcolor: 'transparent',
-                },
-              }}
-            >
-              <Typography
-                sx={{
-                  color: '#64748B',
-                  fontSize: 18,
-                  fontWeight: 400,
-                  lineHeight: '23px',
-                }}
-              >
-                {t('Label.transportation_data')}
-              </Typography>
-            </AccordionSummary>
-            <AccordionDetails sx={{ px: 3, pt: 3, pb: 3, bgcolor: 'transparent' }}>
-              <FormControl fullWidth>
-                <Typography
-                  sx={{
-                    mb: 1,
-                    color: '#64748B',
-                    fontSize: 16,
-                    fontWeight: 400,
-                    lineHeight: '22px',
-                    textTransform: 'capitalize',
-                  }}
-                >
-                  {t('Label.bus_number')}
-                </Typography>
-                <Select
-                  value={filters.busNumber}
-                  onChange={(e) => setFilters({ ...filters, busNumber: e.target.value })}
-                  displayEmpty
-                  sx={{ borderRadius: 1 }}
-                >
-                  <MenuItem value="">{t('Label.select')}</MenuItem>
-                  <MenuItem value="1">الأولى</MenuItem>
-                  <MenuItem value="2">الثانية</MenuItem>
-                  <MenuItem value="3">الثالثة</MenuItem>
-                </Select>
-              </FormControl>
-            </AccordionDetails>
-          </Accordion>
+              </AccordionDetails>
+            </Accordion>
+          )}
 
           {/* Health Status */}
-          <Accordion
-            expanded={expandedSections.includes('health')}
-            onChange={handleAccordionChange('health')}
-            sx={{
-              boxShadow: 'none !important',
-              border: 'none',
-              '&:before': { display: 'none' },
-              mb: 0,
-            }}
-          >
-            <AccordionSummary
-              expandIcon={
-                expandedSections.includes('health') ? (
-                  <Iconify icon="mdi:chevron-down" width={20} color="#64748B" />
-                ) : (
-                  <Iconify icon="mdi:plus" width={20} color="#64748B" />
-                )
+          {showSection.health && (
+            <Accordion
+              expanded={
+                expandedSections.includes('health') || (!!searchValue && showSection.health)
               }
+              onChange={handleAccordionChange('health')}
               sx={{
-                px: 0,
-                minHeight: 56,
-                '& .MuiAccordionSummary-content': { my: 1.5, mx: 3 },
-                '& .MuiAccordionSummary-content.Mui-expanded': { my: 1.5, mx: 3 },
-                '& .MuiAccordionSummary-expandIconWrapper': { mr: 3 },
-                bgcolor: 'transparent',
-                position: 'relative',
-                '&::after': {
-                  content: '""',
-                  position: 'absolute',
-                  bottom: 0,
-                  left: 24,
-                  right: 24,
-                  height: '1px',
-                  bgcolor: 'divider',
-                },
-                '&:hover': {
-                  bgcolor: 'transparent',
-                },
-                '&.Mui-expanded': {
-                  minHeight: 56,
-                  bgcolor: 'transparent',
-                },
+                boxShadow: 'none !important',
+                border: 'none',
+                '&:before': { display: 'none' },
+                mb: 0,
               }}
             >
-              <Typography
+              <AccordionSummary
+                expandIcon={
+                  expandedSections.includes('health') ? (
+                    <Iconify icon="mdi:chevron-down" width={20} color="#64748B" />
+                  ) : (
+                    <Iconify icon="mdi:plus" width={20} color="#64748B" />
+                  )
+                }
                 sx={{
-                  color: '#64748B',
-                  fontSize: 18,
-                  fontWeight: 400,
-                  lineHeight: '23px',
+                  px: 0,
+                  minHeight: 56,
+                  '& .MuiAccordionSummary-content': { my: 1.5, mx: 3 },
+                  '& .MuiAccordionSummary-content.Mui-expanded': { my: 1.5, mx: 3 },
+                  '& .MuiAccordionSummary-expandIconWrapper': { mr: 3 },
+                  bgcolor: 'transparent',
+                  position: 'relative',
+                  '&::after': {
+                    content: '""',
+                    position: 'absolute',
+                    bottom: 0,
+                    left: 24,
+                    right: 24,
+                    height: '1px',
+                    bgcolor: 'divider',
+                  },
+                  '&:hover': {
+                    bgcolor: 'transparent',
+                  },
+                  '&.Mui-expanded': {
+                    minHeight: 56,
+                    bgcolor: 'transparent',
+                  },
                 }}
               >
-                {t('Label.health_status_data')}
-              </Typography>
-            </AccordionSummary>
-            <AccordionDetails sx={{ px: 3, pt: 3, pb: 3, bgcolor: 'transparent' }}>
-              <FormControl fullWidth>
                 <Typography
                   sx={{
-                    mb: 1,
                     color: '#64748B',
-                    fontSize: 16,
+                    fontSize: 18,
                     fontWeight: 400,
-                    lineHeight: '22px',
-                    textTransform: 'capitalize',
+                    lineHeight: '23px',
                   }}
                 >
-                  {t('Label.general_health_status')}
+                  {t('Label.health_status_data')}
                 </Typography>
-                <Select
-                  value={filters.healthStatus}
-                  onChange={(e) => setFilters({ ...filters, healthStatus: e.target.value })}
-                  displayEmpty
-                  sx={{ borderRadius: 1 }}
-                >
-                  <MenuItem value="">{t('Label.select')}</MenuItem>
-                  <MenuItem value="good">جيد</MenuItem>
-                  <MenuItem value="attention">يحتاج عناية</MenuItem>
-                </Select>
-              </FormControl>
-            </AccordionDetails>
-          </Accordion>
+              </AccordionSummary>
+              <AccordionDetails sx={{ px: 3, pt: 3, pb: 3, bgcolor: 'transparent' }}>
+                <FormControl fullWidth>
+                  <Typography
+                    sx={{
+                      mb: 1,
+                      color: labelColor('Label.general_health_status'),
+                      fontSize: 16,
+                      fontWeight: 400,
+                      lineHeight: '22px',
+                      textTransform: 'capitalize',
+                    }}
+                  >
+                    {t('Label.general_health_status')}
+                  </Typography>
+                  <Select
+                    value={filters.healthStatus}
+                    onChange={(e) => setFilters({ ...filters, healthStatus: e.target.value })}
+                    displayEmpty
+                    sx={{ borderRadius: 1 }}
+                  >
+                    <MenuItem value="">{t('Label.select')}</MenuItem>
+                    <MenuItem value="good">جيد</MenuItem>
+                    <MenuItem value="attention">يحتاج عناية</MenuItem>
+                  </Select>
+                </FormControl>
+              </AccordionDetails>
+            </Accordion>
+          )}
 
           {/* Supervision */}
-          <Accordion
-            expanded={expandedSections.includes('supervision')}
-            onChange={handleAccordionChange('supervision')}
-            sx={{
-              boxShadow: 'none !important',
-              border: 'none',
-              '&:before': { display: 'none' },
-              mb: 0,
-            }}
-          >
-            <AccordionSummary
-              expandIcon={
-                expandedSections.includes('supervision') ? (
-                  <Iconify icon="mdi:chevron-down" width={20} color="#64748B" />
-                ) : (
-                  <Iconify icon="mdi:plus" width={20} color="#64748B" />
-                )
+          {showSection.supervision && (
+            <Accordion
+              expanded={
+                expandedSections.includes('supervision') ||
+                (!!searchValue && showSection.supervision)
               }
+              onChange={handleAccordionChange('supervision')}
               sx={{
-                px: 0,
-                minHeight: 56,
-                '& .MuiAccordionSummary-content': { my: 1.5, mx: 3 },
-                '& .MuiAccordionSummary-content.Mui-expanded': { my: 1.5, mx: 3 },
-                '& .MuiAccordionSummary-expandIconWrapper': { mr: 3 },
-                bgcolor: 'transparent',
-                position: 'relative',
-                '&::after': {
-                  content: '""',
-                  position: 'absolute',
-                  bottom: 0,
-                  left: 24,
-                  right: 24,
-                  height: '1px',
-                  bgcolor: 'divider',
-                },
-                '&:hover': {
-                  bgcolor: 'transparent',
-                },
-                '&.Mui-expanded': {
-                  minHeight: 56,
-                  bgcolor: 'transparent',
-                },
+                boxShadow: 'none !important',
+                border: 'none',
+                '&:before': { display: 'none' },
+                mb: 0,
               }}
             >
-              <Typography
+              <AccordionSummary
+                expandIcon={
+                  expandedSections.includes('supervision') ? (
+                    <Iconify icon="mdi:chevron-down" width={20} color="#64748B" />
+                  ) : (
+                    <Iconify icon="mdi:plus" width={20} color="#64748B" />
+                  )
+                }
                 sx={{
-                  color: '#64748B',
-                  fontSize: 18,
-                  fontWeight: 400,
-                  lineHeight: '23px',
+                  px: 0,
+                  minHeight: 56,
+                  '& .MuiAccordionSummary-content': { my: 1.5, mx: 3 },
+                  '& .MuiAccordionSummary-content.Mui-expanded': { my: 1.5, mx: 3 },
+                  '& .MuiAccordionSummary-expandIconWrapper': { mr: 3 },
+                  bgcolor: 'transparent',
+                  position: 'relative',
+                  '&::after': {
+                    content: '""',
+                    position: 'absolute',
+                    bottom: 0,
+                    left: 24,
+                    right: 24,
+                    height: '1px',
+                    bgcolor: 'divider',
+                  },
+                  '&:hover': {
+                    bgcolor: 'transparent',
+                  },
+                  '&.Mui-expanded': {
+                    minHeight: 56,
+                    bgcolor: 'transparent',
+                  },
                 }}
               >
-                {t('Label.supervision_organization')}
-              </Typography>
-            </AccordionSummary>
-            <AccordionDetails sx={{ px: 3, pt: 3, pb: 3, bgcolor: 'transparent' }}>
-              <Stack spacing={2.5}>
-                <Stack direction="row" spacing={2}>
-                  <FormControl fullWidth>
-                    <Typography
-                      sx={{
-                        mb: 1,
-                        color: '#64748B',
-                        fontSize: 16,
-                        fontWeight: 400,
-                        lineHeight: '22px',
-                        textTransform: 'capitalize',
-                      }}
-                    >
-                      {t('Label.supervisors')}
-                    </Typography>
-                    <Autocomplete
-                      multiple
-                      value={filters.supervisors}
-                      onChange={(event, newValue) => {
-                        setFilters({ ...filters, supervisors: newValue });
-                      }}
-                      options={supervisorsList.filter(
-                        (supervisor) =>
-                          !filters.supervisors?.some((selected) => selected.id === supervisor.id)
-                      )}
-                      getOptionLabel={(option) => option.name}
-                      renderInput={(params) => (
-                        <TextField
-                          {...params}
-                          placeholder={t('Label.select')}
-                          sx={{
-                            '& .MuiOutlinedInput-root': {
-                              borderRadius: 1,
-                            },
-                          }}
-                        />
-                      )}
-                      renderTags={(value, getTagProps) =>
-                        value.map((option, index) => (
-                          <Chip
-                            {...getTagProps({ index })}
-                            key={option.id}
-                            avatar={
-                              <Avatar sx={{ width: 24, height: 24 }}>
-                                {option.name.charAt(0)}
-                              </Avatar>
-                            }
-                            label={option.name}
-                            sx={{ borderRadius: 1 }}
+                <Typography
+                  sx={{
+                    color: '#64748B',
+                    fontSize: 18,
+                    fontWeight: 400,
+                    lineHeight: '23px',
+                  }}
+                >
+                  {t('Label.supervision_organization')}
+                </Typography>
+              </AccordionSummary>
+              <AccordionDetails sx={{ px: 3, pt: 3, pb: 3, bgcolor: 'transparent' }}>
+                <Stack spacing={2.5}>
+                  <Stack direction="row" spacing={2}>
+                    <FormControl fullWidth>
+                      <Typography
+                        sx={{
+                          mb: 1,
+                          color: labelColor('Label.supervisors'),
+                          fontSize: 16,
+                          fontWeight: 400,
+                          lineHeight: '22px',
+                          textTransform: 'capitalize',
+                        }}
+                      >
+                        {t('Label.supervisors')}
+                      </Typography>
+                      <Autocomplete
+                        multiple
+                        value={filters.supervisors}
+                        onChange={(event, newValue) => {
+                          setFilters({ ...filters, supervisors: newValue });
+                        }}
+                        options={supervisorsList.filter(
+                          (supervisor) =>
+                            !filters.supervisors?.some((selected) => selected.id === supervisor.id)
+                        )}
+                        getOptionLabel={(option) => option.name}
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            placeholder={t('Label.select')}
+                            sx={{
+                              '& .MuiOutlinedInput-root': {
+                                borderRadius: 1,
+                              },
+                            }}
                           />
-                        ))
-                      }
-                    />
-                  </FormControl>
-                  <FormControl fullWidth>
-                    <Typography
-                      sx={{
-                        mb: 1,
-                        color: '#64748B',
-                        fontSize: 16,
-                        fontWeight: 400,
-                        lineHeight: '22px',
-                        textTransform: 'capitalize',
-                      }}
-                    >
-                      {t('Label.import_file')}
-                    </Typography>
-                    <Select
-                      value={filters.importFile}
-                      onChange={(e) => setFilters({ ...filters, importFile: e.target.value })}
-                      displayEmpty
-                      sx={{ borderRadius: 1 }}
-                    >
-                      <MenuItem value="">{t('Label.select')}</MenuItem>
-                    </Select>
-                  </FormControl>
+                        )}
+                        renderTags={(value, getTagProps) =>
+                          value.map((option, index) => (
+                            <Chip
+                              {...getTagProps({ index })}
+                              key={option.id}
+                              avatar={
+                                <Avatar sx={{ width: 24, height: 24 }}>
+                                  {option.name.charAt(0)}
+                                </Avatar>
+                              }
+                              label={option.name}
+                              sx={{ borderRadius: 1 }}
+                            />
+                          ))
+                        }
+                      />
+                    </FormControl>
+                    <FormControl fullWidth>
+                      <Typography
+                        sx={{
+                          mb: 1,
+                          color: labelColor('Label.import_file'),
+                          fontSize: 16,
+                          fontWeight: 400,
+                          lineHeight: '22px',
+                          textTransform: 'capitalize',
+                        }}
+                      >
+                        {t('Label.import_file')}
+                      </Typography>
+                      <Select
+                        value={filters.importFile}
+                        onChange={(e) => setFilters({ ...filters, importFile: e.target.value })}
+                        displayEmpty
+                        sx={{ borderRadius: 1 }}
+                      >
+                        <MenuItem value="">{t('Label.select')}</MenuItem>
+                      </Select>
+                    </FormControl>
+                  </Stack>
                 </Stack>
-              </Stack>
-            </AccordionDetails>
-          </Accordion>
+              </AccordionDetails>
+            </Accordion>
+          )}
 
           {/* Shipping Operations */}
-          <Accordion
-            expanded={expandedSections.includes('shipping')}
-            onChange={handleAccordionChange('shipping')}
-            sx={{
-              boxShadow: 'none !important',
-              border: 'none',
-              '&:before': { display: 'none' },
-              mb: 0,
-            }}
-          >
-            <AccordionSummary
-              expandIcon={
-                expandedSections.includes('shipping') ? (
-                  <Iconify icon="mdi:chevron-down" width={20} color="#64748B" />
-                ) : (
-                  <Iconify icon="mdi:plus" width={20} color="#64748B" />
-                )
+          {showSection.shipping && (
+            <Accordion
+              expanded={
+                expandedSections.includes('shipping') || (!!searchValue && showSection.shipping)
               }
+              onChange={handleAccordionChange('shipping')}
               sx={{
-                px: 0,
-                minHeight: 56,
-                '& .MuiAccordionSummary-content': { my: 1.5, mx: 3 },
-                '& .MuiAccordionSummary-content.Mui-expanded': { my: 1.5, mx: 3 },
-                '& .MuiAccordionSummary-expandIconWrapper': { mr: 3 },
-                bgcolor: 'transparent',
-                position: 'relative',
-                '&::after': {
-                  content: '""',
-                  position: 'absolute',
-                  bottom: 0,
-                  left: 24,
-                  right: 24,
-                  height: '1px',
-                  bgcolor: 'divider',
-                },
-                '&:hover': {
-                  bgcolor: 'transparent',
-                },
-                '&.Mui-expanded': {
-                  minHeight: 56,
-                  bgcolor: 'transparent',
-                },
+                boxShadow: 'none !important',
+                border: 'none',
+                '&:before': { display: 'none' },
+                mb: 0,
               }}
             >
-              <Typography
+              <AccordionSummary
+                expandIcon={
+                  expandedSections.includes('shipping') ? (
+                    <Iconify icon="mdi:chevron-down" width={20} color="#64748B" />
+                  ) : (
+                    <Iconify icon="mdi:plus" width={20} color="#64748B" />
+                  )
+                }
                 sx={{
-                  color: '#64748B',
-                  fontSize: 18,
-                  fontWeight: 400,
-                  lineHeight: '23px',
+                  px: 0,
+                  minHeight: 56,
+                  '& .MuiAccordionSummary-content': { my: 1.5, mx: 3 },
+                  '& .MuiAccordionSummary-content.Mui-expanded': { my: 1.5, mx: 3 },
+                  '& .MuiAccordionSummary-expandIconWrapper': { mr: 3 },
+                  bgcolor: 'transparent',
+                  position: 'relative',
+                  '&::after': {
+                    content: '""',
+                    position: 'absolute',
+                    bottom: 0,
+                    left: 24,
+                    right: 24,
+                    height: '1px',
+                    bgcolor: 'divider',
+                  },
+                  '&:hover': {
+                    bgcolor: 'transparent',
+                  },
+                  '&.Mui-expanded': {
+                    minHeight: 56,
+                    bgcolor: 'transparent',
+                  },
                 }}
               >
-                {t('Label.shipping_operations')}
-              </Typography>
-            </AccordionSummary>
-            <AccordionDetails sx={{ px: 3, pt: 3, pb: 3, bgcolor: 'transparent' }}>
-              <Stack spacing={2.5}>
-                <Stack direction="row" spacing={2}>
-                  <FormControl fullWidth>
-                    <Typography
-                      sx={{
-                        mb: 1,
-                        color: '#64748B',
-                        fontSize: 16,
-                        fontWeight: 400,
-                        lineHeight: '22px',
-                        textTransform: 'capitalize',
-                      }}
-                    >
-                      {t('Label.shipping_tool')}
-                    </Typography>
-                    <Select
-                      value={filters.shippingManagement}
-                      onChange={(e) =>
-                        setFilters({ ...filters, shippingManagement: e.target.value })
-                      }
-                      displayEmpty
-                      sx={{ borderRadius: 1 }}
-                    >
-                      <MenuItem value="">{t('Label.select')}</MenuItem>
-                    </Select>
-                  </FormControl>
-                  <FormControl fullWidth>
-                    <Typography
-                      sx={{
-                        mb: 1,
-                        color: '#64748B',
-                        fontSize: 16,
-                        fontWeight: 400,
-                        lineHeight: '22px',
-                        textTransform: 'capitalize',
-                      }}
-                    >
-                      {t('Label.shipment_status')}
-                    </Typography>
-                    <Select
-                      value={filters.shipmentStatus}
-                      onChange={(e) => setFilters({ ...filters, shipmentStatus: e.target.value })}
-                      displayEmpty
-                      sx={{ borderRadius: 1 }}
-                    >
-                      <MenuItem value="">{t('Label.select')}</MenuItem>
-                    </Select>
-                  </FormControl>
+                <Typography
+                  sx={{
+                    color: '#64748B',
+                    fontSize: 18,
+                    fontWeight: 400,
+                    lineHeight: '23px',
+                  }}
+                >
+                  {t('Label.shipping_operations')}
+                </Typography>
+              </AccordionSummary>
+              <AccordionDetails sx={{ px: 3, pt: 3, pb: 3, bgcolor: 'transparent' }}>
+                <Stack spacing={2.5}>
+                  <Stack direction="row" spacing={2}>
+                    <FormControl fullWidth>
+                      <Typography
+                        sx={{
+                          mb: 1,
+                          color: labelColor('Label.shipping_tool'),
+                          fontSize: 16,
+                          fontWeight: 400,
+                          lineHeight: '22px',
+                          textTransform: 'capitalize',
+                        }}
+                      >
+                        {t('Label.shipping_tool')}
+                      </Typography>
+                      <Select
+                        value={filters.shippingManagement}
+                        onChange={(e) =>
+                          setFilters({ ...filters, shippingManagement: e.target.value })
+                        }
+                        displayEmpty
+                        sx={{ borderRadius: 1 }}
+                      >
+                        <MenuItem value="">{t('Label.select')}</MenuItem>
+                      </Select>
+                    </FormControl>
+                    <FormControl fullWidth>
+                      <Typography
+                        sx={{
+                          mb: 1,
+                          color: labelColor('Label.shipment_status'),
+                          fontSize: 16,
+                          fontWeight: 400,
+                          lineHeight: '22px',
+                          textTransform: 'capitalize',
+                        }}
+                      >
+                        {t('Label.shipment_status')}
+                      </Typography>
+                      <Select
+                        value={filters.shipmentStatus}
+                        onChange={(e) => setFilters({ ...filters, shipmentStatus: e.target.value })}
+                        displayEmpty
+                        sx={{ borderRadius: 1 }}
+                      >
+                        <MenuItem value="">{t('Label.select')}</MenuItem>
+                      </Select>
+                    </FormControl>
+                  </Stack>
                 </Stack>
-              </Stack>
-            </AccordionDetails>
-          </Accordion>
+              </AccordionDetails>
+            </Accordion>
+          )}
         </Box>
       </DialogContent>
 
