@@ -99,7 +99,8 @@
     "teachers": "المعلمون",
     "main_page": "الصفحة الرئيسية",
     "group_actions": "إجراءات جماعية",
-    "filter_pilgrim_data": "تصفية بيانات الحجاج"
+    "filter_pilgrim_data": "تصفية بيانات الحجاج",
+    "import_pilgrim_data": "استيراد بيانات الحجاج"
   },
   "Label": {
     "language_arabic": "العربية",
@@ -398,7 +399,34 @@
     "shipping_operations": "عمليات الشحن",
     "shipping_tool": "أداة الشحن",
     "shipment_status": "حالة الشحنات",
-    "select": "اختر"
+    "select": "اختر",
+    "drag_file_or_click": "اسحب الملف هنا أو انقر للتحميل",
+    "download_excel_file": "قم بتنزيل الملف لرؤية نموذج مثالي",
+    "download_pilgrims_names_arabic": "تحميل اسماء الحجاج بالعربي",
+    "download_pilgrims_names_english": "تحميل اسماء الحجاج بالانجليزي",
+    "view_import_log": "عرض سجل الاستيراد",
+    "hide_import_log": "إخفاء سجل الاستيراد",
+    "total_records": "إجمالي السجل",
+    "import_statistics_title": "إحصائيات الاستيراد",
+    "import_statistics_subtitle": "تفاصيل البيانات التي سيتم استيرادها",
+    "number_of_rows": "عدد الصفوف",
+    "total_records_stat": "إجمالي السجلات",
+    "added_records": "تمت الإضافة",
+    "updated_records": "محدثة",
+    "accommodation_deleted": "تم حذف من الإسكان",
+    "bus_deleted": "تم حذف من الحافلات",
+    "cancelled_records": "ملغاة",
+    "loading_upload": "جاري التحميل...",
+    "loading_processing": "جاري المعالجة...",
+    "table_name": "الاسم",
+    "table_source": "المصدر",
+    "table_import_date": "تاريخ الاستيراد",
+    "table_created": "المنشئ",
+    "table_updated": "المعدل",
+    "table_removed_from_accommodation": "المحذوف من التسكين",
+    "table_removed_from_buses": "المحذوف من الحافلات",
+    "table_updated_pilgrims": "المحدث من الحجاج",
+    "table_cancelled_pilgrims": "الحجاج الملغيين"
   },
   "Button": {
     "send_request": "إرسال الطلب",
@@ -418,6 +446,9 @@
     "save": "حفظ",
     "delete_tags": "حذف الوسوم",
     "clear": "مسح",
+    "import_from_excel": "إستيراد من اكسل",
+    "download": "تحميل",
+    "import_data": "إستيراد البيانات",
     "filter": "فلتر",
     "clear_fields": "تفريغ الحقول"
   },
@@ -515,7 +546,10 @@
     "accommodation_description": "عرض بيانات توزيع الحجاج على المخيمات لضمان التنظيم والراحة.",
     "gathering_points_description": "تتضمن معلومات عن نوع و نقطة التجمع، لمنطقة حركة الحجاج وضمانهم وصولهم إلى وجهاتهم بسهولة وأمان.",
     "arrival_time_description": "لتحديد حالة وصول الحجاج سواءكان في الموعد، مبكراً أو متأخراً لتسهيل متابعة الرحلات.",
-    "filter_pilgrim_subtitle": "استخدم الحقول التالية للوصول السريع لبيانات الحجاج المطلوبة."
+    "filter_pilgrim_subtitle": "استخدم الحقول التالية للوصول السريع لبيانات الحجاج المطلوبة.",
+    "import_pilgrim_data_description": "استيراد ملفات بيانات الحجاج بسهولة من اكسل. إلى النظام التوافق سريعاً، حملت ملفات منسقة ومطابقة للحقول القياسية حتى تتم العملية بسلاسة دون اخطاء.",
+    "import_statistics_description": "استعراض ملفات بيانات الحجاج بالأضافة منها أو التعديل للنظام التعاقب التحديث.",
+    "import_results_description": "تم اكتشاف السجلات المكررة، نقترح تحديثها بالبيانات الجديدة المُقدّمة."
   },
   "Helper": {
     "drop_or_select": "اسحب أو {browse} الملف هنا",

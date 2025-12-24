@@ -99,7 +99,8 @@
     "teachers": "Teachers",
     "main_page": "Main Page",
     "group_actions": "Group Actions",
-    "filter_pilgrim_data": "Filter Pilgrim Data"
+    "filter_pilgrim_data": "Filter Pilgrim Data",
+    "import_pilgrim_data": "Import Pilgrim Data"
   },
   "Label": {
     "language_arabic": "Arabic",
@@ -399,7 +400,34 @@
     "shipping_operations": "Shipping Operations",
     "shipping_tool": "Shipping Tool",
     "shipment_status": "Shipment Status",
-    "select": "Select"
+    "select": "Select",
+    "drag_file_or_click": "Drag file here or click to upload",
+    "download_excel_file": "Download the file to see an example template",
+    "download_pilgrims_names_arabic": "Download Pilgrim Names (Arabic)",
+    "download_pilgrims_names_english": "Download Pilgrim Names (English)",
+    "view_import_log": "View Import Log",
+    "hide_import_log": "Hide Import Log",
+    "total_records": "Total Records",
+    "import_statistics_title": "Import Statistics",
+    "import_statistics_subtitle": "Details of the data to be imported",
+    "number_of_rows": "Number of Rows",
+    "total_records_stat": "Total Records",
+    "added_records": "Added",
+    "updated_records": "Updated",
+    "accommodation_deleted": "Removed from Accommodation",
+    "bus_deleted": "Removed from Buses",
+    "cancelled_records": "Cancelled",
+    "loading_upload": "Uploading...",
+    "loading_processing": "Processing...",
+    "table_name": "Name",
+    "table_source": "Source",
+    "table_import_date": "Import Date",
+    "table_created": "Created",
+    "table_updated": "Updated",
+    "table_removed_from_accommodation": "Removed from Accommodation",
+    "table_removed_from_buses": "Removed from Buses",
+    "table_updated_pilgrims": "Updated Pilgrims",
+    "table_cancelled_pilgrims": "Cancelled Pilgrims"
   },
   "Button": {
     "send_request": "Send Request",
@@ -419,6 +447,9 @@
     "save": "Save",
     "delete_tags": "Delete Tags",
     "clear": "Clear",
+    "import_from_excel": "Import from Excel",
+    "download": "Download",
+    "import_data": "Import Data",
     "filter": "Filter",
     "clear_fields": "Clear Fields"
   },
@@ -516,7 +547,10 @@
     "accommodation_description": "Display data on pilgrim distribution across camps to ensure organization and comfort.",
     "gathering_points_description": "Includes information about the type and gathering point to track pilgrim movement and ensure their safe and easy arrival to destinations.",
     "arrival_time_description": "To determine the arrival status of pilgrims whether on time, early, or late to facilitate trip tracking.",
-    "filter_pilgrim_subtitle": "Use the following fields for quick access to required pilgrim data."
+    "filter_pilgrim_subtitle": "Use the following fields for quick access to required pilgrim data.",
+    "import_pilgrim_data_description": "Easily import pilgrim data files from Excel into the system. Upload formatted files that match the standard fields for a smooth process without errors.",
+    "import_statistics_description": "Review the statistics of the uploaded data including additions, updates, and deletions before final import.",
+    "import_results_description": "Duplicate records detected. We suggest updating them with the new provided data."
   },
   "Helper": {
     "drop_or_select": "Drop or {browse} file here",

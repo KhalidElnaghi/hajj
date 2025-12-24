@@ -27,6 +27,7 @@ import CustomBreadcrumbs from 'src/components/custom-breadcrumbs/custom-breadcru
 import Iconify from 'src/components/iconify';
 import Image from 'next/image';
 import { BulkActionsDialog } from './components/bulk-actions';
+import { ImportDialog } from './components/import-dialog';
 import FilterDialog from './components/filter-dialog';
 
 // ----------------------------------------------------------------------
@@ -223,6 +224,7 @@ export default function PilgrimsView() {
   const table = useTable();
   const bulkDialog = useDisclosure();
   const filterDialog = useDisclosure();
+  const importDialog = useDisclosure();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [genderFilter, setGenderFilter] = useState<string>('all');
@@ -903,6 +905,7 @@ export default function PilgrimsView() {
             <Stack direction="row" spacing={1.25} alignItems="center">
               <Button
                 variant="outlined"
+                onClick={importDialog.onOpen}
                 startIcon={
                   <Image
                     src="/assets/images/pilgrims/import.svg"
@@ -1007,6 +1010,9 @@ export default function PilgrimsView() {
         onApplyFilters={handleApplyFilters}
         externalFilters={appliedFilters}
       />
+
+      {/* Import Dialog */}
+      <ImportDialog open={importDialog.open} onClose={importDialog.onClose} />
     </Container>
   );
 }
