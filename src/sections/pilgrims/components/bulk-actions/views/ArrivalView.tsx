@@ -1,13 +1,6 @@
 'use client';
 
-import {
-  Box,
-  Button,
-  Stack,
-  ToggleButton,
-  ToggleButtonGroup,
-  Typography,
-} from '@mui/material';
+import { Box, Button, Stack, Typography } from '@mui/material';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 
@@ -26,42 +19,64 @@ export default function ArrivalView({ onBack, onClose, selectedCount }: BulkActi
     <Stack spacing={3} sx={{ p: 1 }}>
       {/* Section Header */}
       <Box>
-        <Typography variant="h6" sx={{ fontWeight: 700, fontSize: 16, textAlign: 'right' }}>
+        <Typography variant="h6" sx={{ fontWeight: 700, fontSize: 16 }}>
           {t('Label.arrival_time')}
         </Typography>
-        <Typography variant="body2" sx={{ color: 'text.secondary', mt: 0.5, fontSize: 13, textAlign: 'right' }}>
+        <Typography variant="body2" sx={{ color: 'text.secondary', mt: 0.5, fontSize: 13 }}>
           {t('Description.arrival_time_description')}
         </Typography>
       </Box>
 
       {/* Arrival Type Toggle */}
-      <Box>
-        <ToggleButtonGroup
-          value={arrivalType}
-          exclusive
-          onChange={(e, value) => value && setArrivalType(value)}
-          fullWidth
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          bgcolor: '#f5f5f5',
+          borderRadius: '50px',
+          p: 0.5,
+          gap: 1,
+          maxWidth: 300,
+        }}
+      >
+        <Button
+          onClick={() => setArrivalType('early')}
           sx={{
-            '& .MuiToggleButton-root': {
-              borderRadius: 1,
-              border: '1px solid #e5e7eb',
-              py: 1.5,
-              fontSize: 14,
-              fontWeight: 500,
-              '&.Mui-selected': {
-                bgcolor: '#0d6efd',
-                color: 'white',
-                borderColor: '#0d6efd',
-                '&:hover': {
-                  bgcolor: '#0b5ed7',
-                },
-              },
+            flex: 1,
+            borderRadius: '50px',
+            textTransform: 'none',
+            fontSize: 14,
+            fontWeight: 500,
+            bgcolor: arrivalType === 'early' ? '#0d6efd' : 'transparent',
+            color: arrivalType === 'early' ? 'white' : '#5D6679',
+            border: 'none',
+            '&:hover': {
+              bgcolor: arrivalType === 'early' ? '#0b5ed7' : 'rgba(0, 0, 0, 0.04)',
+              border: 'none',
             },
           }}
         >
-          <ToggleButton value="early">{t('Label.arrival_early')}</ToggleButton>
-          <ToggleButton value="late">{t('Label.arrival_late')}</ToggleButton>
-        </ToggleButtonGroup>
+          {t('Label.arrival_early')}
+        </Button>
+        <Button
+          onClick={() => setArrivalType('late')}
+          sx={{
+            flex: 1,
+            borderRadius: '50px',
+            textTransform: 'none',
+            fontSize: 14,
+            fontWeight: 500,
+            bgcolor: arrivalType === 'late' ? '#0d6efd' : 'transparent',
+            color: arrivalType === 'late' ? 'white' : '#5D6679',
+            border: 'none',
+            '&:hover': {
+              bgcolor: arrivalType === 'late' ? '#0b5ed7' : 'rgba(0, 0, 0, 0.04)',
+              border: 'none',
+            },
+          }}
+        >
+          {t('Label.arrival_late')}
+        </Button>
       </Box>
 
       {/* Action Buttons */}
@@ -100,4 +115,3 @@ export default function ArrivalView({ onBack, onClose, selectedCount }: BulkActi
     </Stack>
   );
 }
-
