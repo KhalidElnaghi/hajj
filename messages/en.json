@@ -98,7 +98,8 @@
     "students": "Students",
     "teachers": "Teachers",
     "main_page": "Main Page",
-    "group_actions": "Group Actions"
+    "group_actions": "Group Actions",
+    "filter_pilgrim_data": "Filter Pilgrim Data"
   },
   "Label": {
     "language_arabic": "Arabic",
@@ -327,7 +328,65 @@
     "link_supervisors": "Link Supervisors",
     "arrival_time": "Arrival Time",
     "shipping_management": "Shipping Management",
-    "send_receipt_notification": "Send Receipt Notification"
+    "send_receipt_notification": "Send Receipt Notification",
+    "quick_templates": "Quick Templates",
+    "total_pilgrims_today": "Total Pilgrims Today",
+    "sms_template_welcome": "Welcome Message",
+    "sms_template_instructions": "Instructions Messages",
+    "sms_template_arrival_days": "Days Before Arrival",
+    "sms_template_gathering_point": "Gathering Point",
+    "sms_template_housing_description": "Housing Description Message",
+    "sms_template_emergency": "Emergency Message",
+    "sms_template_daily_program": "Daily Program Message",
+    "sms_template_new_phase_reminder": "New Phase Reminder",
+    "sms_template_greetings": "Greetings Messages",
+    "today_tag_arrival": "Arrival to Jeddah",
+    "today_tag_hotel_checkin": "Hotel Check-in",
+    "today_tag_hotel_stay": "Stay in Jeddah",
+    "today_tag_departure": "Departure",
+    "today_tag_holy_sites": "Transfer to Holy Sites",
+    "housing_location_in_rituals": "Housing Location in Rituals",
+    "location_mina": "Mina",
+    "location_arafat": "Arafat",
+    "location_muzdalifah": "Muzdalifah",
+    "trip_return": "Return",
+    "trip_departure": "Departure",
+    "city_jeddah": "Jeddah",
+    "city_riyadh": "Riyadh",
+    "city_dammam": "Dammam",
+    "city_makkah": "Makkah",
+    "city_madinah": "Madinah",
+    "nationality_saudi": "Saudi",
+    "nationality_egypt": "Egypt",
+    "nationality_pakistan": "Pakistan",
+    "nationality_indonesia": "Indonesia",
+    "arrival_early": "Early",
+    "arrival_late": "Late",
+    "tags": "Tags",
+    "tag_near_bathroom": "Near Bathroom",
+    "tag_tent_entrance": "Tent Entrance",
+    "tag_tent_middle": "Middle of Tent",
+    "tag_near_restaurant": "Near Restaurant",
+    "tag_fasil_entrance": "Fasil Entrance",
+    "tag_near_medical_center": "Near Medical Center",
+    "personal_information": "Personal Information",
+    "package_name": "Package Name",
+    "early_late": "Early / Late",
+    "early": "Early",
+    "late": "Late",
+    "booking_status": "Booking Status",
+    "room_group_number": "Room / Group Number",
+    "camp_status": "Camp Status",
+    "transportation_data": "Transportation Data",
+    "health_status_data": "Health Status Data",
+    "general_health_status": "General Health Status",
+    "supervision_organization": "Supervision and Organization",
+    "supervisors": "Supervisors",
+    "import_file": "Import File",
+    "shipping_operations": "Shipping Operations",
+    "shipping_tool": "Shipping Tool",
+    "shipment_status": "Shipment Status",
+    "select": "Select"
   },
   "Button": {
     "send_request": "Send Request",
@@ -342,7 +401,12 @@
     "delete": "Delete",
     "back": "Back",
     "previous": "Previous",
-    "next": "Next"
+    "next": "Next",
+    "send": "Send",
+    "save": "Save",
+    "delete_tags": "Delete Tags",
+    "filter": "Filter",
+    "clear_fields": "Clear Fields"
   },
   "Dialog": {},
   "Message": {
@@ -404,7 +468,15 @@
       "booking_session_cancelled": "Booking session cancelled successfully"
     }
   },
-  "Placeholder": {},
+  "Placeholder": {
+    "write_message_text": "Write message text...",
+    "search_or_add_new_tag": "Search or add new tag",
+    "select_location": "Select Location",
+    "select_gathering_point": "Select Gathering Point",
+    "select_destination": "Select Destination",
+    "select_nationality": "Select Nationality",
+    "search_by_nationality_gathering": "Search by nationality, gathering point..."
+  },
   "Description": {
     "pilgrims_management": "This is a placeholder page for Pilgrims Management. Here you can manage all pilgrims information, registrations, and related data.",
     "supervisors_management": "This is a placeholder page for Supervisors Management. Here you can manage all supervisors, their assignments, and responsibilities.",
@@ -422,10 +494,18 @@
     "nationalities": "Manage supported nationalities and their activation state.",
     "students": "Manage students and their details.",
     "teachers": "Manage teachers and their details.",
-    "group_actions_description": "Includes multiple and effective operations and guidance for pilgrims, including messages, notifications, and delivery services for belongings and shipments to easily organize the trip"
+    "group_actions_description": "Includes multiple and effective operations and guidance for pilgrims, including messages, notifications, and delivery services for belongings and shipments to easily organize the trip",
+    "sms_messages_description": "This page enables sending comprehensive SMS messages to pilgrim teams with updates on arrangements, operations, and responses during the journey.",
+    "today_description": "Facilitate quick access tracking for pilgrim group information related to ongoing operations.",
+    "tags_description": "To help you quickly access pilgrim groups associated with the same classification.",
+    "accommodation_description": "Display data on pilgrim distribution across camps to ensure organization and comfort.",
+    "gathering_points_description": "Includes information about the type and gathering point to track pilgrim movement and ensure their safe and easy arrival to destinations.",
+    "arrival_time_description": "To determine the arrival status of pilgrims whether on time, early, or late to facilitate trip tracking.",
+    "filter_pilgrim_subtitle": "Use the following fields for quick access to required pilgrim data."
   },
   "Helper": {
-    "drop_or_select": "Drop or {browse} file here"
+    "drop_or_select": "Drop or {browse} file here",
+    "search_add_new_word": "You can search and add a new word"
   },
   "Action": {
     "remove_all": "Remove all",

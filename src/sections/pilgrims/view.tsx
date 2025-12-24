@@ -7,11 +7,7 @@ import {
   Button,
   Card,
   Container,
-  Dialog,
-  DialogContent,
-  DialogTitle,
   Divider,
-  IconButton,
   InputAdornment,
   Menu,
   MenuItem,
@@ -30,6 +26,8 @@ import { headCellType, Action } from 'src/components/custom-shared-table/shared-
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs/custom-breadcrumbs';
 import Iconify from 'src/components/iconify';
 import Image from 'next/image';
+import { BulkActionsDialog } from './components/bulk-actions';
+import FilterDialog from './components/filter-dialog';
 
 // ----------------------------------------------------------------------
 
@@ -224,11 +222,15 @@ export default function PilgrimsView() {
   const t = useTranslations();
   const table = useTable();
   const bulkDialog = useDisclosure();
+  const filterDialog = useDisclosure();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [genderFilter, setGenderFilter] = useState<string>('all');
   const [filterAnchorEl, setFilterAnchorEl] = useState<null | HTMLElement>(null);
   const filterMenuOpen = Boolean(filterAnchorEl);
+
+  // Applied filters from dialog
+  const [appliedFilters, setAppliedFilters] = useState<any>({});
 
   const filterOptions = [
     { key: 'gathering_point_type', label: t('Label.gathering_point_type') },
@@ -255,7 +257,104 @@ export default function PilgrimsView() {
     );
   };
 
-  const activeFilterCount = selectedFilters.length;
+  const handleApplyFilters = (filters: any) => {
+    setAppliedFilters(filters);
+  };
+
+  const handleClearFilterSection = (section: string) => {
+    const updatedFilters = { ...appliedFilters };
+
+    switch (section) {
+      case 'personal':
+        updatedFilters.nationality = '';
+        updatedFilters.city = '';
+        updatedFilters.package = '';
+        updatedFilters.badge = '';
+        updatedFilters.gender = '';
+        updatedFilters.marriedLate = '';
+        updatedFilters.bookingStatus = '';
+        break;
+      case 'gathering':
+        updatedFilters.gatheringPointType = '';
+        updatedFilters.gatheringPoint = '';
+        updatedFilters.destination = '';
+        break;
+      case 'accommodation':
+        updatedFilters.roomNumber = '';
+        updatedFilters.accommodationDestination = '';
+        updatedFilters.campStatus = '';
+        break;
+      case 'transportation':
+        updatedFilters.busNumber = '';
+        break;
+      case 'health':
+        updatedFilters.healthStatus = '';
+        break;
+      case 'supervision':
+        updatedFilters.supervisors = [];
+        updatedFilters.importFile = '';
+        break;
+      case 'shipping':
+        updatedFilters.shippingManagement = '';
+        updatedFilters.shipmentStatus = '';
+        break;
+    }
+
+    setAppliedFilters(updatedFilters);
+  };
+
+  const getActiveFilterSections = () => {
+    const sections = [];
+
+    if (
+      appliedFilters.nationality ||
+      appliedFilters.city ||
+      appliedFilters.package ||
+      appliedFilters.badge ||
+      appliedFilters.gender ||
+      appliedFilters.marriedLate ||
+      appliedFilters.bookingStatus
+    ) {
+      sections.push({ key: 'personal', label: t('Label.personal_information') });
+    }
+
+    if (
+      appliedFilters.gatheringPointType ||
+      appliedFilters.gatheringPoint ||
+      appliedFilters.destination
+    ) {
+      sections.push({ key: 'gathering', label: t('Label.gathering_point') });
+    }
+
+    if (
+      appliedFilters.roomNumber ||
+      appliedFilters.accommodationDestination ||
+      appliedFilters.campStatus
+    ) {
+      sections.push({ key: 'accommodation', label: t('Label.accommodation') });
+    }
+
+    if (appliedFilters.busNumber) {
+      sections.push({ key: 'transportation', label: t('Label.transportation_data') });
+    }
+
+    if (appliedFilters.healthStatus) {
+      sections.push({ key: 'health', label: t('Label.health_status_data') });
+    }
+
+    if (appliedFilters.supervisors?.length > 0 || appliedFilters.importFile) {
+      sections.push({ key: 'supervision', label: t('Label.supervision_organization') });
+    }
+
+    if (appliedFilters.shippingManagement || appliedFilters.shipmentStatus) {
+      sections.push({ key: 'shipping', label: t('Label.shipping_operations') });
+    }
+
+    return sections;
+  };
+
+  const activeFilterSections = getActiveFilterSections();
+  const activeFilterCount = activeFilterSections.length;
 
   const tableHead: headCellType[] = [
     { id: 'name', label: 'Label.name' },
@@ -294,77 +393,6 @@ export default function PilgrimsView() {
       onClick: (row) => console.log('delete pilgrim', row.id),
     },
   ];
-
-  // Bulk dialog options based on the image
-  const bulkDialogOptions = [
-    {
-      key: 'send-message',
-      label: t('Label.send_emergency_message'),
-      icon: '/assets/images/pilgrims/bulk-action/sms.svg',
-      action: () => console.log('Send message to pilgrims'),
-    },
-    {
-      key: 'today',
-      label: t('Label.today'),
-      icon: '/assets/images/pilgrims/bulk-action/tags.svg',
-      action: () => console.log('Today actions'),
-    },
-    {
-      key: 'accommodation-needs',
-      label: t('Label.accommodation_needs_in_rituals'),
-      icon: '/assets/images/pilgrims/bulk-action/accommodation.svg',
-      action: () => console.log('Accommodation needs'),
-    },
-    {
-      key: 'transportation',
-      label: t('Label.transportation_vehicles'),
-      icon: '/assets/images/pilgrims/bulk-action/transport.svg',
-      action: () => console.log('Transportation'),
-    },
-    {
-      key: 'camp',
-      label: t('Label.camp'),
-      icon: '/assets/images/pilgrims/bulk-action/tents.svg',
-      action: () => console.log('Camp'),
-    },
-    {
-      key: 'gathering-points',
-      label: t('Label.gathering_points'),
-      icon: '/assets/images/pilgrims/bulk-action/location.svg',
-      action: () => console.log('Gathering points'),
-    },
-    {
-      key: 'link-supervisors',
-      label: t('Label.link_supervisors'),
-      icon: '/assets/images/pilgrims/bulk-action/link.svg',
-      action: () => console.log('Link supervisors'),
-    },
-    {
-      key: 'arrival-time',
-      label: t('Label.arrival_time'),
-      icon: '/assets/images/pilgrims/bulk-action/time.svg',
-      action: () => console.log('Arrival time'),
-    },
-    {
-      key: 'shipping-management',
-      label: t('Label.shipping_management'),
-      icon: '/assets/images/pilgrims/bulk-action/shipping.svg',
-      action: () => console.log('Shipping management'),
-    },
-    {
-      key: 'send-receipt-notification',
-      label: t('Label.send_receipt_notification'),
-      icon: '/assets/images/pilgrims/bulk-action/receive.svg',
-      action: () => console.log('Send receipt notification'),
-    },
-  ];
-
-  const handleDialogOptionClick = (option: (typeof bulkDialogOptions)[0]) => {
-    option.action();
-    bulkDialog.onClose();
-    // You can add navigation or state changes here based on the option
-    // For example: router.push(`/pilgrims/${option.key}`);
-  };
 
   const registrationStatusColors: Record<string, { bg: string; color: string; label: string }> = {
     completed: { bg: '#E8F5E9', color: '#2E7D32', label: 'مكتمل' },
@@ -670,26 +698,26 @@ export default function PilgrimsView() {
                   ),
                 }}
               />
-              {/* Absolute Filter Button with Dropdown */}
-              <Box>
-                <Button
-                  variant="outlined"
-                  onClick={handleFilterClick}
-                  sx={{
-                    borderRadius: 1,
-                    height: 44,
-                    paddingInlineStart: 2,
-                    paddingInlineEnd: 5,
-                    minWidth: 200,
-                    borderColor: '#e0e0e0',
-                    color: '#333',
-                    bgcolor: '#fff',
-                    position: 'relative',
-                    '&:hover': { borderColor: '#bdbdbd', bgcolor: '#fafafa' },
-                  }}
-                >
-                  {/* Badge at the end */}
-                  {activeFilterCount > 0 && (
+              {/* Absolute Filter Button with Dropdown - Only show if filters are applied */}
+              {activeFilterCount > 0 && (
+                <Box>
+                  <Button
+                    variant="outlined"
+                    onClick={handleFilterClick}
+                    sx={{
+                      borderRadius: 1,
+                      height: 44,
+                      paddingInlineStart: 2,
+                      paddingInlineEnd: 5,
+                      minWidth: 200,
+                      borderColor: '#e0e0e0',
+                      color: '#333',
+                      bgcolor: '#fff',
+                      position: 'relative',
+                      '&:hover': { borderColor: '#bdbdbd', bgcolor: '#fafafa' },
+                    }}
+                  >
+                    {/* Badge at the end */}
                     <Box
                       component="span"
                       sx={{
@@ -711,48 +739,45 @@ export default function PilgrimsView() {
                     >
                       {activeFilterCount}
                     </Box>
-                  )}
 
-                  <Stack
-                    direction="row"
-                    alignItems="center"
-                    spacing={0.75}
-                    sx={{ marginInlineEnd: 3 }}
+                    <Stack
+                      direction="row"
+                      alignItems="center"
+                      spacing={0.75}
+                      sx={{ marginInlineEnd: 3 }}
+                    >
+                      <Iconify icon="mdi:chevron-down" width={20} sx={{ color: '#333' }} />
+                      <Box component="span" sx={{ fontWeight: 600, fontSize: 14 }}>
+                        {t('Label.absolute_filter')}
+                      </Box>
+                    </Stack>
+                  </Button>
+
+                  <Menu
+                    anchorEl={filterAnchorEl}
+                    open={filterMenuOpen}
+                    onClose={handleFilterClose}
+                    anchorOrigin={{
+                      vertical: 'bottom',
+                      horizontal: 'right',
+                    }}
+                    transformOrigin={{
+                      vertical: 'top',
+                      horizontal: 'right',
+                    }}
+                    PaperProps={{
+                      sx: {
+                        mt: 1,
+                        borderRadius: 1,
+                        minWidth: 250,
+                        boxShadow: '0px 8px 24px rgba(0, 0, 0, 0.12)',
+                      },
+                    }}
                   >
-                    <Iconify icon="mdi:chevron-down" width={20} sx={{ color: '#333' }} />
-                    <Box component="span" sx={{ fontWeight: 600, fontSize: 14 }}>
-                      {t('Label.absolute_filter')}
-                    </Box>
-                  </Stack>
-                </Button>
-
-                <Menu
-                  anchorEl={filterAnchorEl}
-                  open={filterMenuOpen}
-                  onClose={handleFilterClose}
-                  anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'right',
-                  }}
-                  transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
-                  }}
-                  PaperProps={{
-                    sx: {
-                      mt: 1,
-                      borderRadius: 1,
-                      minWidth: 200,
-                      boxShadow: '0px 8px 24px rgba(0, 0, 0, 0.12)',
-                    },
-                  }}
-                >
-                  {filterOptions.map((option) => {
-                    const isSelected = selectedFilters.includes(option.key);
-                    return (
+                    {activeFilterSections.map((section) => (
                       <MenuItem
-                        key={option.key}
-                        onClick={() => handleToggleFilter(option.key)}
+                        key={section.key}
+                        onClick={() => handleClearFilterSection(section.key)}
                         sx={{
                           py: 1.5,
                           px: 2,
@@ -765,8 +790,8 @@ export default function PilgrimsView() {
                         }}
                       >
                         <Box component="span" sx={{ color: '#333', fontWeight: 500 }}>
-                          {option.label}
-                        </Box>{' '}
+                          {section.label}
+                        </Box>
                         <Box
                           component="span"
                           sx={{
@@ -775,15 +800,13 @@ export default function PilgrimsView() {
                             alignItems: 'center',
                           }}
                         >
-                          {isSelected && (
-                            <Iconify icon="mdi:close" width={18} sx={{ color: '#999' }} />
-                          )}
+                          <Iconify icon="mdi:close" width={18} sx={{ color: '#999' }} />
                         </Box>
                       </MenuItem>
-                    );
-                  })}
-                </Menu>
-              </Box>
+                    ))}
+                  </Menu>
+                </Box>
+              )}
               {/* Custom Bulk Actions Button that opens dialog */}
               <Button
                 variant={table.selected.length > 0 ? 'contained' : 'outlined'}
@@ -923,6 +946,7 @@ export default function PilgrimsView() {
 
               <Button
                 variant="outlined"
+                onClick={filterDialog.onOpen}
                 sx={{
                   minWidth: 'auto',
                   width: 44,
@@ -952,7 +976,7 @@ export default function PilgrimsView() {
             actions={actions}
             customRender={customRender}
             disablePagination={false}
-            order={false}
+            order={true}
             enableSelection
             table={table}
           />
@@ -960,80 +984,19 @@ export default function PilgrimsView() {
       </Box>
 
       {/* Bulk Actions Dialog */}
-      <Dialog
+      <BulkActionsDialog
         open={bulkDialog.open}
         onClose={bulkDialog.onClose}
-        maxWidth="sm"
-        fullWidth
-        PaperProps={{
-          sx: {
-            borderRadius: 3,
-            p: 2,
-          },
-        }}
-      >
-        <DialogTitle sx={{ p: 1, mb: 2 }}>
-          <Stack direction="row" alignItems="flex-start" justifyContent="space-between" spacing={2}>
-            <Box sx={{ flex: 1 }}>
-              <Typography variant="h6" sx={{ fontWeight: 700, fontSize: 18 }}>
-                {t('Title.group_actions')}
-              </Typography>
-              <Typography variant="body2" sx={{ color: 'text.secondary', mt: 1, fontSize: 13 }}>
-                {t('Description.group_actions_description')}
-              </Typography>
-            </Box>
-            <IconButton
-              onClick={bulkDialog.onClose}
-              sx={{
-                color: 'text.secondary',
-                mt: -1,
-                mr: -1,
-                border: '1px solid #e5e7eb',
+        selectedCount={table.selected.length}
+      />
 
-                p: 0.5,
-                '&:hover': {
-                  bgcolor: '#f9fafb',
-                  borderColor: '#d1d5db',
-                },
-              }}
-            >
-              <Iconify icon="mdi:close" width={24} />
-            </IconButton>
-          </Stack>
-        </DialogTitle>
-        <Divider sx={{ my: 2 }} />
-        <DialogContent sx={{ p: 0.5 }}>
-          <Stack spacing={1.5}>
-            {/* Other Options */}
-            {bulkDialogOptions.map((option) => (
-              <Button
-                key={option.key}
-                fullWidth
-                variant="outlined"
-                onClick={() => handleDialogOptionClick(option)}
-                sx={{
-                  bgcolor: '#fff',
-                  borderColor: '#e5e7eb',
-                  color: '#1f2937',
-                  borderRadius: 1,
-                  py: 0.5,
-                  fontSize: 14,
-                  fontWeight: 500,
-                 justifyContent: 'flex-start',
-                  gap: 1,
-                  '&:hover': {
-                    bgcolor: '#f3f7ff',
-                    borderColor: '#0d6efd',
-                  },
-                }}
-              >
-                <Image src={option.icon} alt={option.label} width={20} height={20} />
-                <Box component="span">{option.label}</Box>
-              </Button>
-            ))}
-          </Stack>
-        </DialogContent>
-      </Dialog>
+      {/* Filter Dialog */}
+      <FilterDialog
+        open={filterDialog.open}
+        onClose={filterDialog.onClose}
+        onApplyFilters={handleApplyFilters}
+        externalFilters={appliedFilters}
+      />
     </Container>
   );
 }
