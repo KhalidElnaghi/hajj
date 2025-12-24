@@ -808,89 +808,96 @@ export default function PilgrimsView() {
                 </Box>
               )}
               {/* Custom Bulk Actions Button that opens dialog */}
-              <Button
-                variant={table.selected.length > 0 ? 'contained' : 'outlined'}
-                onClick={bulkDialog.onOpen}
-                disabled={table.selected.length === 0}
-                sx={{
-                  bgcolor:
-                    table.selected.length === 0
-                      ? '#fff'
-                      : table.selected.length > 0
-                        ? '#0b0b0b'
-                        : '#fff',
-                  color:
-                    table.selected.length === 0
-                      ? '#333'
-                      : table.selected.length > 0
-                        ? '#fff'
-                        : '#333',
-                  borderRadius: 1,
-                  height: 44,
-                  paddingInlineStart: 2,
-                  paddingInlineEnd: 5,
-                  minWidth: 200,
-                  position: 'relative',
-                  boxShadow: 'none',
-                  border:
-                    table.selected.length === 0 || table.selected.length === 0
-                      ? '1px solid #dce5ef'
-                      : 'none',
-                  '&:hover': {
+              {table.selected.length > 0 && (
+                <Button
+                  variant={table.selected.length > 0 ? 'contained' : 'outlined'}
+                  onClick={bulkDialog.onOpen}
+                  disabled={table.selected.length === 0}
+                  sx={{
                     bgcolor:
                       table.selected.length === 0
                         ? '#fff'
                         : table.selected.length > 0
-                          ? '#1c1c1c'
+                          ? '#0b0b0b'
                           : '#fff',
+                    color:
+                      table.selected.length === 0
+                        ? '#333'
+                        : table.selected.length > 0
+                          ? '#fff'
+                          : '#333',
+                    borderRadius: 1,
+                    height: 44,
+                    paddingInlineStart: 2,
+                    paddingInlineEnd: 5,
+                    minWidth: 200,
+                    position: 'relative',
                     boxShadow: 'none',
-                  },
-                  '&.Mui-disabled': {
-                    bgcolor: '#fff !important',
-                    color: '#333 !important',
-                    border: '1px solid #dce5ef !important',
-                    opacity: 1,
-                  },
-                }}
-              >
-                <Box
-                  component="span"
-                  sx={{
-                    position: 'absolute',
-                    top: '50%',
-                    insetInlineEnd: 12,
-                    transform: 'translateY(-50%)',
-                    bgcolor: '#dc3545',
-                    color: 'white',
-                    borderRadius: '50%',
-                    width: 24,
-                    height: 24,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: 12,
-                    fontWeight: 700,
+                    border:
+                      table.selected.length === 0 || table.selected.length === 0
+                        ? '1px solid #dce5ef'
+                        : 'none',
+                    '&:hover': {
+                      bgcolor:
+                        table.selected.length === 0
+                          ? '#fff'
+                          : table.selected.length > 0
+                            ? '#1c1c1c'
+                            : '#fff',
+                      boxShadow: 'none',
+                    },
+                    '&.Mui-disabled': {
+                      bgcolor: '#fff !important',
+                      color: '#333 !important',
+                      border: '1px solid #dce5ef !important',
+                      opacity: 1,
+                    },
                   }}
                 >
-                  {table.selected.length}
-                </Box>
-
-                <Stack direction="row" alignItems="center" spacing={1} sx={{ marginInlineEnd: 3 }}>
-                  <Image
-                    src={
-                      table.selected.length > 0
-                        ? '/assets/images/pilgrims/bulk-actions.svg'
-                        : '/assets/images/pilgrims/bulk-actions-dark.svg'
-                    }
-                    alt="bulk actions"
-                    width={20}
-                    height={20}
-                  />
-                  <Box component="span" sx={{ fontWeight: 600, fontSize: 14 }}>
-                    {t('Label.bulk_actions')}
+                  <Box
+                    component="span"
+                    sx={{
+                      position: 'absolute',
+                      top: '50%',
+                      insetInlineEnd: 12,
+                      transform: 'translateY(-50%)',
+                      bgcolor: '#dc3545',
+                      color: 'white',
+                      borderRadius: '50%',
+                      width: 24,
+                      height: 24,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: 12,
+                      fontWeight: 700,
+                    }}
+                  >
+                    {table.selected.length}
                   </Box>
-                </Stack>
-              </Button>
+
+                  <Stack
+                    direction="row"
+                    alignItems="center"
+                    spacing={1}
+                    sx={{ marginInlineEnd: 3 }}
+                  >
+                    <Image
+                      src={
+                        table.selected.length > 0
+                          ? '/assets/images/pilgrims/bulk-actions.svg'
+                          : '/assets/images/pilgrims/bulk-actions-dark.svg'
+                      }
+                      alt="bulk actions"
+                      width={20}
+                      height={20}
+                    />
+                    <Box component="span" sx={{ fontWeight: 600, fontSize: 14 }}>
+                      {t('Label.bulk_actions')}
+                    </Box>
+                  </Stack>
+                </Button>
+              )}
             </Stack>
 
             <Stack direction="row" spacing={1.25} alignItems="center">

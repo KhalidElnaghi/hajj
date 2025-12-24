@@ -24,6 +24,7 @@ type Props<T> = {
   inactiveIconSrc?: string;
   onAfterAction?: () => void;
   disableWhenEmpty?: boolean;
+  hideWhenEmpty?: boolean;
   buttonProps?: ButtonProps;
 };
 
@@ -40,6 +41,7 @@ export default function TableBulkActions<T>({
   inactiveIconSrc = DEFAULT_ICON_INACTIVE,
   onAfterAction,
   disableWhenEmpty = true,
+  hideWhenEmpty = false,
   buttonProps,
 }: Props<T>) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -49,6 +51,11 @@ export default function TableBulkActions<T>({
   const isDisabled = disableOpen || actions.length === 0 || buttonProps?.disabled;
   const isActive = selectedCount > 0 && !buttonProps?.disabled && actions.length > 0;
   const effectiveVariant = buttonProps?.variant ?? (isActive ? 'contained' : 'outlined');
+
+  // Hide the button if hideWhenEmpty is true and no items are selected
+  if (hideWhenEmpty && selectedCount === 0) {
+    return null;
+  }
 
   const actionIds = useMemo(() => selectedIds.map((id) => String(id)), [selectedIds]);
   const renderedIcon = isActive ? iconSrc : (inactiveIconSrc ?? iconSrc);
