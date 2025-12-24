@@ -292,6 +292,7 @@
     "housing": "التسكين",
     "bus": "الحافلة",
     "phone": "رقم الجوال",
+    "today": "اليوم",
     "additional_recipients": "إضافة حجاج آخرين",
     "today_tag_arrival": "الوصول إلى جدة",
     "today_tag_hotel_checkin": "تسجيل الدخول",
@@ -299,7 +300,8 @@
     "today_tag_departure": "المغادرة",
     "today_tag_holy_sites": "الانتقال إلى المشاعر",
     "download_pilgrims_names_arabic": "تحميل اسماء الحجاج بالعربي",
-    "download_pilgrims_names_english": "تحميل اسماء الحجاج بالانجليزي"
+    "download_pilgrims_names_english": "تحميل اسماء الحجاج بالانجليزي",
+    "pilgrims_management": "إدارة الحجاج"
   },
   "Button": {
     "send_request": "إرسال الطلب",
@@ -453,6 +455,7 @@
     },
     "Label": {
       "search": "ابحث عن ما تريد...",
+      "breadcrumb_home": "الصفحة الرئيسية",
       "absolute_filter": "التصفية المطلقة",
       "accommodation": "السكن",
       "accommodation_capacity": "المسكنين",

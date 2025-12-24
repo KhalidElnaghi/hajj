@@ -455,6 +455,7 @@
     },
     "Label": {
       "search": "Search about what you want...",
+      "breadcrumb_home": "Home",
       "absolute_filter": "Absolute Filter",
       "accommodation": "Accommodation",
       "accommodation_capacity": "Accommodation",
@@ -584,7 +585,8 @@
       "updated_records": "Updated",
       "upload_file": "Upload File",
       "view": "View",
-      "view_import_log": "View Import Log"
+      "view_import_log": "View Import Log",
+      "pilgrims_management": "Pilgrims Management"
     },
     "Button": {
       "add": "Add",
