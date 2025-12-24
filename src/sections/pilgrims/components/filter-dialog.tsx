@@ -320,6 +320,7 @@ export default function FilterDialog({
                 px: 0,
                 minHeight: 56,
                 '& .MuiAccordionSummary-content': { my: 1.5, mx: 3 },
+                '& .MuiAccordionSummary-content.Mui-expanded': { my: 1.5, mx: 3 },
                 '& .MuiAccordionSummary-expandIconWrapper': { mr: 3 },
                 bgcolor: 'transparent',
                 position: 'relative',
@@ -588,6 +589,7 @@ export default function FilterDialog({
                 px: 0,
                 minHeight: 56,
                 '& .MuiAccordionSummary-content': { my: 1.5, mx: 3 },
+                '& .MuiAccordionSummary-content.Mui-expanded': { my: 1.5, mx: 3 },
                 '& .MuiAccordionSummary-expandIconWrapper': { mr: 3 },
                 bgcolor: 'transparent',
                 position: 'relative',
@@ -723,6 +725,7 @@ export default function FilterDialog({
                 px: 0,
                 minHeight: 56,
                 '& .MuiAccordionSummary-content': { my: 1.5, mx: 3 },
+                '& .MuiAccordionSummary-content.Mui-expanded': { my: 1.5, mx: 3 },
                 '& .MuiAccordionSummary-expandIconWrapper': { mr: 3 },
                 bgcolor: 'transparent',
                 position: 'relative',
@@ -853,6 +856,7 @@ export default function FilterDialog({
                 px: 0,
                 minHeight: 56,
                 '& .MuiAccordionSummary-content': { my: 1.5, mx: 3 },
+                '& .MuiAccordionSummary-content.Mui-expanded': { my: 1.5, mx: 3 },
                 '& .MuiAccordionSummary-expandIconWrapper': { mr: 3 },
                 bgcolor: 'transparent',
                 position: 'relative',
@@ -937,6 +941,7 @@ export default function FilterDialog({
                 px: 0,
                 minHeight: 56,
                 '& .MuiAccordionSummary-content': { my: 1.5, mx: 3 },
+                '& .MuiAccordionSummary-content.Mui-expanded': { my: 1.5, mx: 3 },
                 '& .MuiAccordionSummary-expandIconWrapper': { mr: 3 },
                 bgcolor: 'transparent',
                 position: 'relative',
@@ -1020,6 +1025,7 @@ export default function FilterDialog({
                 px: 0,
                 minHeight: 56,
                 '& .MuiAccordionSummary-content': { my: 1.5, mx: 3 },
+                '& .MuiAccordionSummary-content.Mui-expanded': { my: 1.5, mx: 3 },
                 '& .MuiAccordionSummary-expandIconWrapper': { mr: 3 },
                 bgcolor: 'transparent',
                 position: 'relative',
@@ -1157,6 +1163,7 @@ export default function FilterDialog({
                 px: 0,
                 minHeight: 56,
                 '& .MuiAccordionSummary-content': { my: 1.5, mx: 3 },
+                '& .MuiAccordionSummary-content.Mui-expanded': { my: 1.5, mx: 3 },
                 '& .MuiAccordionSummary-expandIconWrapper': { mr: 3 },
                 bgcolor: 'transparent',
                 position: 'relative',
@@ -1260,7 +1267,7 @@ export default function FilterDialog({
           sx={{
             borderRadius: 1,
             px: 4,
-            py: .75,
+            py: 0.75,
             bgcolor: '#0d6efd',
             fontWeight: 600,
             '&:hover': {
@@ -1276,7 +1283,7 @@ export default function FilterDialog({
           sx={{
             borderRadius: 1,
             px: 4,
-            py: .75,
+            py: 0.75,
             borderColor: '#e0e0e0',
             color: '#64748B',
             '&:hover': {
@@ -1293,7 +1300,7 @@ export default function FilterDialog({
           sx={{
             borderRadius: 1,
             px: 4,
-            py: .75,
+            py: 0.75,
             color: '#EF4444',
             fontWeight: 600,
             '&:hover': {
