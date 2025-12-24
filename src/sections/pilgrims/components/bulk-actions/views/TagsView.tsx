@@ -1,16 +1,7 @@
 'use client';
 
-import {
-  Autocomplete,
-  Box,
-  Button,
-  Chip,
-  InputAdornment,
-  Stack,
-  TextField,
-  Typography,
-  createFilterOptions,
-} from '@mui/material';
+import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete';
+import { Box, Button, Chip, InputAdornment, Stack, TextField, Typography } from '@mui/material';
 import { useTranslations } from 'next-intl';
 import { useState, useMemo } from 'react';
 
@@ -24,7 +15,12 @@ interface TagOption {
 
 const filter = createFilterOptions<TagOption>();
 
-export default function TagsView({ onBack, onClose, selectedCount, onClearSelection }: BulkActionViewProps) {
+export default function TagsView({
+  onBack,
+  onClose,
+  selectedCount,
+  onClearSelection,
+}: BulkActionViewProps) {
   const t = useTranslations();
   const [inputValue, setInputValue] = useState('');
   const [selectedTag, setSelectedTag] = useState<TagOption | null>(null);
