@@ -18,7 +18,6 @@ import { useResponsive } from 'src/hooks/use-responsive';
 import { useEventListener } from 'src/hooks/use-event-listener';
 
 import Label from 'src/components/label';
-import Iconify from 'src/components/iconify';
 import Scrollbar from 'src/components/scrollbar';
 import SearchNotFound from 'src/components/search-not-found';
 
@@ -109,7 +108,12 @@ function Searchbar() {
   const renderButton = (
     <Stack direction="row" alignItems="center">
       <IconButton onClick={search.onTrue}>
-        <Iconify icon="eva:search-fill" />
+        <Box
+          component="img"
+          src="/assets/images/pilgrims/search.svg"
+          alt="search"
+          sx={{ width: 20, height: 20 }}
+        />
       </IconButton>
 
       {lgUp && <Label sx={{ px: 0.75, fontSize: 12, color: 'text.secondary' }}>⌘K</Label>}
@@ -150,7 +154,12 @@ function Searchbar() {
             onChange={handleSearch}
             startAdornment={
               <InputAdornment position="start">
-                <Iconify icon="eva:search-fill" width={24} sx={{ color: 'text.disabled' }} />
+                <Box
+                  component="img"
+                  src="/assets/images/pilgrims/search.svg"
+                  alt="search"
+                  sx={{ width: 24, height: 24 }}
+                />
               </InputAdornment>
             }
             endAdornment={<Label sx={{ letterSpacing: 1, color: 'text.secondary' }}>esc</Label>}

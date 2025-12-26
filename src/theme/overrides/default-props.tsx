@@ -1,3 +1,4 @@
+import Box from '@mui/material/Box';
 import { Theme } from '@mui/material/styles';
 import SvgIcon, { SvgIconProps } from '@mui/material/SvgIcon';
 
@@ -288,7 +289,12 @@ export function defaultProps(theme: Theme) {
           exportIcon: () => <Iconify width={20} icon="solar:export-bold" />,
           // quick filter
           quickFilterIcon: () => (
-            <Iconify width={24} icon="eva:search-fill" sx={{ color: 'text.secondary' }} />
+            <Box
+              component="img"
+              src="/assets/images/pilgrims/search.svg"
+              alt="search"
+              sx={{ width: 24, height: 24 }}
+            />
           ),
           quickFilterClearIcon: () => <Iconify width={20} icon="eva:close-fill" />,
         },

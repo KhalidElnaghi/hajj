@@ -17,13 +17,16 @@ export default function BreadcrumbsLink({ link, activeLast, disabled }: Props) {
   const styles = {
     typography: 'body2',
     alignItems: 'center',
-    color: 'text.primary',
+    color: disabled ? 'text.primary' : 'text.secondary',
     display: 'inline-flex',
+    gap: 0.25,
+    whiteSpace: 'nowrap',
+    fontWeight: disabled ? 700 : 600,
     ...(disabled &&
       !activeLast && {
         cursor: 'default',
         pointerEvents: 'none',
-        color: 'text.disabled',
+        color: 'text.primary',
       }),
   };
 
