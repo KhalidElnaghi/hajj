@@ -3,6 +3,9 @@
 import { useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslations } from 'next-intl';
+import { useSnackbar } from 'notistack';
+import * as Yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
 
 import {
   Box,
@@ -34,6 +37,7 @@ import {
 import { Controller } from 'react-hook-form';
 import Iconify from 'src/components/iconify';
 import { PageHeader } from 'src/components/custom-page-headding';
+import { useCreatePilgrim } from 'src/services/mutations/pilgrims';
 
 type PilgrimFormValues = {
   nameAr: string;
@@ -72,6 +76,8 @@ export default function AddEditPilgrimForm() {
   const router = useRouter();
   const { currentLang } = useLocales();
   const isRtl = currentLang?.value === 'ar';
+  const { enqueueSnackbar } = useSnackbar();
+  const createPilgrimMutation = useCreatePilgrim();
 
   const defaultValues = useMemo<PilgrimFormValues>(
     () => ({
@@ -108,19 +114,144 @@ export default function AddEditPilgrimForm() {
     []
   );
 
-  const methods = useForm<PilgrimFormValues>({
-    defaultValues,
+  // Yup validation schema
+  const PilgrimSchema = Yup.object().shape({
+    nameAr: Yup.string()
+      .required(t('Pilgrims.Message.name_ar_required') || 'Arabic name is required')
+      .min(2, t('Pilgrims.Message.name_min_length') || 'Name must be at least 2 characters'),
+    nameEn: Yup.string()
+      .required(t('Pilgrims.Message.name_en_required') || 'English name is required')
+      .min(2, t('Pilgrims.Message.name_min_length') || 'Name must be at least 2 characters'),
+    bookingNumber: Yup.string().default(''),
+    idNumber: Yup.string()
+      .required(t('Pilgrims.Message.id_number_required') || 'ID number is required')
+      .length(10, t('Pilgrims.Message.id_number_length') || 'National ID must be exactly 10 characters')
+      .matches(/^\d+$/, t('Pilgrims.Message.id_number_invalid') || 'ID number must contain only digits')
+      .test(
+        'saudi-id-format',
+        t('Pilgrims.Message.id_number_saudi_format') || 'ID must be a valid Saudi National ID (starts with 1 or 2) or Iqama ID (starts with 3 or 4)',
+        (value) => {
+          if (!value || value.length !== 10) return false;
+          const firstDigit = value.charAt(0);
+          return ['1', '2', '3', '4'].includes(firstDigit);
+        }
+      ),
+    city: Yup.string().default(''),
+    packageName: Yup.string().default(''),
+    nationality: Yup.string()
+      .required(t('Pilgrims.Message.nationality_required') || 'Nationality is required'),
+    gender: Yup.string()
+      .required(t('Pilgrims.Message.gender_required') || 'Gender is required')
+      .oneOf(['male', 'female'], t('Pilgrims.Message.gender_invalid') || 'Invalid gender'),
+    arrivalDate: Yup.string().default(''),
+    departureDate: Yup.string().default(''),
+    permit: Yup.string().default(''),
+    gregorianBirthDate: Yup.string().default(''),
+    hijriBirthDate: Yup.string().default(''),
+    age: Yup.number()
+      .default(0)
+      .min(0, t('Pilgrims.Message.age_invalid') || 'Age must be a positive number')
+      .max(150, t('Pilgrims.Message.age_max') || 'Age must be less than 150'),
+    mobileNumber: Yup.string()
+      .default('')
+      .matches(/^[0-9+\-\s()]*$/, t('Pilgrims.Message.phone_invalid') || 'Invalid phone number format'),
+    anotherMobileNumber: Yup.string()
+      .default('')
+      .test(
+        'saudi-phone',
+        t('Pilgrims.Message.phone_saudi_invalid') || 'Mobile number must be a valid Saudi phone number',
+        (value) => {
+          if (!value || value.trim() === '') return true; // Optional field
+          // Remove spaces, dashes, and other characters
+          const cleaned = value.replace(/[\s\-+()]/g, '');
+          // Saudi phone numbers: 05XXXXXXXX (10 digits starting with 05) or 5XXXXXXXX (9 digits starting with 5)
+          // Or international format: +9665XXXXXXXX
+          const saudiPhoneRegex = /^(?:\+966|00966|966|0)?5[0-9]{8}$/;
+          return saudiPhoneRegex.test(cleaned);
+        }
+      ),
+    photo: Yup.mixed()
+      .required(t('Pilgrims.Message.photo_required') || 'Photo is required')
+      .test(
+        'fileType',
+        t('Pilgrims.Message.photo_invalid_type') || 'Photo must be an image (jpeg, jpg, png)',
+        (value) => {
+          if (!value) return false; // Photo is required
+          if (typeof value === 'string') return true; // String is allowed (for existing photos)
+          if (value instanceof File) {
+            const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+            return validTypes.includes(value.type);
+          }
+          // Check if it's a File object with preview property
+          if (typeof value === 'object' && 'preview' in value && value instanceof File) {
+            const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+            return validTypes.includes(value.type);
+          }
+          return false;
+        }
+      )
+      .test(
+        'fileSize',
+        t('Pilgrims.Message.photo_size_limit') || 'Photo size must be less than 5MB',
+        (value) => {
+          if (!value || typeof value === 'string') return true;
+          if (value instanceof File) {
+            return value.size <= 5 * 1024 * 1024; // 5MB
+          }
+          // Check if it's a File object with preview property
+          if (typeof value === 'object' && 'preview' in value && value instanceof File) {
+            return value.size <= 5 * 1024 * 1024; // 5MB
+          }
+          return false;
+        }
+      ),
+    gatheringPointType: Yup.string().default(''),
+    gatheringPoint: Yup.string().default(''),
+    prominent: Yup.string().default(''),
+    accommodationArea: Yup.string().default(''),
+    tentRoomNumber: Yup.string().default(''),
+    campStatus: Yup.string().default(''),
+    busNumber: Yup.string().default(''),
+    seatNumber: Yup.string().default(''),
+    generalHealthStatus: Yup.string().default(''),
+    healthDetails: Yup.string().default(''),
+    supervisors: Yup.array().of(Yup.string()).default([]),
+    supervisorNotes: Yup.string().default(''),
   });
 
-  const { handleSubmit, setValue, reset } = methods;
+  const methods = useForm<PilgrimFormValues>({
+    resolver: yupResolver(PilgrimSchema) as any,
+    defaultValues,
+    mode: 'onBlur', // Validate on blur to show errors after user leaves the field
+    reValidateMode: 'onChange', // Re-validate on change after first validation
+  });
+
+  const {
+    handleSubmit,
+    setValue,
+    reset,
+    formState: { isSubmitting, isDirty },
+  } = methods;
 
   const onSubmit = handleSubmit(async (data) => {
     try {
-      console.log('Form data:', data);
-      // TODO: Implement API call
+      await createPilgrimMutation.mutateAsync(data);
+      enqueueSnackbar(
+        t('Pilgrims.Message.pilgrim_created_successfully') || 'Pilgrim created successfully',
+        {
+          variant: 'success',
+        }
+      );
       router.push(paths.dashboard.pilgrims.list);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error submitting form:', error);
+      enqueueSnackbar(
+        error?.response?.data?.message ||
+          error?.message ||
+          t('Pilgrims.Message.error_creating_pilgrim') ||
+          'Error creating pilgrim',
+        { variant: 'error' }
+      );
     }
   });
 
@@ -268,13 +399,24 @@ export default function AddEditPilgrimForm() {
                     <Box sx={{ width: '100%' }}>
                       <Typography
                         variant="body2"
+                        component="label"
                         sx={{
                           fontWeight: 500,
                           mb: 1.5,
                           color: 'text.secondary',
+                          display: 'block',
                         }}
                       >
                         {t('Pilgrims.Label.name_in_arabic')}
+                        <Box
+                          component="span"
+                          sx={{
+                            color: 'error.main',
+                            ml: 0.5,
+                          }}
+                        >
+                          *
+                        </Box>
                       </Typography>
                       <RHFTextField name="nameAr" required placeholder="" />
                     </Box>
@@ -283,13 +425,24 @@ export default function AddEditPilgrimForm() {
                     <Box sx={{ width: '100%' }}>
                       <Typography
                         variant="body2"
+                        component="label"
                         sx={{
                           fontWeight: 500,
                           mb: 1.5,
                           color: 'text.secondary',
+                          display: 'block',
                         }}
                       >
                         {t('Pilgrims.Label.name_in_english')}
+                        <Box
+                          component="span"
+                          sx={{
+                            color: 'error.main',
+                            ml: 0.5,
+                          }}
+                        >
+                          *
+                        </Box>
                       </Typography>
                       <RHFTextField name="nameEn" required placeholder="" />
                     </Box>
@@ -315,15 +468,26 @@ export default function AddEditPilgrimForm() {
                     <Box sx={{ width: '100%' }}>
                       <Typography
                         variant="body2"
+                        component="label"
                         sx={{
                           fontWeight: 500,
                           mb: 1.5,
                           color: 'text.secondary',
+                          display: 'block',
                         }}
                       >
                         {t('Pilgrims.Label.id_number')}
+                        <Box
+                          component="span"
+                          sx={{
+                            color: 'error.main',
+                            ml: 0.5,
+                          }}
+                        >
+                          *
+                        </Box>
                       </Typography>
-                      <RHFTextField name="idNumber" placeholder="" />
+                      <RHFTextField name="idNumber" required placeholder="" />
                     </Box>
                   </Grid>
                   <Grid size={{ xs: 12, md: 4 }}>
@@ -380,15 +544,26 @@ export default function AddEditPilgrimForm() {
                     <Box sx={{ width: '100%' }}>
                       <Typography
                         variant="body2"
+                        component="label"
                         sx={{
                           fontWeight: 500,
                           mb: 1.5,
                           color: 'text.secondary',
+                          display: 'block',
                         }}
                       >
                         {t('Pilgrims.Label.nationality')}
+                        <Box
+                          component="span"
+                          sx={{
+                            color: 'error.main',
+                            ml: 0.5,
+                          }}
+                        >
+                          *
+                        </Box>
                       </Typography>
-                      <RHFSelect name="nationality">
+                      <RHFSelect name="nationality" required>
                         <MenuItem value="">
                           <em>None</em>
                         </MenuItem>
@@ -404,15 +579,26 @@ export default function AddEditPilgrimForm() {
                     <Box sx={{ width: '100%' }}>
                       <Typography
                         variant="body2"
+                        component="label"
                         sx={{
                           fontWeight: 500,
                           mb: 1.5,
                           color: 'text.secondary',
+                          display: 'block',
                         }}
                       >
                         {t('Pilgrims.Label.gender')}
+                        <Box
+                          component="span"
+                          sx={{
+                            color: 'error.main',
+                            ml: 0.5,
+                          }}
+                        >
+                          *
+                        </Box>
                       </Typography>
-                      <RHFSelect name="gender">
+                      <RHFSelect name="gender" required>
                         <MenuItem value="">
                           <em>None</em>
                         </MenuItem>
@@ -571,13 +757,24 @@ export default function AddEditPilgrimForm() {
                     <Box sx={{ width: '100%' }}>
                       <Typography
                         variant="body2"
+                        component="label"
                         sx={{
                           fontWeight: 500,
                           mb: 1.5,
                           color: 'text.secondary',
+                          display: 'block',
                         }}
                       >
                         {t('Pilgrims.Label.add_photo')}
+                        <Box
+                          component="span"
+                          sx={{
+                            color: 'error.main',
+                            ml: 0.5,
+                          }}
+                        >
+                          *
+                        </Box>
                       </Typography>
                       <Controller
                         name="photo"
@@ -756,11 +953,15 @@ export default function AddEditPilgrimForm() {
                                 height: 32,
                                 fontSize: '0.875rem',
                                 fontWeight: 600,
-                                color: selected ? theme.palette.primary.contrastText : theme.palette.text.secondary,
+                                color: selected
+                                  ? theme.palette.primary.contrastText
+                                  : theme.palette.text.secondary,
                                 bgcolor: selected ? theme.palette.primary.main : 'transparent',
                                 borderColor: selected ? 'transparent' : theme.palette.grey[300],
                                 '&:hover': {
-                                  bgcolor: selected ? theme.palette.primary.dark : theme.palette.grey[100],
+                                  bgcolor: selected
+                                    ? theme.palette.primary.dark
+                                    : theme.palette.grey[100],
                                 },
                               })}
                             />
@@ -856,7 +1057,10 @@ export default function AddEditPilgrimForm() {
 
               {/* Health Status Section */}
               <Box>
-                {renderSectionHeader('solar:heart-pulse-outline', t('Pilgrims.Label.health_status_data'))}
+                {renderSectionHeader(
+                  'solar:heart-pulse-outline',
+                  t('Pilgrims.Label.health_status_data')
+                )}
                 <Grid container spacing={3}>
                   <Grid size={{ xs: 12, md: 6 }}>
                     <Box sx={{ width: '100%' }}>
@@ -954,8 +1158,11 @@ export default function AddEditPilgrimForm() {
                   variant="contained"
                   color="primary"
                   sx={{ minWidth: 120, px: 3 }}
+                  disabled={createPilgrimMutation.isPending}
                 >
-                  {t('Pilgrims.Label.save')}
+                  {createPilgrimMutation.isPending
+                    ? t('Pilgrims.Label.saving') || 'Saving...'
+                    : t('Pilgrims.Label.save')}
                 </Button>
               </Stack>
             </Stack>

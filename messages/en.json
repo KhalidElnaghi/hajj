@@ -637,6 +637,28 @@
     },
     "Helper": {
       "search_add_new_word": "You can search and add a new word"
+    },
+    "Message": {
+      "name_ar_required": "Arabic name is required",
+      "name_en_required": "English name is required",
+      "name_min_length": "Name must be at least 2 characters",
+      "id_number_required": "ID number is required",
+      "id_number_invalid": "ID number must contain only digits",
+      "id_number_length": "National ID must be exactly 10 characters",
+      "nationality_required": "Nationality is required",
+      "gender_required": "Gender is required",
+      "gender_invalid": "Invalid gender",
+      "photo_required": "Photo is required",
+      "photo_invalid_type": "Photo must be an image (jpeg, jpg, png)",
+      "photo_size_limit": "Photo size must be less than 5MB",
+      "phone_invalid": "Invalid phone number format",
+      "age_invalid": "Age must be a positive number",
+      "age_max": "Age must be less than 150",
+      "pilgrim_created_successfully": "Pilgrim created successfully",
+      "error_creating_pilgrim": "Error creating pilgrim",
+      "saving": "Saving...",
+      "id_number_saudi_format": "ID must be a valid Saudi National ID (starts with 1 or 2) or Iqama ID (starts with 3 or 4)",
+      "phone_saudi_invalid": "Mobile number must be a valid Saudi phone number"
     }
   }
 }

@@ -637,6 +637,28 @@
     },
     "Helper": {
       "search_add_new_word": "يمكن البحث وإضافة كلمة جديد"
+    },
+    "Message": {
+      "name_ar_required": "الاسم بالعربية مطلوب",
+      "name_en_required": "الاسم بالإنجليزية مطلوب",
+      "name_min_length": "يجب أن يكون الاسم حرفين على الأقل",
+      "id_number_required": "رقم الهوية مطلوب",
+      "id_number_invalid": "يجب أن يحتوي رقم الهوية على أرقام فقط",
+      "id_number_length": "يجب أن يكون رقم الهوية 10 أرقام بالضبط",
+      "nationality_required": "الجنسية مطلوبة",
+      "gender_required": "الجنس مطلوب",
+      "gender_invalid": "الجنس غير صحيح",
+      "photo_required": "الصورة مطلوبة",
+      "photo_invalid_type": "يجب أن تكون الصورة بصيغة (jpeg, jpg, png)",
+      "photo_size_limit": "يجب أن يكون حجم الصورة أقل من 5 ميجابايت",
+      "phone_invalid": "تنسيق رقم الهاتف غير صحيح",
+      "age_invalid": "يجب أن يكون العمر رقماً موجباً",
+      "age_max": "يجب أن يكون العمر أقل من 150",
+      "pilgrim_created_successfully": "تم إنشاء الحاج بنجاح",
+      "error_creating_pilgrim": "خطأ في إنشاء الحاج",
+      "saving": "جاري الحفظ...",
+      "id_number_saudi_format": "يجب أن يكون رقم الهوية هوية وطنية سعودية صحيحة (تبدأ بـ 1 أو 2) أو إقامة (تبدأ بـ 3 أو 4)",
+      "phone_saudi_invalid": "يجب أن يكون رقم الجوال رقم هاتف سعودي صحيح"
     }
   }
 }
