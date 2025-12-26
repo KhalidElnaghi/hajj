@@ -29,6 +29,8 @@ import Image from 'next/image';
 import { BulkActionsDialog } from './components/bulk-actions';
 import { ImportDialog } from './components/import-dialog';
 import FilterDialog from './components/filter-dialog';
+import { paths } from 'src/routes/paths';
+import { useRouter } from 'next/navigation';
 
 // ----------------------------------------------------------------------
 
@@ -230,7 +232,7 @@ export default function PilgrimsView() {
   const [genderFilter, setGenderFilter] = useState<string>('all');
   const [filterAnchorEl, setFilterAnchorEl] = useState<null | HTMLElement>(null);
   const filterMenuOpen = Boolean(filterAnchorEl);
-
+  const router = useRouter();
   // Applied filters from dialog
   const [appliedFilters, setAppliedFilters] = useState<any>({});
 
@@ -580,7 +582,11 @@ export default function PilgrimsView() {
             { name: t('Label.pilgrims_management') },
           ]}
           action={
-            <Button variant="contained" color="primary" onClick={() => console.log('add pilgrim')}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => router.push(paths.dashboard.pilgrims.addEdit)}
+            >
               {t('Button.add')}
             </Button>
           }
