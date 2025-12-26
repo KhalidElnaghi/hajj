@@ -20,6 +20,7 @@ import {
 import { paths } from 'src/routes/paths';
 
 import { useRouter } from 'src/routes/hooks';
+import { useLocales } from 'src/locales';
 
 import FormProvider from 'src/components/hook-form/form-provider';
 import {
@@ -55,6 +56,7 @@ type PilgrimFormValues = {
   gatheringPointType: string;
   gatheringPoint: string;
   prominent: string;
+  accommodationArea: string;
   tentRoomNumber: string;
   campStatus: string;
   busNumber: string;
@@ -68,6 +70,8 @@ type PilgrimFormValues = {
 export default function AddEditPilgrimForm() {
   const t = useTranslations();
   const router = useRouter();
+  const { currentLang } = useLocales();
+  const isRtl = currentLang?.value === 'ar';
 
   const defaultValues = useMemo<PilgrimFormValues>(
     () => ({
@@ -97,6 +101,7 @@ export default function AddEditPilgrimForm() {
       seatNumber: '',
       generalHealthStatus: '',
       healthDetails: '',
+      accommodationArea: '',
       supervisors: [],
       supervisorNotes: '',
     }),
@@ -165,10 +170,22 @@ export default function AddEditPilgrimForm() {
     { value: '1445-01-02', label: '1445/01/02' },
   ];
 
+  const gatheringPointTypes = [
+    { value: 'hotel', label: 'فندق' },
+    { value: 'camp', label: 'مخيم' },
+    { value: 'other', label: 'أخرى' },
+  ];
+
   const gatheringPoints = [
-    { value: 'nawd', label: 'نود' },
-    { value: 'naqd', label: 'نقد' },
-    { value: 'alad', label: 'العد' },
+    { value: 'point1', label: 'نقطة 1' },
+    { value: 'point2', label: 'نقطة 2' },
+    { value: 'point3', label: 'نقطة 3' },
+  ];
+
+  const accommodationAreas = [
+    { value: 'mina', label: 'منى' },
+    { value: 'arafat', label: 'عرفات' },
+    { value: 'muzdalifah', label: 'مزدلفة' },
   ];
 
   const prominentOptions = [
@@ -628,43 +645,82 @@ export default function AddEditPilgrimForm() {
               {/* Gathering Points Section */}
               <Box>
                 {renderSectionHeader('solar:bus-outline', t('Label.gathering_points'))}
-                <Controller
-                  name="gatheringPoint"
-                  control={methods.control}
-                  render={({ field }) => (
-                    <Stack direction="row" spacing={2} flexWrap="wrap">
-                      {gatheringPoints.map((point) => (
-                        <Chip
-                          key={point.value}
-                          label={point.label}
-                          onClick={() => field.onChange(point.value)}
-                          sx={{
-                            px: 2,
-                            py: 1.5,
-                            fontSize: '0.875rem',
-                            fontWeight: 600,
-                            cursor: 'pointer',
-                            ...(field.value === point.value
-                              ? {
-                                  bgcolor: 'primary.main',
-                                  color: 'primary.contrastText',
-                                  '&:hover': {
-                                    bgcolor: 'primary.dark',
-                                  },
-                                }
-                              : {
-                                  bgcolor: 'grey.100',
-                                  color: 'text.primary',
-                                  '&:hover': {
-                                    bgcolor: 'grey.200',
-                                  },
-                                }),
-                          }}
-                        />
-                      ))}
-                    </Stack>
-                  )}
-                />
+                <Grid container spacing={3}>
+                  <Grid size={{ xs: 12, md: 4 }}>
+                    <Box sx={{ width: '100%' }}>
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          fontWeight: 500,
+                          mb: 1.5,
+                          color: 'text.secondary',
+                        }}
+                      >
+                        {t('Label.gathering_point_type')}
+                      </Typography>
+                      <RHFSelect name="gatheringPointType">
+                        <MenuItem value="">
+                          <em>None</em>
+                        </MenuItem>
+                        {gatheringPointTypes.map((type) => (
+                          <MenuItem key={type.value} value={type.value}>
+                            {type.label}
+                          </MenuItem>
+                        ))}
+                      </RHFSelect>
+                    </Box>
+                  </Grid>
+
+                  <Grid size={{ xs: 12, md: 4 }}>
+                    <Box sx={{ width: '100%' }}>
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          fontWeight: 500,
+                          mb: 1.5,
+                          color: 'text.secondary',
+                        }}
+                      >
+                        {t('Label.gathering_point')}
+                      </Typography>
+                      <RHFSelect name="gatheringPoint">
+                        <MenuItem value="">
+                          <em>None</em>
+                        </MenuItem>
+                        {gatheringPoints.map((point) => (
+                          <MenuItem key={point.value} value={point.value}>
+                            {point.label}
+                          </MenuItem>
+                        ))}
+                      </RHFSelect>
+                    </Box>
+                  </Grid>
+
+                  <Grid size={{ xs: 12, md: 4 }}>
+                    <Box sx={{ width: '100%' }}>
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          fontWeight: 500,
+                          mb: 1.5,
+                          color: 'text.secondary',
+                        }}
+                      >
+                        {t('Label.prominent')}
+                      </Typography>
+                      <RHFSelect name="prominent">
+                        <MenuItem value="">
+                          <em>None</em>
+                        </MenuItem>
+                        {prominentOptions.map((option) => (
+                          <MenuItem key={option.value} value={option.value}>
+                            {option.label}
+                          </MenuItem>
+                        ))}
+                      </RHFSelect>
+                    </Box>
+                  </Grid>
+                </Grid>
               </Box>
 
               <Divider />
@@ -675,6 +731,45 @@ export default function AddEditPilgrimForm() {
                   'solar:home-angle-outline',
                   t('Label.accommodation_residence')
                 )}
+                <Stack
+                  direction="row"
+                  spacing={1.5}
+                  justifyContent={isRtl ? 'flex-start' : 'flex-end'}
+                  sx={{ mb: 3 }}
+                >
+                  <Controller
+                    name="accommodationArea"
+                    control={methods.control}
+                    render={({ field }) => (
+                      <>
+                        {accommodationAreas.map((area) => {
+                          const selected = field.value === area.value;
+                          return (
+                            <Chip
+                              key={area.value}
+                              label={area.label}
+                              onClick={() => field.onChange(area.value)}
+                              variant={selected ? 'filled' : 'outlined'}
+                              sx={(theme) => ({
+                                borderRadius: 999,
+                                px: 2.5,
+                                height: 32,
+                                fontSize: '0.875rem',
+                                fontWeight: 600,
+                                color: selected ? theme.palette.primary.contrastText : theme.palette.text.secondary,
+                                bgcolor: selected ? theme.palette.primary.main : 'transparent',
+                                borderColor: selected ? 'transparent' : theme.palette.grey[300],
+                                '&:hover': {
+                                  bgcolor: selected ? theme.palette.primary.dark : theme.palette.grey[100],
+                                },
+                              })}
+                            />
+                          );
+                        })}
+                      </>
+                    )}
+                  />
+                </Stack>
                 <Grid container spacing={3}>
                   <Grid size={{ xs: 12, md: 6 }}>
                     <Box sx={{ width: '100%' }}>
@@ -792,7 +887,6 @@ export default function AddEditPilgrimForm() {
 
               <Divider />
 
-              {/* Other Details Section */}
               <Box>
                 {renderSectionTitle(t('Label.other_details_section'))}
                 <RHFTextarea
@@ -839,12 +933,7 @@ export default function AddEditPilgrimForm() {
               </Box>
 
               {/* Action Buttons */}
-              <Stack
-                direction="row"
-                spacing={2}
-                justifyContent="flex-end"
-                sx={{ pt: 4, borderTop: 1, borderColor: 'divider' }}
-              >
+              <Stack direction="row" spacing={2} justifyContent="flex-end" sx={{ pt: 4 }}>
                 <Button
                   variant="outlined"
                   color="error"
