@@ -4,7 +4,7 @@ const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
 
 module.exports = withNextIntl({
   env: {
-    NEXT_PUBLIC_HOST_API: process.env.HOST_API,
+    NEXT_PUBLIC_HOST_API: process.env.HOST_API || 'http://psghajj.site/api/v1',
   },
   images: {
     remotePatterns: [

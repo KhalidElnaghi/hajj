@@ -30,7 +30,8 @@ import { BulkActionsDialog } from './components/bulk-actions';
 import { ImportDialog } from './components/import-dialog';
 import FilterDialog from './components/filter-dialog';
 import { paths } from 'src/routes/paths';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useFetchPilgrims } from 'src/services/queries/pilgrims';
 
 // ----------------------------------------------------------------------
 
@@ -233,8 +234,28 @@ export default function PilgrimsView() {
   const [filterAnchorEl, setFilterAnchorEl] = useState<null | HTMLElement>(null);
   const filterMenuOpen = Boolean(filterAnchorEl);
   const router = useRouter();
+  const searchParams = useSearchParams();
   // Applied filters from dialog
   const [appliedFilters, setAppliedFilters] = useState<any>({});
+
+  // Get pagination from URL params
+  const currentPage = Number(searchParams.get('page')) || 1;
+  const currentLimit = Number(searchParams.get('MaxResultCount')) || 10;
+
+  // Fetch pilgrims data using React Query
+  const {
+    data: pilgrimsData,
+    isLoading: pilgrimsLoading,
+    isError: pilgrimsError,
+    refetch: refreshPilgrims,
+  } = useFetchPilgrims({
+    page: currentPage,
+    limit: currentLimit,
+    searchParam: searchTerm || undefined,
+  });
+
+  // Console log the data
+  console.log('Pilgrims Data:', pilgrimsData);
 
   const filterOptions = [
     { key: 'gathering_point_type', label: t('Label.gathering_point_type') },
