@@ -441,7 +441,8 @@
       "filter_pilgrim_data": "تصفية بيانات الحجاج",
       "group_actions": "إجراءات جماعية",
       "import_pilgrim_data": "استيراد بيانات الحجاج",
-      "pilgrims_management": "إدارة الحجاج"
+      "pilgrims_management": "إدارة الحجاج",
+      "add_edit_pilgrim": "إضافة / تعديل حاج"
     },
     "Description": {
       "accommodation_description": "عرض بيانات توزيع الحجاج على المخيمات لضمان التنظيم والراحة.",
@@ -586,7 +587,32 @@
       "upload_file": "رفع ملف",
       "view": "عرض",
       "view_import_log": "عرض سجل الاستيراد",
-      "pilgrims_management": "إدارة الحجاج"
+      "pilgrims_management": "إدارة الحجاج",
+      "add_new_pilgrim": "إضافة حاج جديد",
+      "add_new_pilgrim_description": "أدخل بيانات الحاج بدقة لتسهيل إجراءات الحجز، التسكين، والنقل، وضمان تنظيم تجربة الحج بسلاسة وأمان.",
+      "name_in_arabic": "الاسم بالعربي",
+      "name_in_english": "الاسم بالانجليزي",
+      "id_number": "رقم الهوية",
+      "arrival_date": "تاريخ الوصول",
+      "departure_date": "تاريخ المغادرة",
+      "permit": "التصريح",
+      "gregorian_birth_date": "تاريخ الميلاد",
+      "hijri_birth_date": "تاريخ الميلاد هجري",
+      "age": "العمر",
+      "mobile_number": "رقم الجوال",
+      "another_mobile_number": "رقم جوال آخر",
+      "add_photo": "إضافة صورة",
+      "image_helper": "قم برفع صورة الحد الأقصى 3 ميجابايت",
+      "prominent": "الوجهة",
+      "accommodation_residence": "السكن والإقامة",
+      "tent_room_number": "رقم الخيمة / الغرفة",
+      "seat_number": "رقم المقعد",
+      "other_details_section": "تفاصيل اخرى",
+      "health_status_placeholder_alt": "ما يخطر ببالك عن الحالة الصحية....",
+      "supervisor_notes": "ملاحظات المشرفين",
+      "supervisor_notes_placeholder": "ما يخطر ببالك....",
+      "clear_fields": "تفريغ الحقول",
+      "save": "حفظ"
     },
     "Button": {
       "add": "إضافة",

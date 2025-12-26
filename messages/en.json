@@ -441,7 +441,8 @@
       "filter_pilgrim_data": "Filter Pilgrim Data",
       "group_actions": "Group Actions",
       "import_pilgrim_data": "Import Pilgrim Data",
-      "pilgrims_management": "Pilgrims Management"
+      "pilgrims_management": "Pilgrims Management",
+      "add_edit_pilgrim": "Add / Edit Pilgrim"
     },
     "Description": {
       "accommodation_description": "Display data on pilgrim distribution across camps to ensure organization and comfort.",
@@ -586,7 +587,32 @@
       "upload_file": "Upload File",
       "view": "View",
       "view_import_log": "View Import Log",
-      "pilgrims_management": "Pilgrims Management"
+      "pilgrims_management": "Pilgrims Management",
+      "add_new_pilgrim": "Add New Pilgrim",
+      "add_new_pilgrim_description": "Enter pilgrim data accurately to facilitate booking, accommodation, and transportation procedures, ensuring a smooth and safe Hajj experience.",
+      "name_in_arabic": "Name in Arabic",
+      "name_in_english": "Name in English",
+      "id_number": "ID Number",
+      "arrival_date": "Arrival Date",
+      "departure_date": "Departure Date",
+      "permit": "Permit",
+      "gregorian_birth_date": "Gregorian Birth Date",
+      "hijri_birth_date": "Hijri Birth Date",
+      "age": "Age",
+      "mobile_number": "Mobile Number",
+      "another_mobile_number": "Another Mobile Number",
+      "add_photo": "Add Photo",
+      "image_helper": "Upload an image (max 3MB)",
+      "prominent": "Prominent",
+      "accommodation_residence": "Accommodation and Residence",
+      "tent_room_number": "Tent / Room Number",
+      "seat_number": "Seat Number",
+      "other_details_section": "Other Details",
+      "health_status_placeholder_alt": "What comes to mind about health status....",
+      "supervisor_notes": "Supervisor Notes",
+      "supervisor_notes_placeholder": "What comes to mind....",
+      "clear_fields": "Clear Fields",
+      "save": "Save"
     },
     "Button": {
       "add": "Add",
