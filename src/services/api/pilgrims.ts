@@ -214,10 +214,10 @@ export const createPilgrim = async (data: CreatePilgrimData): Promise<CreatePilg
   }
   
   // Mobile numbers as integers
-  // Only send mobile2 if it's provided and valid (Saudi phone number)
+  // mobile is REQUIRED
   formData.append('mobile', safeInteger(data.mobileNumber).toString());
   
-  // Only send mobile2 if it's a valid Saudi phone number
+  // mobile2 is OPTIONAL - only send if provided and valid (Saudi phone number)
   if (isValidValue(data.anotherMobileNumber)) {
     const mobile2 = safeInteger(data.anotherMobileNumber);
     if (mobile2 > 0) {
@@ -225,11 +225,11 @@ export const createPilgrim = async (data: CreatePilgrimData): Promise<CreatePilg
     }
   }
   
-  // Birth dates as strings
+  // Birth dates as strings - REQUIRED
   formData.append('birthdate', safeString(data.gregorianBirthDate));
   formData.append('birthdate_hijri', safeString(data.hijriBirthDate));
   
-  // Age as integer
+  // Age as integer - REQUIRED
   formData.append('age', safeInteger(data.age).toString());
   
   // Handle photo - ensure we're sending the actual File object
@@ -319,7 +319,7 @@ export const createPilgrim = async (data: CreatePilgrimData): Promise<CreatePilg
     formData.append(key, value);
   });
   
-  // Default integer fields (can be updated based on actual requirements)
+  // Optional integer fields (gray asterisk in API - not required)
   formData.append('pilgrim_type_id', '2');
   formData.append('reservation_id', '1');
   formData.append('status', '1'); // 1=active, 2=inactive, 3=cancelled
@@ -327,8 +327,9 @@ export const createPilgrim = async (data: CreatePilgrimData): Promise<CreatePilg
   formData.append('whatsapp_active', '0');
   formData.append('departure_status', '0'); // 0=early, 1=late
   formData.append('muhrim_status', '0'); // 0=without, 1=with
-  // Don't send transport_id if it's 0 (invalid) - only send if we have a valid transport ID
-  // formData.append('transport_id', '0'); // Removed - don't send invalid ID
+  // transport_id is OPTIONAL - don't send if it's 0 (invalid)
+  // Only send if we have a valid transport ID
+  // formData.append('transport_id', '0'); // Removed - optional field
   
   // Don't set Content-Type header - let browser set it with boundary for FormData
   return API.post<CreatePilgrimResponse>('/pilgrims/pilgrims', formData);

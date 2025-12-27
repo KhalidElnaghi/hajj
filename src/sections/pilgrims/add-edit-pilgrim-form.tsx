@@ -18,6 +18,7 @@ import {
   Chip,
   Grid,
   MenuItem,
+  IconButton,
 } from '@mui/material';
 
 import { paths } from 'src/routes/paths';
@@ -115,14 +116,15 @@ export default function AddEditPilgrimForm() {
   );
 
   // Yup validation schema
+  // Based on API payload: Red asterisk = Required, Gray asterisk = Optional
   const PilgrimSchema = Yup.object().shape({
+    // REQUIRED FIELDS (red asterisk in API)
     nameAr: Yup.string()
       .required(t('Pilgrims.Message.name_ar_required') || 'Arabic name is required')
       .min(2, t('Pilgrims.Message.name_min_length') || 'Name must be at least 2 characters'),
     nameEn: Yup.string()
       .required(t('Pilgrims.Message.name_en_required') || 'English name is required')
       .min(2, t('Pilgrims.Message.name_min_length') || 'Name must be at least 2 characters'),
-    bookingNumber: Yup.string().default(''),
     idNumber: Yup.string()
       .required(t('Pilgrims.Message.id_number_required') || 'ID number is required')
       .length(10, t('Pilgrims.Message.id_number_length') || 'National ID must be exactly 10 characters')
@@ -136,40 +138,22 @@ export default function AddEditPilgrimForm() {
           return ['1', '2', '3', '4'].includes(firstDigit);
         }
       ),
-    city: Yup.string().default(''),
-    packageName: Yup.string().default(''),
     nationality: Yup.string()
       .required(t('Pilgrims.Message.nationality_required') || 'Nationality is required'),
     gender: Yup.string()
       .required(t('Pilgrims.Message.gender_required') || 'Gender is required')
       .oneOf(['male', 'female'], t('Pilgrims.Message.gender_invalid') || 'Invalid gender'),
-    arrivalDate: Yup.string().default(''),
-    departureDate: Yup.string().default(''),
-    permit: Yup.string().default(''),
-    gregorianBirthDate: Yup.string().default(''),
-    hijriBirthDate: Yup.string().default(''),
+    gregorianBirthDate: Yup.string()
+      .required(t('Pilgrims.Message.birthdate_required') || 'Birthdate is required'),
+    hijriBirthDate: Yup.string()
+      .required(t('Pilgrims.Message.birthdate_hijri_required') || 'Hijri birthdate is required'),
     age: Yup.number()
-      .default(0)
+      .required(t('Pilgrims.Message.age_required') || 'Age is required')
       .min(0, t('Pilgrims.Message.age_invalid') || 'Age must be a positive number')
       .max(150, t('Pilgrims.Message.age_max') || 'Age must be less than 150'),
     mobileNumber: Yup.string()
-      .default('')
+      .required(t('Pilgrims.Message.mobile_required') || 'Mobile number is required')
       .matches(/^[0-9+\-\s()]*$/, t('Pilgrims.Message.phone_invalid') || 'Invalid phone number format'),
-    anotherMobileNumber: Yup.string()
-      .default('')
-      .test(
-        'saudi-phone',
-        t('Pilgrims.Message.phone_saudi_invalid') || 'Mobile number must be a valid Saudi phone number',
-        (value) => {
-          if (!value || value.trim() === '') return true; // Optional field
-          // Remove spaces, dashes, and other characters
-          const cleaned = value.replace(/[\s\-+()]/g, '');
-          // Saudi phone numbers: 05XXXXXXXX (10 digits starting with 05) or 5XXXXXXXX (9 digits starting with 5)
-          // Or international format: +9665XXXXXXXX
-          const saudiPhoneRegex = /^(?:\+966|00966|966|0)?5[0-9]{8}$/;
-          return saudiPhoneRegex.test(cleaned);
-        }
-      ),
     photo: Yup.mixed()
       .required(t('Pilgrims.Message.photo_required') || 'Photo is required')
       .test(
@@ -203,6 +187,31 @@ export default function AddEditPilgrimForm() {
             return value.size <= 5 * 1024 * 1024; // 5MB
           }
           return false;
+        }
+      ),
+    packageName: Yup.string()
+      .required(t('Pilgrims.Message.package_required') || 'Package is required'),
+    city: Yup.string()
+      .required(t('Pilgrims.Message.city_required') || 'City is required'),
+    
+    // OPTIONAL FIELDS (gray asterisk in API)
+    bookingNumber: Yup.string().default(''),
+    arrivalDate: Yup.string().default(''),
+    departureDate: Yup.string().default(''),
+    permit: Yup.string().default(''),
+    anotherMobileNumber: Yup.string()
+      .default('')
+      .test(
+        'saudi-phone',
+        t('Pilgrims.Message.phone_saudi_invalid') || 'Mobile number must be a valid Saudi phone number',
+        (value) => {
+          if (!value || value.trim() === '') return true; // Optional field
+          // Remove spaces, dashes, and other characters
+          const cleaned = value.replace(/[\s\-+()]/g, '');
+          // Saudi phone numbers: 05XXXXXXXX (10 digits starting with 05) or 5XXXXXXXX (9 digits starting with 5)
+          // Or international format: +9665XXXXXXXX
+          const saudiPhoneRegex = /^(?:\+966|00966|966|0)?5[0-9]{8}$/;
+          return saudiPhoneRegex.test(cleaned);
         }
       ),
     gatheringPointType: Yup.string().default(''),
@@ -494,15 +503,26 @@ export default function AddEditPilgrimForm() {
                     <Box sx={{ width: '100%' }}>
                       <Typography
                         variant="body2"
+                        component="label"
                         sx={{
                           fontWeight: 500,
                           mb: 1.5,
                           color: 'text.secondary',
+                          display: 'block',
                         }}
                       >
                         {t('Pilgrims.Label.city')}
+                        <Box
+                          component="span"
+                          sx={{
+                            color: 'error.main',
+                            ml: 0.5,
+                          }}
+                        >
+                          *
+                        </Box>
                       </Typography>
-                      <RHFSelect name="city">
+                      <RHFSelect name="city" required>
                         <MenuItem value="">
                           <em>None</em>
                         </MenuItem>
@@ -520,15 +540,26 @@ export default function AddEditPilgrimForm() {
                     <Box sx={{ width: '100%' }}>
                       <Typography
                         variant="body2"
+                        component="label"
                         sx={{
                           fontWeight: 500,
                           mb: 1.5,
                           color: 'text.secondary',
+                          display: 'block',
                         }}
                       >
                         {t('Pilgrims.Label.package_name')}
+                        <Box
+                          component="span"
+                          sx={{
+                            color: 'error.main',
+                            ml: 0.5,
+                          }}
+                        >
+                          *
+                        </Box>
                       </Typography>
-                      <RHFSelect name="packageName">
+                      <RHFSelect name="packageName" required>
                         <MenuItem value="">
                           <em>None</em>
                         </MenuItem>
@@ -672,13 +703,24 @@ export default function AddEditPilgrimForm() {
                     <Box sx={{ width: '100%' }}>
                       <Typography
                         variant="body2"
+                        component="label"
                         sx={{
                           fontWeight: 500,
                           mb: 1.5,
                           color: 'text.secondary',
+                          display: 'block',
                         }}
                       >
                         {t('Pilgrims.Label.gregorian_birth_date')}
+                        <Box
+                          component="span"
+                          sx={{
+                            color: 'error.main',
+                            ml: 0.5,
+                          }}
+                        >
+                          *
+                        </Box>
                       </Typography>
                       <RHFDatePicker name="gregorianBirthDate" />
                     </Box>
@@ -687,15 +729,26 @@ export default function AddEditPilgrimForm() {
                     <Box sx={{ width: '100%' }}>
                       <Typography
                         variant="body2"
+                        component="label"
                         sx={{
                           fontWeight: 500,
                           mb: 1.5,
                           color: 'text.secondary',
+                          display: 'block',
                         }}
                       >
                         {t('Pilgrims.Label.hijri_birth_date')}
+                        <Box
+                          component="span"
+                          sx={{
+                            color: 'error.main',
+                            ml: 0.5,
+                          }}
+                        >
+                          *
+                        </Box>
                       </Typography>
-                      <RHFSelect name="hijriBirthDate">
+                      <RHFSelect name="hijriBirthDate" required>
                         <MenuItem value="">
                           <em>None</em>
                         </MenuItem>
@@ -711,15 +764,26 @@ export default function AddEditPilgrimForm() {
                     <Box sx={{ width: '100%' }}>
                       <Typography
                         variant="body2"
+                        component="label"
                         sx={{
                           fontWeight: 500,
                           mb: 1.5,
                           color: 'text.secondary',
+                          display: 'block',
                         }}
                       >
                         {t('Pilgrims.Label.age')}
+                        <Box
+                          component="span"
+                          sx={{
+                            color: 'error.main',
+                            ml: 0.5,
+                          }}
+                        >
+                          *
+                        </Box>
                       </Typography>
-                      <RHFTextField name="age" type="number" placeholder="" />
+                      <RHFTextField name="age" type="number" required placeholder="" />
                     </Box>
                   </Grid>
 
@@ -727,15 +791,26 @@ export default function AddEditPilgrimForm() {
                     <Box sx={{ width: '100%' }}>
                       <Typography
                         variant="body2"
+                        component="label"
                         sx={{
                           fontWeight: 500,
                           mb: 1.5,
                           color: 'text.secondary',
+                          display: 'block',
                         }}
                       >
                         {t('Pilgrims.Label.mobile_number')}
+                        <Box
+                          component="span"
+                          sx={{
+                            color: 'error.main',
+                            ml: 0.5,
+                          }}
+                        >
+                          *
+                        </Box>
                       </Typography>
-                      <RHFTextField name="mobileNumber" placeholder="" />
+                      <RHFTextField name="mobileNumber" required placeholder="" />
                     </Box>
                   </Grid>
                   <Grid size={{ xs: 12, md: 4 }}>
@@ -779,58 +854,119 @@ export default function AddEditPilgrimForm() {
                       <Controller
                         name="photo"
                         control={methods.control}
-                        render={({ field, fieldState: { error } }) => (
-                          <Box
-                            component="label"
-                            sx={{
-                              display: 'flex',
-                              alignItems: 'center',
-                              width: '100%',
-                              height: 56,
-                              px: 2,
-                              borderRadius: 1.5,
-                              border: '1px solid',
-                              borderColor: error ? 'error.main' : 'grey.300',
-                              bgcolor: 'background.paper',
-                              cursor: 'pointer',
-                              transition: 'all 0.2s',
-                              '&:hover': {
-                                borderColor: error ? 'error.main' : 'grey.400',
-                              },
-                              '&:focus-within': {
-                                borderColor: error ? 'error.main' : 'primary.main',
-                                borderWidth: 2,
-                              },
-                            }}
-                          >
-                            <input
-                              type="file"
-                              accept="image/*"
-                              style={{ display: 'none' }}
-                              onChange={(e) => {
-                                const file = e.target.files?.[0];
-                                if (file) {
-                                  const newFile = Object.assign(file, {
-                                    preview: URL.createObjectURL(file),
-                                  });
-                                  field.onChange(newFile);
-                                  handleDropPhoto([newFile]);
-                                }
-                              }}
-                            />
-                            <Iconify
-                              icon="solar:alt-arrow-down-linear"
-                              width={20}
-                              sx={{ color: 'grey.500', mr: 1 }}
-                            />
-                            <Box sx={{ flex: 1 }} />
-                            <Iconify
-                              icon="solar:gallery-add-bold"
-                              width={24}
-                              sx={{ color: 'grey.500' }}
-                            />
-                          </Box>
-                        )}
+                        render={({ field, fieldState: { error } }) => {
+                          const file = field.value instanceof File ? field.value : null;
+                          const fileName = file ? file.name : '';
+                          const fileInputId = 'photo-input';
+
+                          return (
+                            <Box>
+                              <Box
+                                component="label"
+                                htmlFor={fileInputId}
+                                sx={{
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  width: '100%',
+                                  height: 56,
+                                  px: 2,
+                                  borderRadius: 1.5,
+                                  border: '1px solid',
+                                  borderColor: error ? 'error.main' : 'grey.300',
+                                  bgcolor: 'background.paper',
+                                  cursor: 'pointer',
+                                  transition: 'all 0.2s',
+                                  '&:hover': {
+                                    borderColor: error ? 'error.main' : 'grey.400',
+                                  },
+                                  '&:focus-within': {
+                                    borderColor: error ? 'error.main' : 'primary.main',
+                                    borderWidth: 2,
+                                  },
+                                }}
+                              >
+                                <input
+                                  id={fileInputId}
+                                  type="file"
+                                  accept="image/jpeg,image/jpg,image/png"
+                                  style={{ display: 'none' }}
+                                  onChange={(e) => {
+                                    const selectedFile = e.target.files?.[0];
+                                    if (selectedFile) {
+                                      const newFile = Object.assign(selectedFile, {
+                                        preview: URL.createObjectURL(selectedFile),
+                                      });
+                                      field.onChange(newFile);
+                                      handleDropPhoto([newFile]);
+                                    }
+                                  }}
+                                />
+                                <Iconify
+                                  icon="solar:gallery-add-bold"
+                                  width={24}
+                                  sx={{ color: 'grey.500', mr: 1.5 }}
+                                />
+                                <Box
+                                  sx={{
+                                    flex: 1,
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis',
+                                    whiteSpace: 'nowrap',
+                                    color: fileName ? 'text.primary' : 'text.secondary',
+                                    fontSize: '0.875rem',
+                                  }}
+                                >
+                                  {fileName || t('Pilgrims.Label.select_image') || 'Select an image'}
+                                </Box>
+                                {file && (
+                                  <IconButton
+                                    size="small"
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      e.stopPropagation();
+                                      field.onChange(null);
+                                      setValue('photo', null, { shouldValidate: true });
+                                      // Clear the file input
+                                      const input = document.getElementById(fileInputId) as HTMLInputElement;
+                                      if (input) {
+                                        input.value = '';
+                                      }
+                                    }}
+                                    sx={{
+                                      ml: 1,
+                                      color: 'error.main',
+                                      '&:hover': {
+                                        bgcolor: 'error.lighter',
+                                      },
+                                    }}
+                                  >
+                                    <Iconify icon="solar:close-circle-bold" width={20} />
+                                  </IconButton>
+                                )}
+                                {!file && (
+                                  <Iconify
+                                    icon="solar:alt-arrow-down-linear"
+                                    width={20}
+                                    sx={{ color: 'grey.500', ml: 1 }}
+                                  />
+                                )}
+                              </Box>
+                              {error && (
+                                <Typography
+                                  variant="caption"
+                                  sx={{
+                                    color: 'error.main',
+                                    mt: 0.5,
+                                    ml: 1.5,
+                                    display: 'block',
+                                  }}
+                                >
+                                  {error.message}
+                                </Typography>
+                              )}
+                            </Box>
+                          );
+                        }}
                       />
                     </Box>
                   </Grid>

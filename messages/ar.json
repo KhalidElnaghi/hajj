@@ -602,6 +602,7 @@
       "mobile_number": "رقم الجوال",
       "another_mobile_number": "رقم جوال آخر",
       "add_photo": "إضافة صورة",
+      "select_image": "اختر صورة",
       "image_helper": "قم برفع صورة الحد الأقصى 3 ميجابايت",
       "prominent": "الوجهة",
       "accommodation_residence": "السكن والإقامة",
@@ -658,7 +659,13 @@
       "error_creating_pilgrim": "خطأ في إنشاء الحاج",
       "saving": "جاري الحفظ...",
       "id_number_saudi_format": "يجب أن يكون رقم الهوية هوية وطنية سعودية صحيحة (تبدأ بـ 1 أو 2) أو إقامة (تبدأ بـ 3 أو 4)",
-      "phone_saudi_invalid": "يجب أن يكون رقم الجوال رقم هاتف سعودي صحيح"
+      "phone_saudi_invalid": "يجب أن يكون رقم الجوال رقم هاتف سعودي صحيح",
+      "birthdate_required": "تاريخ الميلاد مطلوب",
+      "birthdate_hijri_required": "تاريخ الميلاد الهجري مطلوب",
+      "age_required": "العمر مطلوب",
+      "mobile_required": "رقم الجوال مطلوب",
+      "package_required": "الباقة مطلوبة",
+      "city_required": "المدينة مطلوبة"
     }
   }
 }
