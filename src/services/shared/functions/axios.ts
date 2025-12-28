@@ -25,6 +25,19 @@ export const API = {
     
     // If data is FormData, don't set Content-Type header - let browser/axios set it with boundary
     const isFormData = data instanceof FormData;
+    
+    if (isFormData && process.env.NODE_ENV === 'development') {
+      console.log('📤 Sending FormData request:', {
+        url,
+        hasPhoto: data.has('photo'),
+        photoFile: data.get('photo') instanceof File ? {
+          name: (data.get('photo') as File).name,
+          type: (data.get('photo') as File).type,
+          size: (data.get('photo') as File).size,
+        } : null,
+      });
+    }
+    
     const headers: any = {
       Authorization: token ? `Bearer ${token}` : undefined,
       'Accept-Language': Cookie.get('Language') || 'ar',

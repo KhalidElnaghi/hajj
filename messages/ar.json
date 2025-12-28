@@ -615,7 +615,8 @@
       "supervisor_notes": "ملاحظات المشرفين",
       "supervisor_notes_placeholder": "ما يخطر ببالك....",
       "clear_fields": "تفريغ الحقول",
-      "save": "حفظ"
+      "save": "حفظ",
+      "saving": "جاري الحفظ"
     },
     "Button": {
       "add": "إضافة",

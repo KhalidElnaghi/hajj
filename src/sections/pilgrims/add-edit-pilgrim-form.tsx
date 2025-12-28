@@ -19,6 +19,7 @@ import {
   Grid,
   MenuItem,
   IconButton,
+  CircularProgress,
 } from '@mui/material';
 
 import { paths } from 'src/routes/paths';
@@ -210,7 +211,6 @@ export default function AddEditPilgrimForm() {
     ),
     city: Yup.string().required(t('Pilgrims.Message.city_required') || 'City is required'),
 
-    // OPTIONAL FIELDS (gray asterisk in API)
     bookingNumber: Yup.string().default(''),
     arrivalDate: Yup.string().default(''),
     departureDate: Yup.string().default(''),
@@ -223,10 +223,7 @@ export default function AddEditPilgrimForm() {
           'Mobile number must be a valid Saudi phone number',
         (value) => {
           if (!value || value.trim() === '') return true; // Optional field
-          // Remove spaces, dashes, and other characters
           const cleaned = value.replace(/[\s\-+()]/g, '');
-          // Saudi phone numbers: 05XXXXXXXX (10 digits starting with 05) or 5XXXXXXXX (9 digits starting with 5)
-          // Or international format: +9665XXXXXXXX
           const saudiPhoneRegex = /^(?:\+966|00966|966|0)?5[0-9]{8}$/;
           return saudiPhoneRegex.test(cleaned);
         }
@@ -248,17 +245,16 @@ export default function AddEditPilgrimForm() {
   const methods = useForm<PilgrimFormValues>({
     resolver: yupResolver(PilgrimSchema) as any,
     defaultValues,
-    mode: 'onBlur', // Validate on blur to show errors after user leaves the field
-    reValidateMode: 'onChange', // Re-validate on change after first validation
+    mode: 'onBlur',
+    reValidateMode: 'onChange',
   });
 
   const {
     handleSubmit,
     setValue,
     reset,
-    formState: { isSubmitting, isDirty },
+    formState: { isDirty },
   } = methods;
-
   const onSubmit = handleSubmit(async (data) => {
     createPilgrimMutation.mutate(data, {
       onSuccess: () => {
@@ -268,7 +264,7 @@ export default function AddEditPilgrimForm() {
             variant: 'success',
           }
         );
-        router.push(paths.dashboard.pilgrims.list);
+        router.push(paths.dashboard.pilgrims.root);
       },
       onError: (error: any) => {
         console.error('Error submitting form:', error);
@@ -282,16 +278,6 @@ export default function AddEditPilgrimForm() {
       },
     });
   });
-
-  const handleDropPhoto = (acceptedFiles: File[]) => {
-    const file = acceptedFiles[0];
-    if (file) {
-      const newFile = Object.assign(file, {
-        preview: URL.createObjectURL(file),
-      });
-      setValue('photo', newFile, { shouldValidate: true });
-    }
-  };
 
   const handleClearFields = () => {
     reset(defaultValues);
@@ -910,22 +896,17 @@ export default function AddEditPilgrimForm() {
                                   accept="image/jpeg,image/jpg,image/png"
                                   style={{ display: 'none' }}
                                   onChange={(e) => {
-                                    const file = e.currentTarget.files?.[0];
-                                    if (file) {
-                                      // Keep the original File object and add preview property
-                                      // Use Object.assign but ensure it's still a File
-                                      const fileWithPreview = Object.assign(file, {
-                                        preview: URL.createObjectURL(file),
-                                      }) as File & { preview?: string };
-
-                                      // Verify it's still a File
-                                      if (fileWithPreview instanceof File) {
-                                        field.onChange(fileWithPreview);
-                                      } else {
-                                        // Fallback: use original file if Object.assign breaks it
-                                        console.warn('File object modified, using original file');
-                                        field.onChange(file);
-                                      }
+                                    const selectedFile = e.currentTarget.files?.[0];
+                                    if (selectedFile) {
+                                      // Save the File object directly - don't use Object.assign
+                                      // This ensures it remains a File object that can be sent to the backend
+                                      field.onChange(selectedFile);
+                                      console.log('File selected:', {
+                                        name: selectedFile.name,
+                                        type: selectedFile.type,
+                                        size: selectedFile.size,
+                                        isFile: selectedFile instanceof File,
+                                      });
                                     }
                                   }}
                                 />
@@ -1306,13 +1287,13 @@ export default function AddEditPilgrimForm() {
 
               {/* Action Buttons */}
               <Stack direction="row" spacing={2} justifyContent="flex-end" sx={{ pt: 4 }}>
-                <Button
+                {/* <Button
                   variant="outlined"
                   color="error"
                   sx={{ minWidth: 120, px: 3, borderWidth: 2 }}
                 >
                   {t('Pilgrims.Label.delete')}
-                </Button>
+                </Button> */}
                 <Button
                   variant="outlined"
                   color="warning"
@@ -1326,10 +1307,15 @@ export default function AddEditPilgrimForm() {
                   variant="contained"
                   color="primary"
                   sx={{ minWidth: 120, px: 3 }}
-                  disabled={createPilgrimMutation.isPending}
+                  disabled={createPilgrimMutation.isPending || !isDirty}
+                  startIcon={
+                    createPilgrimMutation.isPending ? (
+                      <CircularProgress size={16} color="inherit" />
+                    ) : null
+                  }
                 >
                   {createPilgrimMutation.isPending
-                    ? t('Pilgrims.Label.saving') || 'Saving...'
+                    ? t('Pilgrims.Label.saving')
                     : t('Pilgrims.Label.save')}
                 </Button>
               </Stack>

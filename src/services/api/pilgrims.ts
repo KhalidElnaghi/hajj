@@ -390,11 +390,20 @@ export const createPilgrim = async (data: CreatePilgrimData): Promise<CreatePilg
   const formData = new FormData();
 
   // Add photo to FormData if provided (same logic as your example)
-  if (data.photo) {
+  // Check if photo exists and is a valid File object (not empty object or null)
+  const hasValidPhoto = data.photo && 
+    (data.photo instanceof File || 
+     (typeof data.photo === 'object' && 
+      data.photo !== null && 
+      Object.keys(data.photo as object).length > 0 && 
+      'preview' in data.photo));
+
+  if (hasValidPhoto && data.photo) {
     console.log('Photo data received:', {
       type: typeof data.photo,
       isFile: data.photo instanceof File,
-      hasPreview: typeof data.photo === 'object' && 'preview' in data.photo,
+      hasPreview: typeof data.photo === 'object' && data.photo !== null && 'preview' in data.photo,
+      isEmptyObject: typeof data.photo === 'object' && data.photo !== null && Object.keys(data.photo as object).length === 0,
     });
 
     // Extract File object (handle both File and File with preview property)
@@ -405,19 +414,45 @@ export const createPilgrim = async (data: CreatePilgrimData): Promise<CreatePilg
       console.log('Photo is a File:', { name: photoFile.name, type: photoFile.type });
     } else if (typeof data.photo === 'object' && data.photo !== null && 'preview' in data.photo) {
       // Check if it's a File object with preview property
-      const fileWithPreview = data.photo as File & { preview?: string };
+      // Try to access the File object directly
+      const fileWithPreview = data.photo as any;
+      
+      // Check if it's actually a File object (even with preview property)
       if (fileWithPreview instanceof File) {
         photoFile = fileWithPreview;
         console.log('Photo is a File with preview:', { name: photoFile.name, type: photoFile.type });
+      } else if (fileWithPreview.constructor?.name === 'File' || fileWithPreview instanceof Blob) {
+        // Sometimes File objects lose their instanceof check but are still Files
+        photoFile = fileWithPreview as File;
+        console.log('Photo is a File (via constructor check):', { 
+          name: photoFile.name, 
+          type: photoFile.type,
+          constructor: fileWithPreview.constructor?.name,
+        });
       } else {
-        console.error('Photo has preview property but is not a File:', fileWithPreview);
+        console.error('Photo has preview property but is not a File:', {
+          type: typeof fileWithPreview,
+          constructor: fileWithPreview?.constructor?.name,
+          keys: Object.keys(fileWithPreview),
+        });
       }
     }
 
     if (photoFile) {
       // Verify file type before appending
       const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+      console.log('Photo file details:', {
+        name: photoFile.name,
+        type: photoFile.type,
+        size: photoFile.size,
+        isValidType: validTypes.includes(photoFile.type),
+        constructor: photoFile.constructor.name,
+        isFile: photoFile instanceof File,
+        isBlob: photoFile instanceof Blob,
+      });
+
       if (validTypes.includes(photoFile.type)) {
+        // Append file to FormData - use the File object directly
         formData.append('photo', photoFile, photoFile.name);
         console.log('✅ Photo added to FormData:', {
           name: photoFile.name,
@@ -434,6 +469,7 @@ export const createPilgrim = async (data: CreatePilgrimData): Promise<CreatePilg
         photo: data.photo,
         type: typeof data.photo,
         isFile: data.photo instanceof File,
+        constructor: data.photo?.constructor?.name,
       });
     }
   } else {

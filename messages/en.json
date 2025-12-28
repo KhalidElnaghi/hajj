@@ -615,7 +615,8 @@
       "supervisor_notes": "Supervisor Notes",
       "supervisor_notes_placeholder": "What comes to mind....",
       "clear_fields": "Clear Fields",
-      "save": "Save"
+      "save": "Save",
+      "saving": "Saving..."
     },
     "Button": {
       "add": "Add",
