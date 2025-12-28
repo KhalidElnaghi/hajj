@@ -32,6 +32,7 @@ import {
   RHFTextField,
   RHFSelect,
   RHFDatePicker,
+  RHFHijriDatePicker,
   RHFTextarea,
   RHFMultiSelect,
 } from 'src/components/hook-form';
@@ -119,97 +120,62 @@ export default function AddEditPilgrimForm() {
     []
   );
 
-  // Yup validation schema
-  // Based on API payload: Red asterisk = Required, Gray asterisk = Optional
   const PilgrimSchema = Yup.object().shape({
-    // REQUIRED FIELDS (red asterisk in API)
     nameAr: Yup.string()
-      .required(t('Pilgrims.Message.name_ar_required') || 'Arabic name is required')
-      .min(2, t('Pilgrims.Message.name_min_length') || 'Name must be at least 2 characters'),
+      .required(t('Pilgrims.Message.name_ar_required'))
+      .min(2, t('Pilgrims.Message.name_min_length')),
     nameEn: Yup.string()
-      .required(t('Pilgrims.Message.name_en_required') || 'English name is required')
-      .min(2, t('Pilgrims.Message.name_min_length') || 'Name must be at least 2 characters'),
+      .required(t('Pilgrims.Message.name_en_required'))
+      .min(2, t('Pilgrims.Message.name_min_length')),
     idNumber: Yup.string()
-      .required(t('Pilgrims.Message.id_number_required') || 'ID number is required')
-      .length(
-        10,
-        t('Pilgrims.Message.id_number_length') || 'National ID must be exactly 10 characters'
-      )
-      .matches(
-        /^\d+$/,
-        t('Pilgrims.Message.id_number_invalid') || 'ID number must contain only digits'
-      )
-      .test(
-        'saudi-id-format',
-        t('Pilgrims.Message.id_number_saudi_format') ||
-          'ID must be a valid Saudi National ID (starts with 1 or 2) or Iqama ID (starts with 3 or 4)',
-        (value) => {
-          if (!value || value.length !== 10) return false;
-          const firstDigit = value.charAt(0);
-          return ['1', '2', '3', '4'].includes(firstDigit);
-        }
-      ),
-    nationality: Yup.string().required(
-      t('Pilgrims.Message.nationality_required') || 'Nationality is required'
-    ),
+      .required(t('Pilgrims.Message.id_number_required'))
+      .length(10, t('Pilgrims.Message.id_number_length'))
+      .matches(/^\d+$/, t('Pilgrims.Message.id_number_invalid'))
+      .test('saudi-id-format', t('Pilgrims.Message.id_number_saudi_format'), (value) => {
+        if (!value || value.length !== 10) return false;
+        const firstDigit = value.charAt(0);
+        return ['1', '2', '3', '4'].includes(firstDigit);
+      }),
+    nationality: Yup.string().required(t('Pilgrims.Message.nationality_required')),
     gender: Yup.string()
-      .required(t('Pilgrims.Message.gender_required') || 'Gender is required')
-      .oneOf(['0', '1'], t('Pilgrims.Message.gender_invalid') || 'Invalid gender'),
-    gregorianBirthDate: Yup.string().required(
-      t('Pilgrims.Message.birthdate_required') || 'Birthdate is required'
-    ),
-    hijriBirthDate: Yup.string().required(
-      t('Pilgrims.Message.birthdate_hijri_required') || 'Hijri birthdate is required'
-    ),
+      .required(t('Pilgrims.Message.gender_required'))
+      .oneOf(['0', '1'], t('Pilgrims.Message.gender_invalid')),
+    gregorianBirthDate: Yup.string().required(t('Pilgrims.Message.birthdate_required')),
+    hijriBirthDate: Yup.string().required(t('Pilgrims.Message.birthdate_hijri_required')),
     age: Yup.number()
-      .required(t('Pilgrims.Message.age_required') || 'Age is required')
-      .min(0, t('Pilgrims.Message.age_invalid') || 'Age must be a positive number')
-      .max(150, t('Pilgrims.Message.age_max') || 'Age must be less than 150'),
+      .required(t('Pilgrims.Message.age_required'))
+      .min(0, t('Pilgrims.Message.age_invalid'))
+      .max(150, t('Pilgrims.Message.age_max')),
     mobileNumber: Yup.string()
-      .required(t('Pilgrims.Message.mobile_required') || 'Mobile number is required')
-      .matches(
-        /^[0-9+\-\s()]*$/,
-        t('Pilgrims.Message.phone_invalid') || 'Invalid phone number format'
-      ),
+      .required(t('Pilgrims.Message.mobile_required'))
+      .matches(/^[0-9+\-\s()]*$/, t('Pilgrims.Message.phone_invalid')),
     photo: Yup.mixed()
       .nullable()
-      .test(
-        'fileType',
-        t('Pilgrims.Message.photo_invalid_type') || 'Photo must be an image (jpeg, jpg, png)',
-        (value) => {
-          if (!value) return true; // Photo is optional
-          if (typeof value === 'string') return true; // String is allowed (for existing photos)
-          if (value instanceof File) {
-            const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
-            return validTypes.includes(value.type);
-          }
-          // Check if it's a File object with preview property
-          if (typeof value === 'object' && 'preview' in value && value instanceof File) {
-            const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
-            return validTypes.includes(value.type);
-          }
-          return false;
+      .test('fileType', t('Pilgrims.Message.photo_invalid_type'), (value) => {
+        if (!value) return true;
+        if (typeof value === 'string') return true;
+        if (value instanceof File) {
+          const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+          return validTypes.includes(value.type);
         }
-      )
-      .test(
-        'fileSize',
-        t('Pilgrims.Message.photo_size_limit') || 'Photo size must be less than 5MB',
-        (value) => {
-          if (!value || typeof value === 'string') return true;
-          if (value instanceof File) {
-            return value.size <= 5 * 1024 * 1024; // 5MB
-          }
-          // Check if it's a File object with preview property
-          if (typeof value === 'object' && 'preview' in value && value instanceof File) {
-            return value.size <= 5 * 1024 * 1024; // 5MB
-          }
-          return false;
+        if (typeof value === 'object' && 'preview' in value && value instanceof File) {
+          const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+          return validTypes.includes(value.type);
         }
-      ),
-    packageName: Yup.string().required(
-      t('Pilgrims.Message.package_required') || 'Package is required'
-    ),
-    city: Yup.string().required(t('Pilgrims.Message.city_required') || 'City is required'),
+        return false;
+      })
+      .test('fileSize', t('Pilgrims.Message.photo_size_limit'), (value) => {
+        if (!value || typeof value === 'string') return true;
+        if (value instanceof File) {
+          return value.size <= 5 * 1024 * 1024;
+        }
+        if (typeof value === 'object' && 'preview' in value && value instanceof File) {
+          return value.size <= 5 * 1024 * 1024;
+        }
+        return false;
+      }),
+    packageName: Yup.string().required(t('Pilgrims.Message.package_required')),
+    city: Yup.string().required(t('Pilgrims.Message.city_required')),
 
     bookingNumber: Yup.string().default(''),
     arrivalDate: Yup.string().default(''),
@@ -217,17 +183,12 @@ export default function AddEditPilgrimForm() {
     permit: Yup.string().default(''),
     anotherMobileNumber: Yup.string()
       .default('')
-      .test(
-        'saudi-phone',
-        t('Pilgrims.Message.phone_saudi_invalid') ||
-          'Mobile number must be a valid Saudi phone number',
-        (value) => {
-          if (!value || value.trim() === '') return true; // Optional field
-          const cleaned = value.replace(/[\s\-+()]/g, '');
-          const saudiPhoneRegex = /^(?:\+966|00966|966|0)?5[0-9]{8}$/;
-          return saudiPhoneRegex.test(cleaned);
-        }
-      ),
+      .test('saudi-phone', t('Pilgrims.Message.phone_saudi_invalid'), (value) => {
+        if (!value || value.trim() === '') return true;
+        const cleaned = value.replace(/[\s\-+()]/g, '');
+        const saudiPhoneRegex = /^(?:\+966|00966|966|0)?5[0-9]{8}$/;
+        return saudiPhoneRegex.test(cleaned);
+      }),
     gatheringPointType: Yup.string().default(''),
     gatheringPoint: Yup.string().default(''),
     prominent: Yup.string().default(''),
@@ -254,16 +215,15 @@ export default function AddEditPilgrimForm() {
     setValue,
     reset,
     formState: { isDirty },
+    watch,
   } = methods;
+  console.log(watch());
   const onSubmit = handleSubmit(async (data) => {
     createPilgrimMutation.mutate(data, {
       onSuccess: () => {
-        enqueueSnackbar(
-          t('Pilgrims.Message.pilgrim_created_successfully') || 'Pilgrim created successfully',
-          {
-            variant: 'success',
-          }
-        );
+        enqueueSnackbar(t('Pilgrims.Message.pilgrim_created_successfully'), {
+          variant: 'success',
+        });
         router.push(paths.dashboard.pilgrims.root);
       },
       onError: (error: any) => {
@@ -271,8 +231,7 @@ export default function AddEditPilgrimForm() {
         enqueueSnackbar(
           error?.response?.data?.message ||
             error?.message ||
-            t('Pilgrims.Message.error_creating_pilgrim') ||
-            'Error creating pilgrim',
+            t('Pilgrims.Message.error_creating_pilgrim'),
           { variant: 'error' }
         );
       },
@@ -283,7 +242,6 @@ export default function AddEditPilgrimForm() {
     reset(defaultValues);
   };
 
-  // Transform init data into select options
   const cities = useMemo(() => {
     if (!initData?.cities) return [];
     return initData.cities.map((city) => ({
@@ -303,11 +261,6 @@ export default function AddEditPilgrimForm() {
   const permits = [
     { value: 'hajj', label: 'حج' },
     { value: 'umrah', label: 'عمرة' },
-  ];
-
-  const hijriDates = [
-    { value: '1445-01-01', label: '1445/01/01' },
-    { value: '1445-01-02', label: '1445/01/02' },
   ];
 
   const gatheringPointTypes = [
@@ -762,16 +715,7 @@ export default function AddEditPilgrimForm() {
                           *
                         </Box>
                       </Typography>
-                      <RHFSelect name="hijriBirthDate" required>
-                        <MenuItem value="">
-                          <em>None</em>
-                        </MenuItem>
-                        {hijriDates.map((date) => (
-                          <MenuItem key={date.value} value={date.value}>
-                            {date.label}
-                          </MenuItem>
-                        ))}
-                      </RHFSelect>
+                      <RHFHijriDatePicker name="hijriBirthDate" required placeholder="YYYY/MM/DD" />
                     </Box>
                   </Grid>
                   <Grid size={{ xs: 12, md: 4 }}>

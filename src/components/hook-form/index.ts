@@ -10,6 +10,7 @@ export { default as RHFTextarea } from './rhf-textarea';
 export { default as RHFTextField } from './rhf-text-field';
 export { default as RHFTimePicker } from './rhf-time-picker';
 export { default as RHFDatePicker } from './rhf-date-picker';
+export { default as RHFHijriDatePicker } from './rhf-hijri-date-picker';
 export { default as RHFRadioGroup } from './rhf-radio-group';
 export { default as RHFAutocomplete } from './rhf-autocomplete';
 export { default as RHFTextFieldForm } from './rhf-text-field-form';
