@@ -243,25 +243,27 @@ export default function AddEditPilgrimForm() {
   } = methods;
 
   const onSubmit = handleSubmit(async (data) => {
-    try {
-      await createPilgrimMutation.mutateAsync(data);
-      enqueueSnackbar(
-        t('Pilgrims.Message.pilgrim_created_successfully') || 'Pilgrim created successfully',
-        {
-          variant: 'success',
-        }
-      );
-      router.push(paths.dashboard.pilgrims.list);
-    } catch (error: any) {
-      console.error('Error submitting form:', error);
-      enqueueSnackbar(
-        error?.response?.data?.message ||
-          error?.message ||
-          t('Pilgrims.Message.error_creating_pilgrim') ||
-          'Error creating pilgrim',
-        { variant: 'error' }
-      );
-    }
+    createPilgrimMutation.mutate(data, {
+      onSuccess: () => {
+        enqueueSnackbar(
+          t('Pilgrims.Message.pilgrim_created_successfully') || 'Pilgrim created successfully',
+          {
+            variant: 'success',
+          }
+        );
+        router.push(paths.dashboard.pilgrims.list);
+      },
+      onError: (error: any) => {
+        console.error('Error submitting form:', error);
+        enqueueSnackbar(
+          error?.response?.data?.message ||
+            error?.message ||
+            t('Pilgrims.Message.error_creating_pilgrim') ||
+            'Error creating pilgrim',
+          { variant: 'error' }
+        );
+      },
+    });
   });
 
   const handleDropPhoto = (acceptedFiles: File[]) => {
