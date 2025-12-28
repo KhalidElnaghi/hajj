@@ -7,6 +7,7 @@ export const queryKeys = {
     list: (params?: any) => [...queryKeys.pilgrims.lists(), params] as const,
     details: () => [...queryKeys.pilgrims.all, 'detail'] as const,
     detail: (id: string | number) => [...queryKeys.pilgrims.details(), id] as const,
+    initData: () => [...queryKeys.pilgrims.all, 'init-data'] as const,
   },
 };
 

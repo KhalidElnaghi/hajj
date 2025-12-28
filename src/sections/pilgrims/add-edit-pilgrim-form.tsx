@@ -39,6 +39,7 @@ import { Controller } from 'react-hook-form';
 import Iconify from 'src/components/iconify';
 import { PageHeader } from 'src/components/custom-page-headding';
 import { useCreatePilgrim } from 'src/services/mutations/pilgrims';
+import { useFetchPilgrimInitData } from 'src/services/queries/pilgrims';
 
 type PilgrimFormValues = {
   nameAr: string;
@@ -79,6 +80,8 @@ export default function AddEditPilgrimForm() {
   const isRtl = currentLang?.value === 'ar';
   const { enqueueSnackbar } = useSnackbar();
   const createPilgrimMutation = useCreatePilgrim();
+  const { data, isLoading: isLoadingInitData } = useFetchPilgrimInitData();
+  const initData = data?.data;
 
   const defaultValues = useMemo<PilgrimFormValues>(
     () => ({
@@ -127,40 +130,53 @@ export default function AddEditPilgrimForm() {
       .min(2, t('Pilgrims.Message.name_min_length') || 'Name must be at least 2 characters'),
     idNumber: Yup.string()
       .required(t('Pilgrims.Message.id_number_required') || 'ID number is required')
-      .length(10, t('Pilgrims.Message.id_number_length') || 'National ID must be exactly 10 characters')
-      .matches(/^\d+$/, t('Pilgrims.Message.id_number_invalid') || 'ID number must contain only digits')
+      .length(
+        10,
+        t('Pilgrims.Message.id_number_length') || 'National ID must be exactly 10 characters'
+      )
+      .matches(
+        /^\d+$/,
+        t('Pilgrims.Message.id_number_invalid') || 'ID number must contain only digits'
+      )
       .test(
         'saudi-id-format',
-        t('Pilgrims.Message.id_number_saudi_format') || 'ID must be a valid Saudi National ID (starts with 1 or 2) or Iqama ID (starts with 3 or 4)',
+        t('Pilgrims.Message.id_number_saudi_format') ||
+          'ID must be a valid Saudi National ID (starts with 1 or 2) or Iqama ID (starts with 3 or 4)',
         (value) => {
           if (!value || value.length !== 10) return false;
           const firstDigit = value.charAt(0);
           return ['1', '2', '3', '4'].includes(firstDigit);
         }
       ),
-    nationality: Yup.string()
-      .required(t('Pilgrims.Message.nationality_required') || 'Nationality is required'),
+    nationality: Yup.string().required(
+      t('Pilgrims.Message.nationality_required') || 'Nationality is required'
+    ),
     gender: Yup.string()
       .required(t('Pilgrims.Message.gender_required') || 'Gender is required')
-      .oneOf(['male', 'female'], t('Pilgrims.Message.gender_invalid') || 'Invalid gender'),
-    gregorianBirthDate: Yup.string()
-      .required(t('Pilgrims.Message.birthdate_required') || 'Birthdate is required'),
-    hijriBirthDate: Yup.string()
-      .required(t('Pilgrims.Message.birthdate_hijri_required') || 'Hijri birthdate is required'),
+      .oneOf(['0', '1'], t('Pilgrims.Message.gender_invalid') || 'Invalid gender'),
+    gregorianBirthDate: Yup.string().required(
+      t('Pilgrims.Message.birthdate_required') || 'Birthdate is required'
+    ),
+    hijriBirthDate: Yup.string().required(
+      t('Pilgrims.Message.birthdate_hijri_required') || 'Hijri birthdate is required'
+    ),
     age: Yup.number()
       .required(t('Pilgrims.Message.age_required') || 'Age is required')
       .min(0, t('Pilgrims.Message.age_invalid') || 'Age must be a positive number')
       .max(150, t('Pilgrims.Message.age_max') || 'Age must be less than 150'),
     mobileNumber: Yup.string()
       .required(t('Pilgrims.Message.mobile_required') || 'Mobile number is required')
-      .matches(/^[0-9+\-\s()]*$/, t('Pilgrims.Message.phone_invalid') || 'Invalid phone number format'),
+      .matches(
+        /^[0-9+\-\s()]*$/,
+        t('Pilgrims.Message.phone_invalid') || 'Invalid phone number format'
+      ),
     photo: Yup.mixed()
-      .required(t('Pilgrims.Message.photo_required') || 'Photo is required')
+      .nullable()
       .test(
         'fileType',
         t('Pilgrims.Message.photo_invalid_type') || 'Photo must be an image (jpeg, jpg, png)',
         (value) => {
-          if (!value) return false; // Photo is required
+          if (!value) return true; // Photo is optional
           if (typeof value === 'string') return true; // String is allowed (for existing photos)
           if (value instanceof File) {
             const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
@@ -189,11 +205,11 @@ export default function AddEditPilgrimForm() {
           return false;
         }
       ),
-    packageName: Yup.string()
-      .required(t('Pilgrims.Message.package_required') || 'Package is required'),
-    city: Yup.string()
-      .required(t('Pilgrims.Message.city_required') || 'City is required'),
-    
+    packageName: Yup.string().required(
+      t('Pilgrims.Message.package_required') || 'Package is required'
+    ),
+    city: Yup.string().required(t('Pilgrims.Message.city_required') || 'City is required'),
+
     // OPTIONAL FIELDS (gray asterisk in API)
     bookingNumber: Yup.string().default(''),
     arrivalDate: Yup.string().default(''),
@@ -203,7 +219,8 @@ export default function AddEditPilgrimForm() {
       .default('')
       .test(
         'saudi-phone',
-        t('Pilgrims.Message.phone_saudi_invalid') || 'Mobile number must be a valid Saudi phone number',
+        t('Pilgrims.Message.phone_saudi_invalid') ||
+          'Mobile number must be a valid Saudi phone number',
         (value) => {
           if (!value || value.trim() === '') return true; // Optional field
           // Remove spaces, dashes, and other characters
@@ -280,28 +297,23 @@ export default function AddEditPilgrimForm() {
     reset(defaultValues);
   };
 
-  const cities = [
-    { value: 'makkah', label: 'مكة المكرمة' },
-    { value: 'madinah', label: 'المدينة المنورة' },
-    { value: 'riyadh', label: 'الرياض' },
-  ];
+  // Transform init data into select options
+  const cities = useMemo(() => {
+    if (!initData?.cities) return [];
+    return initData.cities.map((city) => ({
+      value: String(city?.city?.id),
+      label: isRtl
+        ? city?.city?.name_ar || city?.city?.name
+        : city?.city?.name_en || city?.city?.name,
+    }));
+  }, [initData?.cities, isRtl]);
 
-  const packages = [
-    { value: 'package1', label: 'باقة 1' },
-    { value: 'package2', label: 'باقة 2' },
-  ];
+  const packages = useMemo(() => initData?.packages, [initData?.packages]);
 
-  const genders = [
-    { value: 'male', label: t('Pilgrims.Label.male') },
-    { value: 'female', label: t('Pilgrims.Label.female') },
-  ];
-
-  const nationalities = [
-    { value: 'saudi', label: 'السعودية' },
-    { value: 'egypt', label: 'مصر' },
-    { value: 'jordan', label: 'الأردن' },
-  ];
-
+  const nationalities = useMemo(() => {
+    return initData?.countries;
+  }, [initData?.countries]);
+  console.log(initData?.cities);
   const permits = [
     { value: 'hajj', label: 'حج' },
     { value: 'umrah', label: 'عمرة' },
@@ -347,10 +359,13 @@ export default function AddEditPilgrimForm() {
     { value: 'poor', label: 'ضعيف' },
   ];
 
-  const supervisorOptions = [
-    { value: 'ahmed', label: 'Ahmed Ali' },
-    { value: 'amal', label: 'Amal Ali' },
-  ];
+  const supervisorOptions = useMemo(() => {
+    if (!initData?.employees) return [];
+    return initData.employees.map((employee) => ({
+      value: String(employee.id),
+      label: isRtl ? employee.name_ar || employee.name : employee.name_en || employee.name,
+    }));
+  }, [initData?.employees, isRtl]);
 
   const renderSectionHeader = (icon: string, title: string) => (
     <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 3 }}>
@@ -565,9 +580,9 @@ export default function AddEditPilgrimForm() {
                         <MenuItem value="">
                           <em>None</em>
                         </MenuItem>
-                        {packages.map((pkg) => (
-                          <MenuItem key={pkg.value} value={pkg.value}>
-                            {pkg.label}
+                        {packages?.map((pkg) => (
+                          <MenuItem key={pkg?.id} value={pkg?.id}>
+                            {isRtl ? pkg?.name_ar || pkg?.name : pkg?.name_en || pkg?.package?.name}
                           </MenuItem>
                         ))}
                       </RHFSelect>
@@ -600,9 +615,11 @@ export default function AddEditPilgrimForm() {
                         <MenuItem value="">
                           <em>None</em>
                         </MenuItem>
-                        {nationalities.map((nat) => (
-                          <MenuItem key={nat.value} value={nat.value}>
-                            {nat.label}
+                        {nationalities?.map((nat) => (
+                          <MenuItem key={nat?.country?.id} value={nat?.country?.id}>
+                            {isRtl
+                              ? nat?.country?.name_ar || nat?.country?.name
+                              : nat?.country?.name_en || nat?.country?.name}
                           </MenuItem>
                         ))}
                       </RHFSelect>
@@ -635,11 +652,20 @@ export default function AddEditPilgrimForm() {
                         <MenuItem value="">
                           <em>None</em>
                         </MenuItem>
-                        {genders.map((gender) => (
-                          <MenuItem key={gender.value} value={gender.value}>
-                            {gender.label}
-                          </MenuItem>
-                        ))}
+                        {initData?.genders.map((gender) => {
+                          const genderKey =
+                            gender.value === 0
+                              ? 'Pilgrims.Label.gender_female'
+                              : gender.value === 1
+                                ? 'Pilgrims.Label.gender_male'
+                                : null;
+
+                          return (
+                            <MenuItem key={gender.value} value={String(gender.value)}>
+                              {genderKey ? t(genderKey) : gender.label || String(gender.value)}
+                            </MenuItem>
+                          );
+                        })}
                       </RHFSelect>
                     </Box>
                   </Grid>
@@ -843,15 +869,6 @@ export default function AddEditPilgrimForm() {
                         }}
                       >
                         {t('Pilgrims.Label.add_photo')}
-                        <Box
-                          component="span"
-                          sx={{
-                            color: 'error.main',
-                            ml: 0.5,
-                          }}
-                        >
-                          *
-                        </Box>
                       </Typography>
                       <Controller
                         name="photo"
@@ -918,7 +935,9 @@ export default function AddEditPilgrimForm() {
                                     fontSize: '0.875rem',
                                   }}
                                 >
-                                  {fileName || t('Pilgrims.Label.select_image') || 'Select an image'}
+                                  {fileName ||
+                                    t('Pilgrims.Label.select_image') ||
+                                    'Select an image'}
                                 </Box>
                                 {file && (
                                   <IconButton
@@ -929,7 +948,9 @@ export default function AddEditPilgrimForm() {
                                       field.onChange(null);
                                       setValue('photo', null, { shouldValidate: true });
                                       // Clear the file input
-                                      const input = document.getElementById(fileInputId) as HTMLInputElement;
+                                      const input = document.getElementById(
+                                        fileInputId
+                                      ) as HTMLInputElement;
                                       if (input) {
                                         input.value = '';
                                       }

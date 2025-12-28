@@ -493,6 +493,8 @@
       "gathering_point_type": "نوع نقطة التجمع",
       "gathering_points": "نقاط التجمع",
       "gender": "الجنس",
+      "gender_female": "أنثى",
+      "gender_male": "ذكر",
       "general_health_status": "الحالة الصحية العامة",
       "health_status": "الحالة الصحية",
       "health_status_data": "بيانات الحالة الصحية",
@@ -667,5 +669,8 @@
       "package_required": "الباقة مطلوبة",
       "city_required": "المدينة مطلوبة"
     }
+  },
+  "None": {
+    "label": "لا شيء"
   }
 }

@@ -73,6 +73,36 @@ export const getPilgrimDetails = async (id: string | number): Promise<Pilgrim> =
   return API.get<Pilgrim>(`/pilgrims/${id}`);
 };
 
+// Init Data Interfaces
+export interface InitDataOption {
+  id: number;
+  name: string;
+  name_ar?: string;
+  name_en?: string;
+  [key: string]: any; // Allow additional properties
+}
+
+export interface PilgrimInitDataResponse {
+  data: {
+    packages: InitDataOption[];
+    cities: InitDataOption[];
+    countries: InitDataOption[];
+    transports: InitDataOption[];
+    pilgrimTypes: InitDataOption[];
+    employees: InitDataOption[];
+    tags: InitDataOption[];
+    muhrimStatuses: InitDataOption[];
+    genders: InitDataOption[];
+    pilgrimStatuses: InitDataOption[];
+    sources: InitDataOption[];
+    departureStatuses: InitDataOption[];
+  };
+}
+
+export const getPilgrimInitData = async (): Promise<PilgrimInitDataResponse> => {
+  return API.get<PilgrimInitDataResponse>('/pilgrims/pilgrims/init-data');
+};
+
 export interface CreatePilgrimData {
   nameAr?: string;
   nameEn?: string;
@@ -182,63 +212,52 @@ export const createPilgrim = async (data: CreatePilgrimData): Promise<CreatePilg
   // Map idNumber to national_id (integer)
   bodyData.national_id = safeInteger(data.idNumber);
 
-  // Map nationality string to nationality_id integer
-  // Backend expects nationality_id as an INTEGER
-  // FormData sends everything as strings, so we send the integer as a string (e.g., "1" not 1)
-  // The backend will parse the string as an integer
-  // IMPORTANT: nationality_id must be a valid integer (not 0, not null, not undefined)
+  // Map nationality to nationality_id integer
+  // The form now sends string IDs directly from the API (e.g., "1", "2")
+  // Parse the ID directly - no mapping needed
   let nationalityIdValue: number = 0;
 
   if (isValidValue(data.nationality)) {
-    // First, try to get the ID from the mapping
-    const mappedId = nationalityMap[data.nationality as string];
-    if (mappedId && mappedId > 0 && Number.isInteger(mappedId)) {
-      nationalityIdValue = mappedId;
+    const parsedId = parseInt(String(data.nationality), 10);
+    if (!isNaN(parsedId) && parsedId > 0 && Number.isInteger(parsedId)) {
+      nationalityIdValue = parsedId;
     } else {
-      // If mapping not found, try to parse the value as an integer ID directly
-      // This handles cases where the form might already be using integer IDs
-      const parsedId = parseInt(String(data.nationality), 10);
-      if (!isNaN(parsedId) && parsedId > 0 && Number.isInteger(parsedId)) {
-        nationalityIdValue = parsedId;
-      } else {
-        // Invalid nationality - log error but still need to send something
-        console.error('Invalid nationality_id:', {
-          value: data.nationality,
-          mappedId: mappedId,
-          parsedId: parsedId,
-          availableMappings: Object.keys(nationalityMap),
-        });
-        // Since it's required, send 0 (will fail backend validation)
-        nationalityIdValue = 0;
-      }
+      console.error('Invalid nationality_id:', {
+        value: data.nationality,
+        parsedId: parsedId,
+      });
+      nationalityIdValue = 0;
     }
   } else {
-    // Nationality is required, but not provided
     console.error('Nationality is required but not provided');
-    nationalityIdValue = 0; // Will fail validation
+    nationalityIdValue = 0;
   }
 
-  // Always send nationality_id as an integer (not string)
   bodyData.nationality_id = Math.floor(nationalityIdValue);
-  
-  // Log for debugging
+
   if (nationalityIdValue === 0) {
     console.error('WARNING: nationality_id is 0 - this will fail backend validation', {
       inputValue: data.nationality,
-      nationalityMap: nationalityMap,
     });
   } else {
-    console.log('nationality_id:', nationalityIdValue, 'from input:', data.nationality);
+    console.log('Sending nationality_id:', bodyData.nationality_id);
   }
 
-  // Map gender string to integer (1=male, 0=female)
+  // Map gender to integer
+  // The form now sends string IDs directly from the API (e.g., "1", "0")
+  // Parse the ID directly - no mapping needed
   if (isValidValue(data.gender)) {
-    const genderId = genderMap[String(data.gender).toLowerCase()];
-    if (genderId !== undefined) {
-      bodyData.gender = genderId;
+    const parsedId = parseInt(String(data.gender), 10);
+    if (!isNaN(parsedId) && Number.isInteger(parsedId)) {
+      bodyData.gender = parsedId;
     } else {
-      // Default to 0 if invalid
-      bodyData.gender = 0;
+      // Fallback: try old mapping for backward compatibility
+      const genderId = genderMap[String(data.gender).toLowerCase()];
+      if (genderId !== undefined) {
+        bodyData.gender = genderId;
+      } else {
+        bodyData.gender = 0;
+      }
     }
   } else {
     bodyData.gender = 0;
@@ -279,81 +298,63 @@ export const createPilgrim = async (data: CreatePilgrimData): Promise<CreatePilg
   }
 
   // Map packageName to package_id (integer) - REQUIRED
+  // The form now sends string IDs directly from the API (e.g., "1", "2")
   let packageIdValue: number = 0;
-  
+
   if (isValidValue(data.packageName)) {
-    // First, try to get the ID from the mapping
-    const mappedId = packageMap[data.packageName as string];
-    if (mappedId && mappedId > 0 && Number.isInteger(mappedId)) {
-      packageIdValue = mappedId;
+    const parsedId = parseInt(String(data.packageName), 10);
+    if (!isNaN(parsedId) && parsedId > 0 && Number.isInteger(parsedId)) {
+      packageIdValue = parsedId;
     } else {
-      // If mapping not found, try to parse the value as an integer ID directly
-      const parsedId = parseInt(String(data.packageName), 10);
-      if (!isNaN(parsedId) && parsedId > 0 && Number.isInteger(parsedId)) {
-        packageIdValue = parsedId;
-      } else {
-        console.error('Invalid package_id:', {
-          value: data.packageName,
-          mappedId: mappedId,
-          parsedId: parsedId,
-          availableMappings: Object.keys(packageMap),
-        });
-        packageIdValue = 0;
-      }
+      console.error('Invalid package_id:', {
+        value: data.packageName,
+        parsedId: parsedId,
+      });
+      packageIdValue = 0;
     }
   } else {
     console.error('Package is required but not provided');
     packageIdValue = 0;
   }
-  
+
   bodyData.package_id = Math.floor(packageIdValue);
-  
+
   if (packageIdValue === 0) {
     console.error('WARNING: package_id is 0 - this will fail backend validation', {
       inputValue: data.packageName,
-      packageMap: packageMap,
     });
   } else {
-    console.log('package_id:', packageIdValue, 'from input:', data.packageName);
+    console.log('Sending package_id:', bodyData.package_id);
   }
 
   // Map city to city_id (integer) - REQUIRED
+  // The form now sends string IDs directly from the API (e.g., "1", "2")
   let cityIdValue: number = 0;
-  
+
   if (isValidValue(data.city)) {
-    // First, try to get the ID from the mapping
-    const mappedId = cityMap[data.city as string];
-    if (mappedId && mappedId > 0 && Number.isInteger(mappedId)) {
-      cityIdValue = mappedId;
+    const parsedId = parseInt(String(data.city), 10);
+    if (!isNaN(parsedId) && parsedId > 0 && Number.isInteger(parsedId)) {
+      cityIdValue = parsedId;
     } else {
-      // If mapping not found, try to parse the value as an integer ID directly
-      const parsedId = parseInt(String(data.city), 10);
-      if (!isNaN(parsedId) && parsedId > 0 && Number.isInteger(parsedId)) {
-        cityIdValue = parsedId;
-      } else {
-        console.error('Invalid city_id:', {
-          value: data.city,
-          mappedId: mappedId,
-          parsedId: parsedId,
-          availableMappings: Object.keys(cityMap),
-        });
-        cityIdValue = 0;
-      }
+      console.error('Invalid city_id:', {
+        value: data.city,
+        parsedId: parsedId,
+      });
+      cityIdValue = 0;
     }
   } else {
     console.error('City is required but not provided');
     cityIdValue = 0;
   }
-  
+
   bodyData.city_id = Math.floor(cityIdValue);
-  
+
   if (cityIdValue === 0) {
     console.error('WARNING: city_id is 0 - this will fail backend validation', {
       inputValue: data.city,
-      cityMap: cityMap,
     });
   } else {
-    console.log('city_id:', cityIdValue, 'from input:', data.city);
+    console.log('Sending city_id:', bodyData.city_id);
   }
 
   // String fields - always send as empty string if null/undefined
@@ -388,10 +389,10 @@ export const createPilgrim = async (data: CreatePilgrimData): Promise<CreatePilg
   // Handle photo - send in FormData if provided
   const formData = new FormData();
   let photoAdded = false;
-  
+
   if (data.photo) {
     let photoFile: File | null = null;
-    
+
     if (data.photo instanceof File) {
       photoFile = data.photo;
     } else if (typeof data.photo === 'object' && 'preview' in data.photo) {
@@ -401,7 +402,7 @@ export const createPilgrim = async (data: CreatePilgrimData): Promise<CreatePilg
         photoFile = fileWithPreview;
       }
     }
-    
+
     if (photoFile) {
       // Verify it's actually an image file
       const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
@@ -423,17 +424,17 @@ export const createPilgrim = async (data: CreatePilgrimData): Promise<CreatePilg
       console.error('Photo is not a valid File object:', data.photo);
     }
   } else {
-    console.warn('Photo is required but not provided');
+    console.log('Photo is optional and not provided - continuing without photo');
   }
-  
-  if (!photoAdded) {
-    console.error('Photo was not added to FormData - this will cause backend validation error');
+
+  if (!photoAdded && data.photo) {
+    console.warn('Photo was provided but not added to FormData - this may cause backend validation error');
   }
 
   // Append all body data to FormData as JSON string, or send separately
   // Option 1: Send everything in FormData (including JSON body as a field)
   // Option 2: Send photo in FormData and data in JSON body (requires multipart/form-data)
-  
+
   // We'll use Option 1: Send all data in FormData, but with proper types
   // Convert all body data to FormData format
   Object.entries(bodyData).forEach(([key, value]) => {

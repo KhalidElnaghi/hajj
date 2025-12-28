@@ -493,6 +493,8 @@
       "gathering_point_type": "Gathering Point Type",
       "gathering_points": "Gathering Points",
       "gender": "Gender",
+      "gender_female": "Female",
+      "gender_male": "Male",
       "general_health_status": "General Health Status",
       "health_status": "Health Status",
       "health_status_data": "Health Status Data",
@@ -667,5 +669,8 @@
       "package_required": "Package is required",
       "city_required": "City is required"
     }
+  },
+  "None": {
+    "label": "None"
   }
 }
