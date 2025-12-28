@@ -910,13 +910,22 @@ export default function AddEditPilgrimForm() {
                                   accept="image/jpeg,image/jpg,image/png"
                                   style={{ display: 'none' }}
                                   onChange={(e) => {
-                                    const selectedFile = e.target.files?.[0];
-                                    if (selectedFile) {
-                                      const newFile = Object.assign(selectedFile, {
-                                        preview: URL.createObjectURL(selectedFile),
-                                      });
-                                      field.onChange(newFile);
-                                      handleDropPhoto([newFile]);
+                                    const file = e.currentTarget.files?.[0];
+                                    if (file) {
+                                      // Keep the original File object and add preview property
+                                      // Use Object.assign but ensure it's still a File
+                                      const fileWithPreview = Object.assign(file, {
+                                        preview: URL.createObjectURL(file),
+                                      }) as File & { preview?: string };
+
+                                      // Verify it's still a File
+                                      if (fileWithPreview instanceof File) {
+                                        field.onChange(fileWithPreview);
+                                      } else {
+                                        // Fallback: use original file if Object.assign breaks it
+                                        console.warn('File object modified, using original file');
+                                        field.onChange(file);
+                                      }
                                     }
                                   }}
                                 />

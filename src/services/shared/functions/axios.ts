@@ -22,13 +22,23 @@ export const API = {
 
   post: async <T = any>(url: string, data?: any, config?: any): Promise<T> => {
     const token = STATIC_TOKEN || Cookie.get(ACCESS_TOKEN);
+    
+    // If data is FormData, don't set Content-Type header - let browser/axios set it with boundary
+    const isFormData = data instanceof FormData;
+    const headers: any = {
+      Authorization: token ? `Bearer ${token}` : undefined,
+      'Accept-Language': Cookie.get('Language') || 'ar',
+      ...config?.headers,
+    };
+    
+    // Remove Content-Type for FormData to let browser set it automatically
+    if (isFormData) {
+      delete headers['Content-Type'];
+    }
+    
     const response = await apiClient.post(url, data, {
       ...config,
-      headers: {
-        Authorization: token ? `Bearer ${token}` : undefined,
-        'Accept-Language': Cookie.get('Language') || 'ar',
-        ...config?.headers,
-      },
+      headers,
     });
     return response.data;
   },

@@ -388,47 +388,56 @@ export const createPilgrim = async (data: CreatePilgrimData): Promise<CreatePilg
 
   // Handle photo - send in FormData if provided
   const formData = new FormData();
-  let photoAdded = false;
 
+  // Add photo to FormData if provided (same logic as your example)
   if (data.photo) {
-    let photoFile: File | null = null;
+    console.log('Photo data received:', {
+      type: typeof data.photo,
+      isFile: data.photo instanceof File,
+      hasPreview: typeof data.photo === 'object' && 'preview' in data.photo,
+    });
 
+    // Extract File object (handle both File and File with preview property)
+    let photoFile: File | null = null;
+    
     if (data.photo instanceof File) {
       photoFile = data.photo;
-    } else if (typeof data.photo === 'object' && 'preview' in data.photo) {
-      // If it's an object with preview, check if it's still a File
+      console.log('Photo is a File:', { name: photoFile.name, type: photoFile.type });
+    } else if (typeof data.photo === 'object' && data.photo !== null && 'preview' in data.photo) {
+      // Check if it's a File object with preview property
       const fileWithPreview = data.photo as File & { preview?: string };
       if (fileWithPreview instanceof File) {
         photoFile = fileWithPreview;
+        console.log('Photo is a File with preview:', { name: photoFile.name, type: photoFile.type });
+      } else {
+        console.error('Photo has preview property but is not a File:', fileWithPreview);
       }
     }
 
     if (photoFile) {
-      // Verify it's actually an image file
+      // Verify file type before appending
       const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
       if (validTypes.includes(photoFile.type)) {
         formData.append('photo', photoFile, photoFile.name);
-        photoAdded = true;
-        console.log('Photo added to FormData:', {
+        console.log('✅ Photo added to FormData:', {
           name: photoFile.name,
           type: photoFile.type,
           size: photoFile.size,
         });
       } else {
-        console.warn('Invalid photo file type:', photoFile.type);
+        console.error('❌ Invalid photo file type:', photoFile.type, 'Expected: jpeg, jpg, png');
         // Still append it - backend will validate
         formData.append('photo', photoFile, photoFile.name);
-        photoAdded = true;
       }
     } else {
-      console.error('Photo is not a valid File object:', data.photo);
+      console.error('❌ Photo is not a valid File object:', {
+        photo: data.photo,
+        type: typeof data.photo,
+        isFile: data.photo instanceof File,
+      });
     }
   } else {
-    console.log('Photo is optional and not provided - continuing without photo');
-  }
-
-  if (!photoAdded && data.photo) {
-    console.warn('Photo was provided but not added to FormData - this may cause backend validation error');
+    console.log('No photo provided (optional field)');
   }
 
   // Append all body data to FormData as JSON string, or send separately
@@ -461,6 +470,7 @@ export const createPilgrim = async (data: CreatePilgrimData): Promise<CreatePilg
     }
   }
 
-  // Don't set Content-Type header - let browser set it with boundary for FormData
+  // API.post will automatically handle FormData and remove Content-Type header
+  // so browser can set it with the correct boundary
   return API.post<CreatePilgrimResponse>('/pilgrims/pilgrims', formData);
 };
