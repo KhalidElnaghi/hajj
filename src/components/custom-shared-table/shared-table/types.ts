@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ChangeEvent, Dispatch, ReactNode, SetStateAction } from 'react';
 
 import { SxProps, Theme } from '@mui/material';
 
@@ -21,6 +21,15 @@ export type Action<T> = {
   onClick: (row: T) => void;
   hide?: (row: T) => Boolean;
 };
+
+export type TableBulkAction<T> = {
+  key: string;
+  label: string;
+  icon?: string;
+  disabled?: boolean;
+  onClick: (selectedIds: string[], selectedRows: T[]) => void;
+};
+
 export interface SharedTableProps<T extends { id: string | number }> {
   tableHead: headCellType[];
   data: T[];
@@ -30,6 +39,14 @@ export interface SharedTableProps<T extends { id: string | number }> {
   count: number;
   headColor?: string;
   emptyIcon?: string;
+  /** Whether to display the order/index (#) column. Defaults to true */
+  order?: boolean;
+  /** Enable row selection with checkboxes */
+  enableSelection?: boolean;
+  /** Pass a table instance to share selection/pagination state */
+  table?: TableProps;
+  /** Callback when a row is clicked */
+  onRowClick?: (row: T) => void;
 }
 export interface SharedTableRowProps<T extends { id: string | number }> {
   row: T;
@@ -38,6 +55,10 @@ export interface SharedTableRowProps<T extends { id: string | number }> {
   headIds: (keyof T)[];
   // 1-based row index for the current page (used for the auto "No" column)
   index?: number;
+  selectionEnabled?: boolean;
+  selected?: boolean;
+  onSelectRow?: (id: string) => void;
+  onRowClick?: (row: T) => void;
 }
 export type SxStyle = SxProps<Theme>;
 
@@ -52,7 +73,8 @@ export type TableProps = {
   //
   onChangePage: (event: unknown, newPage: number) => void;
   onChangeRowsPerPage: (newRowsPerPage: number) => void;
-  onChangeDense: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onChangeDense: (event: ChangeEvent<HTMLInputElement>) => void;
   //
-  setDense: React.Dispatch<React.SetStateAction<boolean>>;
+  setDense: Dispatch<SetStateAction<boolean>>;
+  setSelected: Dispatch<SetStateAction<string[]>>;
 };

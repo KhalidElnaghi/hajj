@@ -1,4 +1,6 @@
-import { memo, forwardRef } from 'react';
+'use client';
+
+import { memo, forwardRef, useState, useEffect } from 'react';
 
 import Box from '@mui/material/Box';
 
@@ -8,11 +10,15 @@ import { StyledScrollbar, StyledRootScrollbar } from './styles';
 // ----------------------------------------------------------------------
 
 const Scrollbar = forwardRef<HTMLDivElement, ScrollbarProps>(({ children, sx, ...other }, ref) => {
-  const userAgent = typeof navigator === 'undefined' ? 'SSR' : navigator.userAgent;
+  const [isMobile, setIsMobile] = useState(false);
 
-  const mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent);
+  useEffect(() => {
+    const userAgent = navigator.userAgent;
+    const mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent);
+    setIsMobile(mobile);
+  }, []);
 
-  if (mobile) {
+  if (isMobile) {
     return (
       <Box ref={ref} sx={{ overflow: 'auto', ...sx }} {...other}>
         {children}

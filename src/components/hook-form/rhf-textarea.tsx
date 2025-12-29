@@ -9,9 +9,10 @@ type Props = TextFieldProps & {
   name: string;
   rules?: { [key: string]: any };
   value?: any;
+  isReadOnly?: boolean;
 };
 
-export default function RHFTextarea({ rules, name, value, helperText, type, ...other }: Props) {
+export default function RHFTextarea({ rules, name, value, helperText, type, isReadOnly, ...other }: Props) {
   const { control, setValue } = useFormContext();
   useEffect(() => {
     setValue(name, value);
@@ -44,6 +45,11 @@ export default function RHFTextarea({ rules, name, value, helperText, type, ...o
             name={field.name}
             error={!!error}
             helperText={error ? error?.message : helperText}
+            slotProps={{
+              input: {
+                readOnly: isReadOnly,
+              },
+            }}
             {...other}
           />
         );

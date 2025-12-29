@@ -10,4 +10,5 @@ export type ConfirmDialogProps = Omit<DialogProps, 'title' | 'content'> & {
   action?: React.ReactNode;
   onClose: VoidFunction;
   handleConfirmDelete?:VoidFunction;
+  loading?: boolean;
 };

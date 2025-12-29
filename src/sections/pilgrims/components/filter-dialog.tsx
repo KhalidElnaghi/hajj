@@ -1,0 +1,1496 @@
+'use client';
+
+import { useState, useEffect, useMemo } from 'react';
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  Stack,
+  TextField,
+  InputAdornment,
+  IconButton,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  Typography,
+  Box,
+  Select,
+  MenuItem,
+  FormControl,
+  ToggleButtonGroup,
+  ToggleButton,
+  Chip,
+  Avatar,
+  Autocomplete,
+} from '@mui/material';
+import { useTranslations } from 'next-intl';
+import Iconify from 'src/components/iconify';
+import Image from 'next/image';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { useFetchPilgrimInitData } from 'src/services/queries/pilgrims';
+import FilterDropdown from './filter-dialog/FilterDropdown';
+import FilterToggleGroup from './filter-dialog/FilterToggleGroup';
+import {
+  transformPackagesToOptions,
+  transformCitiesToOptions,
+  transformCountriesToOptions,
+  transformTransportsToOptions,
+  transformPilgrimTypesToOptions,
+  transformSimpleToDropdownOptions,
+  transformSimpleToToggleOptions,
+  transformEmployeesToOptions,
+  transformTagsToOptions,
+} from './filter-dialog/utils';
+
+// ----------------------------------------------------------------------
+
+type FilterDialogProps = {
+  open: boolean;
+  onClose: () => void;
+  onApplyFilters?: (filters: any) => void;
+  externalFilters?: any;
+};
+
+export default function FilterDialog({
+  open,
+  onClose,
+  onApplyFilters,
+  externalFilters,
+}: FilterDialogProps) {
+  const t = useTranslations('Pilgrims');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [expandedSections, setExpandedSections] = useState<string[]>([]);
+
+  // Fetch init data for dropdowns
+  const { data: initData, isLoading: initDataLoading } = useFetchPilgrimInitData();
+
+  // Transform API data to dropdown options
+  const packageOptions = useMemo(
+    () => transformPackagesToOptions(initData?.data?.packages),
+    [initData?.data?.packages]
+  );
+
+  const cityOptions = useMemo(
+    () => transformCitiesToOptions(initData?.data?.cities),
+    [initData?.data?.cities]
+  );
+
+  const nationalityOptions = useMemo(
+    () => transformCountriesToOptions(initData?.data?.countries),
+    [initData?.data?.countries]
+  );
+
+  const transportOptions = useMemo(
+    () => transformTransportsToOptions(initData?.data?.transports),
+    [initData?.data?.transports]
+  );
+
+  const pilgrimTypeOptions = useMemo(
+    () => transformPilgrimTypesToOptions(initData?.data?.pilgrimTypes),
+    [initData?.data?.pilgrimTypes]
+  );
+
+  const muhrimStatusOptions = useMemo(
+    () => transformSimpleToDropdownOptions(initData?.data?.muhrimStatuses),
+    [initData?.data?.muhrimStatuses]
+  );
+
+  const pilgrimStatusOptions = useMemo(
+    () => transformSimpleToDropdownOptions(initData?.data?.pilgrimStatuses),
+    [initData?.data?.pilgrimStatuses]
+  );
+
+  const sourceOptions = useMemo(
+    () => transformSimpleToDropdownOptions(initData?.data?.sources),
+    [initData?.data?.sources]
+  );
+
+  const genderToggleOptions = useMemo(
+    () => transformSimpleToToggleOptions(initData?.data?.genders),
+    [initData?.data?.genders]
+  );
+
+  const departureToggleOptions = useMemo(
+    () => transformSimpleToToggleOptions(initData?.data?.departureStatuses),
+    [initData?.data?.departureStatuses]
+  );
+
+  const tagOptions = useMemo(
+    () => transformTagsToOptions(initData?.data?.tags),
+    [initData?.data?.tags]
+  );
+
+  const employeeOptions = useMemo(
+    () => transformEmployeesToOptions(initData?.data?.employees),
+    [initData?.data?.employees]
+  );
+
+  const searchValue = searchTerm.trim().toLowerCase();
+  const matchesSearch = (texts: (string | undefined)[]) =>
+    !searchValue || texts.some((text) => text?.toLowerCase().includes(searchValue));
+
+  const sectionKeywords = {
+    personal: [
+      t('Label.personal_information'),
+      t('Label.nationality'),
+      t('Label.city'),
+      t('Label.package_name'),
+      t('Label.tags'),
+      t('Label.gender'),
+      t('Label.early_late'),
+      t('Label.booking_status'),
+      t('Label.pilgrim_type'),
+      t('Label.muhrim_status'),
+      t('Label.pilgrim_status'),
+    ],
+    gathering: [
+      t('Label.gathering_points'),
+      t('Label.gathering_point_type'),
+      t('Label.gathering_point'),
+      t('Label.destination'),
+    ],
+    accommodation: [
+      t('Label.accommodation'),
+      t('Label.room_number'),
+      t('Label.accommodation_destination'),
+      t('Label.camp_status'),
+    ],
+    transportation: [t('Label.transportation'), t('Label.transport')],
+    health: [t('Label.health_status')],
+    supervision: [t('Label.supervision'), t('Label.supervisors')],
+    import: [t('Label.import_file'), t('Label.source')],
+    shipping: [
+      t('Label.shipping_operations'),
+      t('Label.shipping_management'),
+      t('Label.shipment_status'),
+    ],
+  };
+
+  const showSection = {
+    personal: matchesSearch(sectionKeywords.personal),
+    gathering: matchesSearch(sectionKeywords.gathering),
+    accommodation: matchesSearch(sectionKeywords.accommodation),
+    transportation: matchesSearch(sectionKeywords.transportation),
+    health: matchesSearch(sectionKeywords.health),
+    supervision: matchesSearch(sectionKeywords.supervision),
+    import: matchesSearch(sectionKeywords.import),
+    shipping: matchesSearch(sectionKeywords.shipping),
+  };
+
+  const labelColor = (key: string) =>
+    searchValue && t(key)?.toLowerCase().includes(searchValue) ? 'primary.main' : '#64748B';
+
+  // Get supervisors list from init data
+  const supervisorsList = initData?.data?.employees || [];
+
+  // Employee interface for autocomplete
+  interface EmployeeOption {
+    id: number;
+    name: {
+      ar: string;
+      en: string;
+    };
+  }
+
+  // Form state
+  const [filters, setFilters] = useState({
+    // Personal Information
+    nationality: '',
+    city: '',
+    badge: '',
+    gender: '',
+    marriedLate: '',
+    bookingStatus: '',
+    package: '',
+    pilgrimType: '',
+    muhrimStatus: '',
+    pilgrimStatus: '',
+
+    // Assembly Points
+    gatheringPointType: '',
+    gatheringPoint: '',
+    destination: '',
+    gatheringDate: null as any,
+
+    // Accommodation
+    roomNumber: '',
+    accommodationDestination: '',
+    campStatus: '',
+
+    // Transportation
+    transport: '',
+
+    // Health Status
+    healthStatus: '',
+
+    // Supervision
+    supervisor: null as EmployeeOption | null,
+
+    // Import File
+    importFile: '',
+    source: '',
+
+    // Shipping Operations
+    shippingManagement: '',
+    shipmentStatus: '',
+  });
+
+  // Sync with external filters when they change
+  useEffect(() => {
+    if (externalFilters) {
+      const updatedFilters = {
+        nationality: externalFilters.nationality || '',
+        city: externalFilters.city || '',
+        badge: externalFilters.badge || '',
+        gender: externalFilters.gender || '',
+        marriedLate: externalFilters.marriedLate || '',
+        bookingStatus: externalFilters.bookingStatus || '',
+        package: externalFilters.package || '',
+        pilgrimType: externalFilters.pilgrimType || '',
+        muhrimStatus: externalFilters.muhrimStatus || '',
+        pilgrimStatus: externalFilters.pilgrimStatus || '',
+        gatheringPointType: externalFilters.gatheringPointType || '',
+        gatheringPoint: externalFilters.gatheringPoint || '',
+        destination: externalFilters.destination || '',
+        gatheringDate: externalFilters.gatheringDate || null,
+        roomNumber: externalFilters.roomNumber || '',
+        accommodationDestination: externalFilters.accommodationDestination || '',
+        campStatus: externalFilters.campStatus || '',
+        transport: externalFilters.transport || '',
+        healthStatus: externalFilters.healthStatus || '',
+        supervisor: externalFilters.supervisor || null,
+        importFile: externalFilters.importFile || '',
+        source: externalFilters.source || '',
+        shippingManagement: externalFilters.shippingManagement || '',
+        shipmentStatus: externalFilters.shipmentStatus || '',
+      };
+
+      setFilters(updatedFilters);
+
+      // Determine which sections should be expanded based on filters
+      const sectionsToExpand = [];
+
+      if (
+        updatedFilters.nationality ||
+        updatedFilters.city ||
+        updatedFilters.package ||
+        updatedFilters.badge ||
+        updatedFilters.gender ||
+        updatedFilters.marriedLate ||
+        updatedFilters.bookingStatus ||
+        updatedFilters.pilgrimType ||
+        updatedFilters.muhrimStatus ||
+        updatedFilters.pilgrimStatus
+      ) {
+        sectionsToExpand.push('personal');
+      }
+
+      if (
+        updatedFilters.gatheringPointType ||
+        updatedFilters.gatheringPoint ||
+        updatedFilters.destination
+      ) {
+        sectionsToExpand.push('gathering');
+      }
+
+      if (
+        updatedFilters.roomNumber ||
+        updatedFilters.accommodationDestination ||
+        updatedFilters.campStatus
+      ) {
+        sectionsToExpand.push('accommodation');
+      }
+
+      if (updatedFilters.transport) {
+        sectionsToExpand.push('transportation');
+      }
+
+      if (updatedFilters.healthStatus) {
+        sectionsToExpand.push('health');
+      }
+
+      if (updatedFilters.supervisor) {
+        sectionsToExpand.push('supervision');
+      }
+
+      if (updatedFilters.importFile || updatedFilters.source) {
+        sectionsToExpand.push('import');
+      }
+
+      if (updatedFilters.shippingManagement || updatedFilters.shipmentStatus) {
+        sectionsToExpand.push('shipping');
+      }
+
+      setExpandedSections(sectionsToExpand);
+    }
+  }, [externalFilters]);
+
+  const handleAccordionChange =
+    (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
+      setExpandedSections((prev) =>
+        isExpanded ? [...prev, panel] : prev.filter((item) => item !== panel)
+      );
+    };
+
+  const handleReset = () => {
+    setFilters({
+      nationality: '',
+      city: '',
+      package: '',
+      badge: '',
+      gender: '',
+      marriedLate: '',
+      bookingStatus: '',
+      pilgrimType: '',
+      muhrimStatus: '',
+      pilgrimStatus: '',
+      gatheringPointType: '',
+      gatheringPoint: '',
+      destination: '',
+      gatheringDate: null,
+      roomNumber: '',
+      accommodationDestination: '',
+      campStatus: '',
+      transport: '',
+      healthStatus: '',
+      supervisor: null,
+      importFile: '',
+      source: '',
+      shippingManagement: '',
+      shipmentStatus: '',
+    });
+    setSearchTerm('');
+    setExpandedSections([]);
+  };
+
+  const handleApply = () => {
+    // Apply filters logic here
+    console.log('Applied filters:', filters);
+    if (onApplyFilters) {
+      onApplyFilters(filters);
+    }
+    onClose();
+  };
+
+  return (
+    <Dialog
+      open={open}
+      onClose={onClose}
+      maxWidth="sm"
+      fullWidth
+      PaperProps={{
+        sx: {
+          borderRadius: 2,
+          maxHeight: '90vh',
+          boxShadow: 'none',
+          bgcolor: 'background.paper',
+        },
+      }}
+    >
+      {/* Dialog Header */}
+      <DialogTitle
+        sx={{
+          px: 3,
+          py: 2.5,
+          borderBottom: '1px solid',
+          borderColor: 'divider',
+        }}
+      >
+        <Stack direction="row" alignItems="center" justifyContent="space-between">
+          <Box>
+            <Typography
+              sx={{
+                color: '#1E293B',
+                fontSize: 27,
+                fontWeight: 500,
+                lineHeight: '30px',
+                mb: 0.5,
+              }}
+            >
+              {t('Title.filter_pilgrim_data')}
+            </Typography>
+            <Typography
+              sx={{
+                color: '#64748B',
+                fontSize: 14,
+                fontWeight: 400,
+                lineHeight: '18px',
+              }}
+            >
+              {t('Description.filter_pilgrim_subtitle')}
+            </Typography>
+          </Box>
+          <IconButton onClick={onClose} sx={{ color: 'text.secondary' }}>
+            <Iconify icon="mdi:close" width={24} />
+          </IconButton>
+        </Stack>
+      </DialogTitle>
+
+      {/* Dialog Content */}
+      <DialogContent sx={{ px: 3, py: 0 }}>
+        {/* Search Field */}
+        <Box sx={{ py: 3 }}>
+          <TextField
+            fullWidth
+            placeholder={t('Placeholder.search_by_nationality_gathering')}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            sx={{
+              '& .MuiOutlinedInput-root': {
+                borderRadius: 1,
+              },
+            }}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <Box
+                    component="img"
+                    src="/assets/images/pilgrims/search.svg"
+                    alt="search"
+                    sx={{ width: 20, height: 20 }}
+                  />
+                </InputAdornment>
+              ),
+            }}
+          />
+        </Box>
+
+        {/* Accordion Sections */}
+        <Box sx={{ mt: 2 }}>
+          {/* Personal Information */}
+          {showSection.personal && (
+            <Accordion
+              expanded={
+                expandedSections.includes('personal') || (!!searchValue && showSection.personal)
+              }
+              onChange={handleAccordionChange('personal')}
+              TransitionProps={{ timeout: 300 }}
+              sx={{
+                boxShadow: 'none !important',
+                border: 'none',
+                '&:before': { display: 'none' },
+                '&.Mui-expanded': {
+                  margin: 0,
+                },
+                mb: 0,
+              }}
+            >
+              <AccordionSummary
+                expandIcon={
+                  expandedSections.includes('personal') ? (
+                    <Iconify icon="mdi:chevron-down" width={20} color="#64748B" />
+                  ) : (
+                    <Iconify icon="mdi:plus" width={20} color="#64748B" />
+                  )
+                }
+                sx={{
+                  px: 0,
+                  minHeight: 56,
+                  '& .MuiAccordionSummary-content': { my: 1.5, mx: 3 },
+                  '& .MuiAccordionSummary-content.Mui-expanded': { my: 1.5, mx: 3 },
+                  '& .MuiAccordionSummary-expandIconWrapper': { mr: 3 },
+                  bgcolor: 'transparent',
+                  position: 'relative',
+                  '&::after': {
+                    content: '""',
+                    position: 'absolute',
+                    bottom: 0,
+                    left: 24,
+                    right: 24,
+                    height: '1px',
+                    bgcolor: 'divider',
+                  },
+                  '&:hover': {
+                    bgcolor: 'transparent',
+                  },
+                  '&.Mui-expanded': {
+                    minHeight: 56,
+                    bgcolor: 'transparent',
+                  },
+                }}
+              >
+                <Typography
+                  sx={{
+                    color: '#64748B',
+                    fontSize: 18,
+                    fontWeight: 400,
+                    lineHeight: '23px',
+                  }}
+                >
+                  {t('Label.personal_information')}
+                </Typography>
+              </AccordionSummary>
+              <AccordionDetails sx={{ px: 3, pt: 3, pb: 3, bgcolor: 'transparent' }}>
+                <Stack spacing={2.5}>
+                  <Stack direction="row" spacing={2}>
+                    <FilterDropdown
+                      label={t('Label.nationality')}
+                      value={filters.nationality}
+                      onChange={(value: string) => setFilters({ ...filters, nationality: value })}
+                      options={nationalityOptions}
+                      allLabel={t('Label.all')}
+                      disabled={initDataLoading}
+                      highlighted={
+                        !!(
+                          searchValue && t('Label.nationality')?.toLowerCase().includes(searchValue)
+                        )
+                      }
+                    />
+                    <FilterDropdown
+                      label={t('Label.city')}
+                      value={filters.city}
+                      onChange={(value: string) => setFilters({ ...filters, city: value })}
+                      options={cityOptions}
+                      allLabel={t('Label.all')}
+                      disabled={initDataLoading}
+                      highlighted={
+                        !!(searchValue && t('Label.city')?.toLowerCase().includes(searchValue))
+                      }
+                    />
+                  </Stack>
+
+                  <Stack direction="row" spacing={2}>
+                    <FilterDropdown
+                      label={t('Label.package_name')}
+                      value={filters.package}
+                      onChange={(value: string) => setFilters({ ...filters, package: value })}
+                      options={packageOptions}
+                      allLabel={t('Label.all')}
+                      disabled={initDataLoading}
+                      highlighted={
+                        !!(
+                          searchValue &&
+                          t('Label.package_name')?.toLowerCase().includes(searchValue)
+                        )
+                      }
+                    />
+                    <FilterDropdown
+                      label={t('Label.tags')}
+                      value={filters.badge}
+                      onChange={(value: string) => setFilters({ ...filters, badge: value })}
+                      options={tagOptions}
+                      allLabel={t('Label.all')}
+                      disabled={initDataLoading}
+                      highlighted={
+                        !!(searchValue && t('Label.tags')?.toLowerCase().includes(searchValue))
+                      }
+                    />
+                  </Stack>
+                  <Stack direction="row" spacing={2}>
+                    <FilterToggleGroup
+                      label={t('Label.gender')}
+                      value={filters.gender}
+                      onChange={(value: string) => setFilters({ ...filters, gender: value })}
+                      options={genderToggleOptions}
+                      disabled={initDataLoading}
+                      highlighted={
+                        !!(searchValue && t('Label.gender')?.toLowerCase().includes(searchValue))
+                      }
+                    />
+
+                    <FilterToggleGroup
+                      label={t('Label.early_late')}
+                      value={filters.marriedLate}
+                      onChange={(value: string) => setFilters({ ...filters, marriedLate: value })}
+                      options={departureToggleOptions}
+                      disabled={initDataLoading}
+                      highlighted={
+                        !!(
+                          searchValue && t('Label.early_late')?.toLowerCase().includes(searchValue)
+                        )
+                      }
+                    />
+                  </Stack>
+                  <FormControl fullWidth>
+                    <Typography
+                      sx={{
+                        mb: 1,
+                        color: labelColor('Label.booking_status'),
+                        fontSize: 16,
+                        fontWeight: 400,
+                        lineHeight: '22px',
+                        textTransform: 'capitalize',
+                      }}
+                    >
+                      {t('Label.booking_status')}
+                    </Typography>
+                    <Select
+                      value={filters.bookingStatus}
+                      onChange={(e) => setFilters({ ...filters, bookingStatus: e.target.value })}
+                      displayEmpty
+                      sx={{ borderRadius: 1 }}
+                    >
+                      <MenuItem value="">{t('Label.select')}</MenuItem>
+                      <MenuItem value="completed">مكتمل</MenuItem>
+                      <MenuItem value="pending">مؤكد</MenuItem>
+                      <MenuItem value="confirmed">قيد التأكيد</MenuItem>
+                      <MenuItem value="cancelled">ملغي</MenuItem>
+                    </Select>
+                  </FormControl>
+
+                  <Stack direction="row" spacing={2}>
+                    <FilterDropdown
+                      label={t('Label.pilgrim_type')}
+                      value={filters.pilgrimType}
+                      onChange={(value: string) => setFilters({ ...filters, pilgrimType: value })}
+                      options={pilgrimTypeOptions}
+                      allLabel={t('Label.all')}
+                      disabled={initDataLoading}
+                      highlighted={
+                        !!(
+                          searchValue &&
+                          t('Label.pilgrim_type')?.toLowerCase().includes(searchValue)
+                        )
+                      }
+                    />
+
+                    <FilterDropdown
+                      label={t('Label.muhrim_status')}
+                      value={filters.muhrimStatus}
+                      onChange={(value: string) => setFilters({ ...filters, muhrimStatus: value })}
+                      options={muhrimStatusOptions}
+                      allLabel={t('Label.all')}
+                      disabled={initDataLoading}
+                      highlighted={
+                        !!(
+                          searchValue &&
+                          t('Label.muhrim_status')?.toLowerCase().includes(searchValue)
+                        )
+                      }
+                    />
+                  </Stack>
+
+                  <FilterDropdown
+                    label={t('Label.pilgrim_status')}
+                    value={filters.pilgrimStatus}
+                    onChange={(value: string) => setFilters({ ...filters, pilgrimStatus: value })}
+                    options={pilgrimStatusOptions}
+                    allLabel={t('Label.all')}
+                    disabled={initDataLoading}
+                    highlighted={
+                      !!(
+                        searchValue &&
+                        t('Label.pilgrim_status')?.toLowerCase().includes(searchValue)
+                      )
+                    }
+                  />
+                </Stack>
+              </AccordionDetails>
+            </Accordion>
+          )}
+
+          {/* Assembly Points */}
+          {showSection.gathering && (
+            <Accordion
+              expanded={
+                expandedSections.includes('gathering') || (!!searchValue && showSection.gathering)
+              }
+              onChange={handleAccordionChange('gathering')}
+              sx={{
+                boxShadow: 'none !important',
+                border: 'none',
+                '&:before': { display: 'none' },
+                mb: 0,
+              }}
+            >
+              <AccordionSummary
+                expandIcon={
+                  expandedSections.includes('gathering') ? (
+                    <Iconify icon="mdi:chevron-down" width={20} color="#64748B" />
+                  ) : (
+                    <Iconify icon="mdi:plus" width={20} color="#64748B" />
+                  )
+                }
+                sx={{
+                  px: 0,
+                  minHeight: 56,
+                  '& .MuiAccordionSummary-content': { my: 1.5, mx: 3 },
+                  '& .MuiAccordionSummary-content.Mui-expanded': { my: 1.5, mx: 3 },
+                  '& .MuiAccordionSummary-expandIconWrapper': { mr: 3 },
+                  bgcolor: 'transparent',
+                  position: 'relative',
+                  '&::after': {
+                    content: '""',
+                    position: 'absolute',
+                    bottom: 0,
+                    left: 24,
+                    right: 24,
+                    height: '1px',
+                    bgcolor: 'divider',
+                  },
+                  '&:hover': {
+                    bgcolor: 'transparent',
+                  },
+                  '&.Mui-expanded': {
+                    minHeight: 56,
+                    bgcolor: 'transparent',
+                  },
+                }}
+              >
+                <Typography
+                  sx={{
+                    color: '#64748B',
+                    fontSize: 18,
+                    fontWeight: 400,
+                    lineHeight: '23px',
+                  }}
+                >
+                  {t('Label.gathering_points')}
+                </Typography>
+              </AccordionSummary>
+              <AccordionDetails sx={{ px: 3, pt: 3, pb: 3, bgcolor: 'transparent' }}>
+                <Stack spacing={2.5}>
+                  <Stack direction="row" spacing={2}>
+                    <FormControl fullWidth>
+                      <Typography
+                        sx={{
+                          mb: 1,
+                          color: labelColor('Label.gathering_point_type'),
+                          fontSize: 16,
+                          fontWeight: 400,
+                          lineHeight: '22px',
+                          textTransform: 'capitalize',
+                        }}
+                      >
+                        {t('Label.gathering_point_type')}
+                      </Typography>
+                      <Select
+                        value={filters.gatheringPointType}
+                        onChange={(e) =>
+                          setFilters({ ...filters, gatheringPointType: e.target.value })
+                        }
+                        displayEmpty
+                        sx={{ borderRadius: 1 }}
+                      >
+                        <MenuItem value="">{t('Label.select')}</MenuItem>
+                        <MenuItem value="jeddah">جدة</MenuItem>
+                        <MenuItem value="riyadh">الرياض</MenuItem>
+                        <MenuItem value="dammam">الدمام</MenuItem>
+                      </Select>
+                    </FormControl>
+                    <FormControl fullWidth>
+                      <Typography
+                        sx={{
+                          mb: 1,
+                          color: labelColor('Label.gathering_point'),
+                          fontSize: 16,
+                          fontWeight: 400,
+                          lineHeight: '22px',
+                          textTransform: 'capitalize',
+                        }}
+                      >
+                        {t('Label.gathering_point')}
+                      </Typography>
+                      <Select
+                        value={filters.gatheringPoint}
+                        onChange={(e) => setFilters({ ...filters, gatheringPoint: e.target.value })}
+                        displayEmpty
+                        sx={{ borderRadius: 1 }}
+                      >
+                        <MenuItem value="">{t('Label.select')}</MenuItem>
+                      </Select>
+                    </FormControl>
+                  </Stack>
+                  <Stack direction="row" spacing={2}>
+                    <FormControl fullWidth>
+                      <Typography
+                        sx={{
+                          mb: 1,
+                          color: labelColor('Label.destination'),
+                          fontSize: 16,
+                          fontWeight: 400,
+                          lineHeight: '22px',
+                          textTransform: 'capitalize',
+                        }}
+                      >
+                        {t('Label.destination')}
+                      </Typography>
+                      <Select
+                        value={filters.destination}
+                        onChange={(e) => setFilters({ ...filters, destination: e.target.value })}
+                        displayEmpty
+                        sx={{ borderRadius: 1 }}
+                      >
+                        <MenuItem value="">{t('Label.select')}</MenuItem>
+                      </Select>
+                    </FormControl>
+
+                    <FormControl fullWidth>
+                      <Typography
+                        sx={{
+                          mb: 1,
+                          color: labelColor('Label.gathering_date'),
+                          fontSize: 16,
+                          fontWeight: 400,
+                          lineHeight: '22px',
+                          textTransform: 'capitalize',
+                        }}
+                      >
+                        {t('Label.gathering_date')}
+                      </Typography>
+                      <DatePicker
+                        value={filters.gatheringDate}
+                        onChange={(newValue) => setFilters({ ...filters, gatheringDate: newValue })}
+                        slotProps={{
+                          textField: {
+                            fullWidth: true,
+                            placeholder: t('Label.select'),
+                          },
+                        }}
+                      />
+                    </FormControl>
+                  </Stack>
+                </Stack>
+              </AccordionDetails>
+            </Accordion>
+          )}
+
+          {/* Accommodation */}
+          {showSection.accommodation && (
+            <Accordion
+              expanded={
+                expandedSections.includes('accommodation') ||
+                (!!searchValue && showSection.accommodation)
+              }
+              onChange={handleAccordionChange('accommodation')}
+              sx={{
+                boxShadow: 'none !important',
+                border: 'none',
+                '&:before': { display: 'none' },
+                mb: 0,
+              }}
+            >
+              <AccordionSummary
+                expandIcon={
+                  expandedSections.includes('accommodation') ? (
+                    <Iconify icon="mdi:chevron-down" width={20} color="#64748B" />
+                  ) : (
+                    <Iconify icon="mdi:plus" width={20} color="#64748B" />
+                  )
+                }
+                sx={{
+                  px: 0,
+                  minHeight: 56,
+                  '& .MuiAccordionSummary-content': { my: 1.5, mx: 3 },
+                  '& .MuiAccordionSummary-content.Mui-expanded': { my: 1.5, mx: 3 },
+                  '& .MuiAccordionSummary-expandIconWrapper': { mr: 3 },
+                  bgcolor: 'transparent',
+                  position: 'relative',
+                  '&::after': {
+                    content: '""',
+                    position: 'absolute',
+                    bottom: 0,
+                    left: 24,
+                    right: 24,
+                    height: '1px',
+                    bgcolor: 'divider',
+                  },
+                  '&:hover': {
+                    bgcolor: 'transparent',
+                  },
+                  '&.Mui-expanded': {
+                    minHeight: 56,
+                    bgcolor: 'transparent',
+                  },
+                }}
+              >
+                <Typography
+                  sx={{
+                    color: '#64748B',
+                    fontSize: 18,
+                    fontWeight: 400,
+                    lineHeight: '23px',
+                  }}
+                >
+                  {t('Label.accommodation')}
+                </Typography>
+              </AccordionSummary>
+              <AccordionDetails sx={{ px: 3, pt: 3, pb: 3, bgcolor: 'transparent' }}>
+                <Stack spacing={2.5}>
+                  <Stack direction="row" spacing={2}>
+                    <FormControl fullWidth>
+                      <Typography
+                        sx={{
+                          mb: 1,
+                          color: labelColor('Label.room_group_number'),
+                          fontSize: 16,
+                          fontWeight: 400,
+                          lineHeight: '22px',
+                          textTransform: 'capitalize',
+                        }}
+                      >
+                        {t('Label.room_group_number')}
+                      </Typography>
+                      <Select
+                        value={filters.accommodationDestination}
+                        onChange={(e) =>
+                          setFilters({ ...filters, accommodationDestination: e.target.value })
+                        }
+                        displayEmpty
+                        sx={{ borderRadius: 1 }}
+                      >
+                        <MenuItem value="">{t('Label.select')}</MenuItem>
+                      </Select>
+                    </FormControl>
+                  </Stack>
+                </Stack>
+              </AccordionDetails>
+            </Accordion>
+          )}
+
+          {/* Transportation */}
+          {showSection.transportation && (
+            <Accordion
+              expanded={
+                expandedSections.includes('transportation') ||
+                (!!searchValue && showSection.transportation)
+              }
+              onChange={handleAccordionChange('transportation')}
+              sx={{
+                boxShadow: 'none !important',
+                border: 'none',
+                '&:before': { display: 'none' },
+                mb: 0,
+              }}
+            >
+              <AccordionSummary
+                expandIcon={
+                  expandedSections.includes('transportation') ? (
+                    <Iconify icon="mdi:chevron-down" width={20} color="#64748B" />
+                  ) : (
+                    <Iconify icon="mdi:plus" width={20} color="#64748B" />
+                  )
+                }
+                sx={{
+                  px: 0,
+                  minHeight: 56,
+                  '& .MuiAccordionSummary-content': { my: 1.5, mx: 3 },
+                  '& .MuiAccordionSummary-content.Mui-expanded': { my: 1.5, mx: 3 },
+                  '& .MuiAccordionSummary-expandIconWrapper': { mr: 3 },
+                  bgcolor: 'transparent',
+                  position: 'relative',
+                  '&::after': {
+                    content: '""',
+                    position: 'absolute',
+                    bottom: 0,
+                    left: 24,
+                    right: 24,
+                    height: '1px',
+                    bgcolor: 'divider',
+                  },
+                  '&:hover': {
+                    bgcolor: 'transparent',
+                  },
+                  '&.Mui-expanded': {
+                    minHeight: 56,
+                    bgcolor: 'transparent',
+                  },
+                }}
+              >
+                <Typography
+                  sx={{
+                    color: '#64748B',
+                    fontSize: 18,
+                    fontWeight: 400,
+                    lineHeight: '23px',
+                  }}
+                >
+                  {t('Label.transportation_data')}
+                </Typography>
+              </AccordionSummary>
+              <AccordionDetails sx={{ px: 3, pt: 3, pb: 3, bgcolor: 'transparent' }}>
+                <FilterDropdown
+                  label={t('Label.transport')}
+                  value={filters.transport}
+                  onChange={(value: string) => setFilters({ ...filters, transport: value })}
+                  options={transportOptions}
+                  allLabel={t('Label.all')}
+                  disabled={initDataLoading}
+                  highlighted={
+                    !!(searchValue && t('Label.transport')?.toLowerCase().includes(searchValue))
+                  }
+                />
+              </AccordionDetails>
+            </Accordion>
+          )}
+
+          {/* Health Status */}
+          {showSection.health && (
+            <Accordion
+              expanded={
+                expandedSections.includes('health') || (!!searchValue && showSection.health)
+              }
+              onChange={handleAccordionChange('health')}
+              sx={{
+                boxShadow: 'none !important',
+                border: 'none',
+                '&:before': { display: 'none' },
+                mb: 0,
+              }}
+            >
+              <AccordionSummary
+                expandIcon={
+                  expandedSections.includes('health') ? (
+                    <Iconify icon="mdi:chevron-down" width={20} color="#64748B" />
+                  ) : (
+                    <Iconify icon="mdi:plus" width={20} color="#64748B" />
+                  )
+                }
+                sx={{
+                  px: 0,
+                  minHeight: 56,
+                  '& .MuiAccordionSummary-content': { my: 1.5, mx: 3 },
+                  '& .MuiAccordionSummary-content.Mui-expanded': { my: 1.5, mx: 3 },
+                  '& .MuiAccordionSummary-expandIconWrapper': { mr: 3 },
+                  bgcolor: 'transparent',
+                  position: 'relative',
+                  '&::after': {
+                    content: '""',
+                    position: 'absolute',
+                    bottom: 0,
+                    left: 24,
+                    right: 24,
+                    height: '1px',
+                    bgcolor: 'divider',
+                  },
+                  '&:hover': {
+                    bgcolor: 'transparent',
+                  },
+                  '&.Mui-expanded': {
+                    minHeight: 56,
+                    bgcolor: 'transparent',
+                  },
+                }}
+              >
+                <Typography
+                  sx={{
+                    color: '#64748B',
+                    fontSize: 18,
+                    fontWeight: 400,
+                    lineHeight: '23px',
+                  }}
+                >
+                  {t('Label.health_status_data')}
+                </Typography>
+              </AccordionSummary>
+              <AccordionDetails sx={{ px: 3, pt: 3, pb: 3, bgcolor: 'transparent' }}>
+                <FormControl fullWidth>
+                  <Typography
+                    sx={{
+                      mb: 1,
+                      color: labelColor('Label.general_health_status'),
+                      fontSize: 16,
+                      fontWeight: 400,
+                      lineHeight: '22px',
+                      textTransform: 'capitalize',
+                    }}
+                  >
+                    {t('Label.general_health_status')}
+                  </Typography>
+                  <Select
+                    value={filters.healthStatus}
+                    onChange={(e) => setFilters({ ...filters, healthStatus: e.target.value })}
+                    displayEmpty
+                    sx={{ borderRadius: 1 }}
+                  >
+                    <MenuItem value="">{t('Label.select')}</MenuItem>
+                    <MenuItem value="good">جيد</MenuItem>
+                    <MenuItem value="attention">يحتاج عناية</MenuItem>
+                  </Select>
+                </FormControl>
+              </AccordionDetails>
+            </Accordion>
+          )}
+
+          {/* Supervision */}
+          {showSection.supervision && (
+            <Accordion
+              expanded={
+                expandedSections.includes('supervision') ||
+                (!!searchValue && showSection.supervision)
+              }
+              onChange={handleAccordionChange('supervision')}
+              sx={{
+                boxShadow: 'none !important',
+                border: 'none',
+                '&:before': { display: 'none' },
+                mb: 0,
+              }}
+            >
+              <AccordionSummary
+                expandIcon={
+                  expandedSections.includes('supervision') ? (
+                    <Iconify icon="mdi:chevron-down" width={20} color="#64748B" />
+                  ) : (
+                    <Iconify icon="mdi:plus" width={20} color="#64748B" />
+                  )
+                }
+                sx={{
+                  px: 0,
+                  minHeight: 56,
+                  '& .MuiAccordionSummary-content': { my: 1.5, mx: 3 },
+                  '& .MuiAccordionSummary-content.Mui-expanded': { my: 1.5, mx: 3 },
+                  '& .MuiAccordionSummary-expandIconWrapper': { mr: 3 },
+                  bgcolor: 'transparent',
+                  position: 'relative',
+                  '&::after': {
+                    content: '""',
+                    position: 'absolute',
+                    bottom: 0,
+                    left: 24,
+                    right: 24,
+                    height: '1px',
+                    bgcolor: 'divider',
+                  },
+                  '&:hover': {
+                    bgcolor: 'transparent',
+                  },
+                  '&.Mui-expanded': {
+                    minHeight: 56,
+                    bgcolor: 'transparent',
+                  },
+                }}
+              >
+                <Typography
+                  sx={{
+                    color: '#64748B',
+                    fontSize: 18,
+                    fontWeight: 400,
+                    lineHeight: '23px',
+                  }}
+                >
+                  {t('Label.supervision_organization')}
+                </Typography>
+              </AccordionSummary>
+              <AccordionDetails sx={{ px: 3, pt: 3, pb: 3, bgcolor: 'transparent' }}>
+                <Stack spacing={2.5}>
+                  <FormControl fullWidth>
+                    <Typography
+                      sx={{
+                        mb: 1,
+                        color: labelColor('Label.supervisors'),
+                        fontSize: 16,
+                        fontWeight: 400,
+                        lineHeight: '22px',
+                        textTransform: 'capitalize',
+                      }}
+                    >
+                      {t('Label.supervisors')}
+                    </Typography>
+                    <Autocomplete
+                      value={filters.supervisor}
+                      onChange={(event, newValue) => {
+                        setFilters({ ...filters, supervisor: newValue as EmployeeOption | null });
+                      }}
+                      options={supervisorsList}
+                      getOptionLabel={(option) => option.name.ar}
+                      getOptionKey={(option) => option.id}
+                      isOptionEqualToValue={(option, value) => option.id === value.id}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          placeholder={t('Label.select')}
+                          sx={{
+                            '& .MuiOutlinedInput-root': {
+                              borderRadius: 1,
+                            },
+                          }}
+                        />
+                      )}
+                      renderOption={(props, option) => {
+                        const { key, ...otherProps } = props as any;
+                        return (
+                          <li key={option.id} {...otherProps}>
+                            {option.name.ar}
+                          </li>
+                        );
+                      }}
+                    />
+                  </FormControl>
+                </Stack>
+              </AccordionDetails>
+            </Accordion>
+          )}
+
+          {/* Import File */}
+          {showSection.import && (
+            <Accordion
+              expanded={
+                expandedSections.includes('import') || (!!searchValue && showSection.import)
+              }
+              onChange={handleAccordionChange('import')}
+              sx={{
+                boxShadow: 'none !important',
+                border: 'none',
+                '&:before': { display: 'none' },
+                mb: 0,
+              }}
+            >
+              <AccordionSummary
+                expandIcon={
+                  expandedSections.includes('import') ? (
+                    <Iconify icon="mdi:chevron-down" width={20} color="#64748B" />
+                  ) : (
+                    <Iconify icon="mdi:plus" width={20} color="#64748B" />
+                  )
+                }
+                sx={{
+                  px: 0,
+                  minHeight: 56,
+                  '& .MuiAccordionSummary-content': { my: 1.5, mx: 3 },
+                  '& .MuiAccordionSummary-content.Mui-expanded': { my: 1.5, mx: 3 },
+                  '& .MuiAccordionSummary-expandIconWrapper': { mr: 3 },
+                  bgcolor: 'transparent',
+                  position: 'relative',
+                  '&::after': {
+                    content: '""',
+                    position: 'absolute',
+                    bottom: 0,
+                    left: 24,
+                    right: 24,
+                    height: '1px',
+                    bgcolor: 'divider',
+                  },
+                  '&:hover': {
+                    bgcolor: 'transparent',
+                  },
+                  '&.Mui-expanded': {
+                    minHeight: 56,
+                    bgcolor: 'transparent',
+                  },
+                }}
+              >
+                <Typography
+                  sx={{
+                    color: '#64748B',
+                    fontSize: 18,
+                    fontWeight: 400,
+                    lineHeight: '23px',
+                  }}
+                >
+                  {t('Label.import_file')}
+                </Typography>
+              </AccordionSummary>
+              <AccordionDetails sx={{ px: 3, pt: 3, pb: 3, bgcolor: 'transparent' }}>
+                <Stack spacing={2.5}>
+                  <Stack direction="row" spacing={2}>
+                    <FormControl fullWidth>
+                      <Typography
+                        sx={{
+                          mb: 1,
+                          color: labelColor('Label.import_file'),
+                          fontSize: 16,
+                          fontWeight: 400,
+                          lineHeight: '22px',
+                          textTransform: 'capitalize',
+                        }}
+                      >
+                        {t('Label.import_file')}
+                      </Typography>
+                      <Select
+                        value={filters.importFile}
+                        onChange={(e) => setFilters({ ...filters, importFile: e.target.value })}
+                        displayEmpty
+                        sx={{ borderRadius: 1 }}
+                      >
+                        <MenuItem value="">{t('Label.select')}</MenuItem>
+                      </Select>
+                    </FormControl>
+
+                    <FilterDropdown
+                      label={t('Label.source')}
+                      value={filters.source}
+                      onChange={(value: string) => setFilters({ ...filters, source: value })}
+                      options={sourceOptions}
+                      allLabel={t('Label.all')}
+                      disabled={initDataLoading}
+                      highlighted={
+                        !!(searchValue && t('Label.source')?.toLowerCase().includes(searchValue))
+                      }
+                    />
+                  </Stack>
+                </Stack>
+              </AccordionDetails>
+            </Accordion>
+          )}
+
+          {/* Shipping Operations */}
+          {/* {showSection.shipping && (
+            <Accordion
+              expanded={
+                expandedSections.includes('shipping') || (!!searchValue && showSection.shipping)
+              }
+              onChange={handleAccordionChange('shipping')}
+              sx={{
+                boxShadow: 'none !important',
+                border: 'none',
+                '&:before': { display: 'none' },
+                mb: 0,
+              }}
+            >
+              <AccordionSummary
+                expandIcon={
+                  expandedSections.includes('shipping') ? (
+                    <Iconify icon="mdi:chevron-down" width={20} color="#64748B" />
+                  ) : (
+                    <Iconify icon="mdi:plus" width={20} color="#64748B" />
+                  )
+                }
+                sx={{
+                  px: 0,
+                  minHeight: 56,
+                  '& .MuiAccordionSummary-content': { my: 1.5, mx: 3 },
+                  '& .MuiAccordionSummary-content.Mui-expanded': { my: 1.5, mx: 3 },
+                  '& .MuiAccordionSummary-expandIconWrapper': { mr: 3 },
+                  bgcolor: 'transparent',
+                  position: 'relative',
+                  '&::after': {
+                    content: '""',
+                    position: 'absolute',
+                    bottom: 0,
+                    left: 24,
+                    right: 24,
+                    height: '1px',
+                    bgcolor: 'divider',
+                  },
+                  '&:hover': {
+                    bgcolor: 'transparent',
+                  },
+                  '&.Mui-expanded': {
+                    minHeight: 56,
+                    bgcolor: 'transparent',
+                  },
+                }}
+              >
+                <Typography
+                  sx={{
+                    color: '#64748B',
+                    fontSize: 18,
+                    fontWeight: 400,
+                    lineHeight: '23px',
+                  }}
+                >
+                  {t('Label.shipping_operations')}
+                </Typography>
+              </AccordionSummary>
+              <AccordionDetails sx={{ px: 3, pt: 3, pb: 3, bgcolor: 'transparent' }}>
+                <Stack spacing={2.5}>
+                  <Stack direction="row" spacing={2}>
+                    <FormControl fullWidth>
+                      <Typography
+                        sx={{
+                          mb: 1,
+                          color: labelColor('Label.shipping_tool'),
+                          fontSize: 16,
+                          fontWeight: 400,
+                          lineHeight: '22px',
+                          textTransform: 'capitalize',
+                        }}
+                      >
+                        {t('Label.shipping_tool')}
+                      </Typography>
+                      <Select
+                        value={filters.shippingManagement}
+                        onChange={(e) =>
+                          setFilters({ ...filters, shippingManagement: e.target.value })
+                        }
+                        displayEmpty
+                        sx={{ borderRadius: 1 }}
+                      >
+                        <MenuItem value="">{t('Label.select')}</MenuItem>
+                      </Select>
+                    </FormControl>
+                    <FormControl fullWidth>
+                      <Typography
+                        sx={{
+                          mb: 1,
+                          color: labelColor('Label.shipment_status'),
+                          fontSize: 16,
+                          fontWeight: 400,
+                          lineHeight: '22px',
+                          textTransform: 'capitalize',
+                        }}
+                      >
+                        {t('Label.shipment_status')}
+                      </Typography>
+                      <Select
+                        value={filters.shipmentStatus}
+                        onChange={(e) => setFilters({ ...filters, shipmentStatus: e.target.value })}
+                        displayEmpty
+                        sx={{ borderRadius: 1 }}
+                      >
+                        <MenuItem value="">{t('Label.select')}</MenuItem>
+                      </Select>
+                    </FormControl>
+                  </Stack>
+                </Stack>
+              </AccordionDetails>
+            </Accordion>
+          )} */}
+        </Box>
+      </DialogContent>
+
+      {/* Dialog Actions */}
+      <DialogActions
+        sx={{
+          px: 3,
+          py: 2.5,
+          gap: 1,
+          justifyContent: 'flex-end',
+        }}
+      >
+        <Button
+          variant="contained"
+          onClick={handleApply}
+          sx={{
+            borderRadius: 1,
+            px: 4,
+            py: 0.75,
+            bgcolor: '#0d6efd',
+            fontWeight: 600,
+            '&:hover': {
+              bgcolor: '#0b5ed7',
+            },
+          }}
+        >
+          {t('Button.filter')}
+        </Button>
+        <Button
+          variant="outlined"
+          onClick={handleReset}
+          sx={{
+            borderRadius: 1,
+            px: 4,
+            py: 0.75,
+            borderColor: '#e0e0e0',
+            color: '#64748B',
+            '&:hover': {
+              borderColor: '#bdbdbd',
+              bgcolor: '#fafafa',
+            },
+          }}
+        >
+          {t('Button.clear_fields')}
+        </Button>
+        <Button
+          variant="text"
+          onClick={onClose}
+          sx={{
+            borderRadius: 1,
+            px: 4,
+            py: 0.75,
+            color: '#EF4444',
+            fontWeight: 600,
+            '&:hover': {
+              bgcolor: '#FEF2F2',
+            },
+          }}
+        >
+          {t('Button.cancel')}
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+}

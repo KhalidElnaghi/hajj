@@ -24,6 +24,7 @@ type RHFSelectProps = TextFieldProps & {
   value?: any;
   rules?: { [key: string]: any };
   PaperPropsSx?: SxProps<Theme>;
+  isReadOnly?: boolean;
 };
 
 export function RHFSelect({
@@ -35,6 +36,7 @@ export function RHFSelect({
   PaperPropsSx,
   rules,
   value,
+  isReadOnly,
   ...other
 }: RHFSelectProps) {
   const { control, setValue, watch } = useFormContext();
@@ -49,41 +51,54 @@ export function RHFSelect({
       defaultValue={value}
       rules={rules}
       control={control}
-      render={({ field, fieldState: { error } }) => (
-        <TextField
-          {...field}
-          select
-          fullWidth
-          // InputProps={{
-          //   endAdornment: field.value && (
-          //     <InputAdornment position="start">
-          //       <IconButton onClick={handleClear}>
-          //         <ClearIcon />
-          //       </IconButton>
-          //     </InputAdornment>
-          //   ),
-          // }}
-          SelectProps={{
-            native,
-            MenuProps: {
-              PaperProps: {
-                sx: {
-                  ...(!native && {
+      render={({ field, fieldState: { error } }) => {
+        const fieldValue = field.value ?? '';
+
+        return (
+          <TextField
+            {...field}
+            value={fieldValue}
+            onChange={(e) => {
+              field.onChange(e.target.value);
+            }}
+            onBlur={field.onBlur}
+            name={field.name}
+            select
+            fullWidth
+            slotProps={{
+              input: {
+                readOnly: isReadOnly,
+              },
+            }}
+            // InputProps={{
+            //   endAdornment: field.value && (
+            //     <InputAdornment position="start">
+            //       <IconButton onClick={handleClear}>
+            //         <ClearIcon />
+            //       </IconButton>
+            //     </InputAdornment>
+            //   ),
+            // }}
+            SelectProps={{
+              native: false,
+              MenuProps: {
+                PaperProps: {
+                  sx: {
                     maxHeight: typeof maxHeight === 'number' ? maxHeight : 'unset',
-                  }),
-                  ...PaperPropsSx,
+                    ...PaperPropsSx,
+                  },
                 },
               },
-            },
-            sx: { textTransform: 'capitalize' },
-          }}
-          error={!!error}
-          helperText={error ? error?.message : helperText}
-          {...other}
-        >
-          {children}
-        </TextField>
-      )}
+              sx: { textTransform: 'capitalize' },
+            }}
+            error={!!error}
+            helperText={error ? error?.message : helperText}
+            {...other}
+          >
+            {children}
+          </TextField>
+        );
+      }}
     />
   );
 }
@@ -140,7 +155,7 @@ export function RHFMultiSelect({
       name={name}
       control={control}
       render={({ field, fieldState: { error } }) => (
-        <FormControl error={!!error} {...other}>
+        <FormControl error={!!error} fullWidth {...other}>
           {label && <InputLabel id={name}> {label} </InputLabel>}
 
           <Select

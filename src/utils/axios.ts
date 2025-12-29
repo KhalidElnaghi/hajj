@@ -18,7 +18,7 @@ const apiClient: AxiosInstance = axios.create({
   baseURL: HOST_API,
   headers: {
     'Content-Type': 'application/json',
-    'Accept-Language': Cookie.get('Language') ? Cookie.get('Language') : 'en',
+    'Accept-Language': Cookie.get('Language') ? Cookie.get('Language') : 'ar',
     'Access-Control-Allow-Origin': '*',
     Accept: 'application/json',
     'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE,PATCH,OPTIONS',
@@ -29,7 +29,7 @@ const SharedApiClient: AxiosInstance = axios.create({
   baseURL: HOST_API_SHARED,
   headers: {
     'Content-Type': 'application/json',
-    'Accept-Language': Cookie.get('Language') ? Cookie.get('Language') : 'en',
+    'Accept-Language': Cookie.get('Language') ? Cookie.get('Language') : 'ar',
     'Access-Control-Allow-Origin': '*',
     Accept: 'application/json',
     'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE,PATCH,OPTIONS',
@@ -37,7 +37,19 @@ const SharedApiClient: AxiosInstance = axios.create({
 });
 axios.interceptors.request.use(
   (config) => {
-    config.headers['Accept-Language'] = Cookie.get('Language');
+    config.headers['Accept-Language'] = Cookie.get('Language') || 'ar';
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+// Request interceptor to handle FormData properly
+apiClient.interceptors.request.use(
+  (config) => {
+    // If data is FormData, remove Content-Type header to let browser set it with boundary
+    if (config.data instanceof FormData) {
+      delete config.headers['Content-Type'];
+    }
     return config;
   },
   (error) => Promise.reject(error)
@@ -64,7 +76,7 @@ export const fetcher = async ({ url, config }: { url: string; config?: AxiosRequ
     ...config,
     headers: {
       Authorization: `Bearer ${Cookie.get(ACCESS_TOKEN)}`,
-      'Accept-Language': Cookie.get('Language') || 'en',
+      'Accept-Language': Cookie.get('Language') || 'ar',
     },
   });
 
@@ -82,7 +94,7 @@ export const fetcherAuth = async ({
     ...config,
     headers: {
       Authorization: `Bearer ${Cookie.get(ACCESS_TOKEN)}`,
-      'Accept-Language': Cookie.get('Language') || 'en',
+      'Accept-Language': Cookie.get('Language') || 'ar',
     },
   });
 
