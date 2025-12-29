@@ -447,7 +447,8 @@
       "group_actions": "إجراءات جماعية",
       "import_pilgrim_data": "استيراد بيانات الحجاج",
       "pilgrims_management": "إدارة الحجاج",
-      "add_edit_pilgrim": "إضافة / تعديل حاج"
+      "add_edit_pilgrim": "إضافة / تعديل حاج",
+      "delete_pilgrim": "حذف حاج"
     },
     "Description": {
       "accommodation_description": "عرض بيانات توزيع الحجاج على المخيمات لضمان التنظيم والراحة.",
@@ -645,7 +646,9 @@
       "import_data": "إستيراد البيانات",
       "import_from_excel": "إستيراد من اكسل",
       "save": "حفظ",
-      "send": "إرسال"
+      "send": "إرسال",
+      "delete": "حذف",
+      "deleting": "جاري الحذف..."
     },
     "Placeholder": {
       "search_and_add_pilgrim": "ابحث وأضف حاج جديد",
@@ -684,6 +687,9 @@
       "error_deleting_pilgrim": "خطأ في حذف الحاج",
       "error_loading_pilgrim": "حدث خطأ أثناء تحميل بيانات الحاج",
       "delete_pilgrim_confirmation": "هل أنت متأكد من أنك تريد حذف هذا الحاج؟ لا يمكن التراجع عن هذا الإجراء.",
+      "delete_success": "تم حذف الحاج بنجاح",
+      "delete_error": "خطأ في حذف الحاج",
+      "delete_pilgrim_confirm": "هل أنت متأكد من أنك تريد حذف الحاج {name}؟ لا يمكن التراجع عن هذا الإجراء.",
       "saving": "جاري الحفظ...",
       "id_number_saudi_format": "يجب أن يكون رقم الهوية هوية وطنية سعودية صحيحة (تبدأ بـ 1 أو 2) أو إقامة (تبدأ بـ 3 أو 4)",
       "phone_saudi_invalid": "يجب أن يكون رقم الجوال رقم هاتف سعودي صحيح",

@@ -1136,3 +1136,30 @@ export const updatePilgrim = async (
     throw error;
   }
 };
+
+export interface DeletePilgrimResponse {
+  success: boolean;
+  message: string;
+  data: null;
+}
+
+export const deletePilgrim = async (id: number): Promise<DeletePilgrimResponse> => {
+  console.log('deletePilgrim called with id:', id);
+  console.log('API endpoint:', `/pilgrims/pilgrims/${id}`);
+
+  try {
+    const response = await API.delete<DeletePilgrimResponse>(`/pilgrims/pilgrims/${id}`);
+    console.log('Delete API response:', response);
+    return response;
+  } catch (error: any) {
+    console.error('Delete API error:', {
+      message: error?.message,
+      status: error?.response?.status,
+      statusText: error?.response?.statusText,
+      data: error?.response?.data,
+      url: error?.config?.url,
+      method: error?.config?.method,
+    });
+    throw error;
+  }
+};

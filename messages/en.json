@@ -447,7 +447,8 @@
       "group_actions": "Group Actions",
       "import_pilgrim_data": "Import Pilgrim Data",
       "pilgrims_management": "Pilgrims Management",
-      "add_edit_pilgrim": "Add / Edit Pilgrim"
+      "add_edit_pilgrim": "Add / Edit Pilgrim",
+      "delete_pilgrim": "Delete Pilgrim"
     },
     "Description": {
       "accommodation_description": "Display data on pilgrim distribution across camps to ensure organization and comfort.",
@@ -645,7 +646,9 @@
       "import_data": "Import Data",
       "import_from_excel": "Import from Excel",
       "save": "Save",
-      "send": "Send"
+      "send": "Send",
+      "delete": "Delete",
+      "deleting": "Deleting..."
     },
     "Placeholder": {
       "search_and_add_pilgrim": "Search and add a pilgrim",
@@ -684,6 +687,9 @@
       "error_deleting_pilgrim": "Error deleting pilgrim",
       "error_loading_pilgrim": "Error loading pilgrim data",
       "delete_pilgrim_confirmation": "Are you sure you want to delete this pilgrim? This action cannot be undone.",
+      "delete_success": "Pilgrim deleted successfully",
+      "delete_error": "Error deleting pilgrim",
+      "delete_pilgrim_confirm": "Are you sure you want to delete pilgrim {name}? This action cannot be undone.",
       "saving": "Saving...",
       "id_number_saudi_format": "ID must be a valid Saudi National ID (starts with 1 or 2) or Iqama ID (starts with 3 or 4)",
       "phone_saudi_invalid": "Mobile number must be a valid Saudi phone number",

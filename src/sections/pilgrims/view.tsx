@@ -38,8 +38,10 @@ import { ImportDialog } from './components/import-dialog';
 import FilterDialog from './components/filter-dialog';
 import { paths } from 'src/routes/paths';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
-import { useFetchPilgrims } from 'src/services/queries/pilgrims';
+import { useFetchPilgrims, useDeletePilgrim } from 'src/services/queries/pilgrims';
 import { Pilgrim } from 'src/services/api/pilgrims';
+import { useSnackbar } from 'notistack';
+import { ConfirmDialog } from 'src/components/custom-dialog';
 
 // ----------------------------------------------------------------------
 
@@ -51,6 +53,7 @@ export default function PilgrimsView() {
   const bulkDialog = useDisclosure();
   const filterDialog = useDisclosure();
   const importDialog = useDisclosure();
+  const deleteDialog = useDisclosure();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [genderFilter, setGenderFilter] = useState<string>('all');
@@ -59,8 +62,10 @@ export default function PilgrimsView() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const { enqueueSnackbar } = useSnackbar();
   // Applied filters from dialog
   const [appliedFilters, setAppliedFilters] = useState<any>({});
+  const [pilgrimToDelete, setPilgrimToDelete] = useState<Pilgrim | null>(null);
 
   // Get pagination and filters from URL params
   const currentPage = Number(searchParams.get('page')) || 1;
@@ -109,16 +114,16 @@ export default function PilgrimsView() {
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       const params = new URLSearchParams(searchParams.toString());
-      
+
       if (searchTerm) {
         params.set('query', searchTerm);
       } else {
         params.delete('query');
       }
-      
+
       // Reset to page 1 when search changes
       params.set('page', '1');
-      
+
       router.push(`${pathname}?${params.toString()}`);
     }, 500); // 500ms debounce
 
@@ -137,6 +142,9 @@ export default function PilgrimsView() {
     // Use filter params from URL (including query)
     ...urlFilters,
   });
+
+  // Delete pilgrim mutation
+  const deleteMutation = useDeletePilgrim();
 
   const filterOptions = [
     { key: 'gathering_point_type', label: t('Label.gathering_point_type') },
@@ -388,6 +396,28 @@ export default function PilgrimsView() {
     router.push(paths.dashboard.pilgrims.view(String(row.id)));
   };
 
+  const handleDeleteClick = (row: Pilgrim) => {
+    setPilgrimToDelete(row);
+    deleteDialog.onOpen();
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!pilgrimToDelete) return;
+
+    console.log('Deleting pilgrim:', pilgrimToDelete.id);
+
+    try {
+      const result = await deleteMutation.mutateAsync(pilgrimToDelete.id);
+      console.log('Delete result:', result);
+      enqueueSnackbar(t('Message.delete_success'), { variant: 'success' });
+      deleteDialog.onClose();
+      setPilgrimToDelete(null);
+    } catch (error) {
+      console.error('Delete error:', error);
+      enqueueSnackbar(t('Message.delete_error'), { variant: 'error' });
+    }
+  };
+
   const actions: Action<Pilgrim>[] = [
     {
       label: t('Label.message'),
@@ -407,7 +437,7 @@ export default function PilgrimsView() {
     {
       label: t('Label.delete'),
       icon: '/assets/icons/table/delete.svg',
-      onClick: (row) => console.log('delete pilgrim', row.id),
+      onClick: handleDeleteClick,
     },
   ];
 
@@ -1108,6 +1138,22 @@ export default function PilgrimsView() {
 
       {/* Import Dialog */}
       <ImportDialog open={importDialog.open} onClose={importDialog.onClose} />
+
+      {/* Delete Confirmation Dialog */}
+      <ConfirmDialog
+        open={deleteDialog.open}
+        onClose={deleteDialog.onClose}
+        title={t('Title.delete_pilgrim')}
+        content={
+          pilgrimToDelete
+            ? t('Message.delete_pilgrim_confirm', { name: pilgrimToDelete.name?.ar || '' })
+            : ''
+        }
+        buttonTitle={t('Button.delete')}
+        buttonColor="error"
+        handleConfirmDelete={handleDeleteConfirm}
+        loading={deleteMutation.isPending}
+      />
     </Container>
   );
 }
