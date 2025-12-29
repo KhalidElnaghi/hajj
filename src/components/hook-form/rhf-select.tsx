@@ -24,6 +24,7 @@ type RHFSelectProps = TextFieldProps & {
   value?: any;
   rules?: { [key: string]: any };
   PaperPropsSx?: SxProps<Theme>;
+  isReadOnly?: boolean;
 };
 
 export function RHFSelect({
@@ -35,6 +36,7 @@ export function RHFSelect({
   PaperPropsSx,
   rules,
   value,
+  isReadOnly,
   ...other
 }: RHFSelectProps) {
   const { control, setValue, watch } = useFormContext();
@@ -51,7 +53,7 @@ export function RHFSelect({
       control={control}
       render={({ field, fieldState: { error } }) => {
         const fieldValue = field.value ?? '';
-        
+
         return (
           <TextField
             {...field}
@@ -63,6 +65,11 @@ export function RHFSelect({
             name={field.name}
             select
             fullWidth
+            slotProps={{
+              input: {
+                readOnly: isReadOnly,
+              },
+            }}
             // InputProps={{
             //   endAdornment: field.value && (
             //     <InputAdornment position="start">

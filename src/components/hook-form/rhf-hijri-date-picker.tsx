@@ -16,6 +16,7 @@ type RHFHijriDatePickerProps = {
   helperText?: React.ReactNode;
   placeholder?: string;
   required?: boolean;
+  isReadOnly?: boolean;
 };
 
 export default function RHFHijriDatePicker({
@@ -23,6 +24,7 @@ export default function RHFHijriDatePicker({
   helperText,
   placeholder = 'YYYY/MM/DD',
   required = false,
+  isReadOnly = false,
 }: RHFHijriDatePickerProps) {
   const { control } = useFormContext();
 
@@ -137,6 +139,7 @@ export default function RHFHijriDatePicker({
               </Box>
               <DatePicker
                 value={getValue()}
+                readOnly={isReadOnly}
                 onChange={(value: Value) => {
                   const formatted = formatValue(value);
                   field.onChange(formatted);

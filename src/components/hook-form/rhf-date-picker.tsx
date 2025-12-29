@@ -8,9 +8,16 @@ type RHFDatePickerProps = Omit<React.ComponentProps<typeof DatePicker>, 'value' 
   name: string;
   helperText?: React.ReactNode;
   rules?: { [key: string]: any };
+  isReadOnly?: boolean;
 };
 
-export default function RHFDatePicker({ name, helperText, rules, ...other }: RHFDatePickerProps) {
+export default function RHFDatePicker({
+  name,
+  helperText,
+  rules,
+  isReadOnly,
+  ...other
+}: RHFDatePickerProps) {
   const { control } = useFormContext();
 
   return (
@@ -30,6 +37,7 @@ export default function RHFDatePicker({ name, helperText, rules, ...other }: RHF
             {...field}
             {...other}
             value={fieldValue}
+            readOnly={isReadOnly}
             onChange={(newValue: Dayjs | null) => {
               if (newValue && newValue.isValid()) {
                 field.onChange(newValue.format('YYYY-MM-DD'));
@@ -52,4 +60,3 @@ export default function RHFDatePicker({ name, helperText, rules, ...other }: RHF
     />
   );
 }
-

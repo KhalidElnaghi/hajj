@@ -69,8 +69,119 @@ export const getPilgrims = async (params: GetPilgrimsParams = {}): Promise<Pilgr
   return API.get<PilgrimsResponse>(url);
 };
 
-export const getPilgrimDetails = async (id: string | number): Promise<Pilgrim> => {
-  return API.get<Pilgrim>(`/pilgrims/${id}`);
+export interface PilgrimDetailsResponse {
+  success: boolean;
+  message: string | null;
+  data: {
+    id: number;
+    haj_no: number;
+    name: {
+      ar: string;
+      en: string;
+    };
+    reservation_no: string;
+    national_id: string;
+    mobile: string;
+    mobile2: string | null;
+    gender: number;
+    gender_name: string;
+    birthdate: string | null;
+    birthdate_hijri: string | null;
+    age: number | null;
+    pilgrim_photo: string | null;
+    whatsapp_active: boolean;
+    status: number;
+    status_name: string;
+    source: number;
+    source_name: string;
+    departure_status: number;
+    departure_status_name: string;
+    muhrim_status: number;
+    muhrim_status_name: string;
+    notes: string | null;
+    pilgrim_style: string;
+    booking_via: string;
+    booking_date: string;
+    payment_mechanism: string;
+    payment_status: string;
+    package: {
+      id: number;
+      name: {
+        ar: string;
+        en: string;
+      };
+      status: boolean;
+    };
+    city: {
+      id: number;
+      city_id: number;
+      city: {
+        id: number;
+        country_id: number;
+        name: {
+          ar: string;
+          en: string;
+        };
+        latitude: string;
+        longitude: string;
+        created_at: string;
+        updated_at: string;
+      };
+      created_at: string;
+      updated_at: string;
+    };
+    nationality: {
+      id: number;
+      country_id: number;
+      country: {
+        id: number;
+        name: {
+          ar: string;
+          en: string;
+        };
+        code: string;
+        phone_code: string;
+        currency: {
+          code: string;
+          name: string;
+          symbol: string;
+        };
+        flag: {
+          alt: string;
+          png: string;
+          svg: string;
+        };
+        coat_of_arms: {
+          png: string;
+          svg: string;
+        };
+        latitude: string;
+        longitude: string;
+        official: {
+          ar: string;
+          en: string;
+        };
+        google_map: string;
+        open_street_map: string;
+        region: string;
+        created_at: string;
+        updated_at: string;
+      };
+      created_at: string;
+      updated_at: string;
+    };
+    transport?: any;
+    pilgrim_type?: any;
+    reservation?: any;
+    supervisors: Array<{ id: number; [key: string]: any }>;
+    tags: any[];
+    created_at: string;
+    updated_at: string;
+  };
+}
+
+export const getPilgrimDetails = async (id: string | number): Promise<PilgrimDetailsResponse> => {
+  return API.get<PilgrimDetailsResponse>(`/pilgrims/pilgrims/${id}`);
 };
 
 // Init Data Interfaces

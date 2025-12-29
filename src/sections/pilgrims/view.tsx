@@ -249,7 +249,7 @@ export default function PilgrimsView() {
     isError: pilgrimsError,
     refetch: refreshPilgrims,
   } = useFetchPilgrims({
-    page: 50,
+    page: currentPage,
     limit: currentLimit,
     searchParam: searchTerm || undefined,
   });
