@@ -129,6 +129,7 @@
     "academic_degree": "الدرجة العلمية",
     "academic_degrees": "الدرجات العلمية",
     "no_data": "لا توجد بيانات",
+    "not_available": "غير متوفر",
     "page": "صفحة",
     "of": "من",
     "number": "الرقم",
@@ -462,6 +463,9 @@
       "search": "ابحث عن ما تريد...",
       "breadcrumb_home": "الصفحة الرئيسية",
       "absolute_filter": "التصفية المطلقة",
+      "not_available": "غير متوفر",
+      "haj_no": "رقم الحاج",
+      "transport": "وسيلة النقل",
       "accommodation": "السكن",
       "accommodation_capacity": "المسكنين",
       "accommodation_deleted": "تم حذف من الإسكان",
@@ -620,7 +624,9 @@
       "supervisor_notes_placeholder": "ما يخطر ببالك....",
       "clear_fields": "تفريغ الحقول",
       "save": "حفظ",
-      "saving": "جاري الحفظ"
+      "saving": "جاري الحفظ",
+      "Female": "أنثى",
+      "Male": "ذكر"
     },
     "Button": {
       "add": "إضافة",

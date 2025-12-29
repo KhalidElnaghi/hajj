@@ -32,11 +32,11 @@ export default function SharedTable<T extends { id: string | number }>({
 }: SharedTableProps<T>) {
   const table = tableProp ?? useTable();
   const searchParams = useSearchParams();
-  const skipCountParam = searchParams.get('SkipCount');
+  const pageParam = searchParams.get('page');
+  const perPageParam = searchParams.get('per_page');
 
-  const limit = 10;
-  const skipCount = Number(skipCountParam) || 0;
-  const page = Math.max((Number(searchParams.get('page')) || 1) - 1, 0);
+  const limit = Number(perPageParam) || 10;
+  const page = Math.max((Number(pageParam) || 1) - 1, 0);
 
   const showOrder = order !== false;
   const selectedIds = table.selected ?? [];

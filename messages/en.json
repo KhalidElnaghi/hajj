@@ -129,6 +129,7 @@
     "academic_degree": "Academic degree",
     "academic_degrees": "Academic degrees",
     "no_data": "No data",
+    "not_available": "Not Available",
     "page": "Page",
     "of": "of",
     "number": "No.",
@@ -462,6 +463,9 @@
       "search": "Search about what you want...",
       "breadcrumb_home": "Home",
       "absolute_filter": "Absolute Filter",
+      "not_available": "Not Available",
+      "haj_no": "Hajj Number",
+      "transport": "Transport",
       "accommodation": "Accommodation",
       "accommodation_capacity": "Accommodation",
       "accommodation_deleted": "Removed from Accommodation",
@@ -620,7 +624,9 @@
       "supervisor_notes_placeholder": "What comes to mind....",
       "clear_fields": "Clear Fields",
       "save": "Save",
-      "saving": "Saving..."
+      "saving": "Saving...",
+      "Female": "Female",
+      "Male": "Male"
     },
     "Button": {
       "add": "Add",

@@ -19,7 +19,7 @@ export default function useTable(props?: UseTableProps): ReturnType {
   const querySignature = searchParams.toString();
   const { createQueryString } = useQueryString();
 
-  const currentLimit = Number(searchParams.get('MaxResultCount')) || 10;
+  const currentLimit = Number(searchParams.get('per_page')) || 10;
 
   const onChangeDense = useCallback((event: ChangeEvent<HTMLInputElement>) => {
     setDense(event.target.checked);
@@ -28,8 +28,8 @@ export default function useTable(props?: UseTableProps): ReturnType {
   const onChangeRowsPerPage = useCallback(
     (newLimit: number) => {
       createQueryString([
-        { name: 'MaxResultCount', value: String(newLimit) },
-        { name: 'SkipCount', value: '0' },
+        { name: 'per_page', value: String(newLimit) },
+        { name: 'page', value: '1' },
       ]);
     },
     [createQueryString]
@@ -37,11 +37,9 @@ export default function useTable(props?: UseTableProps): ReturnType {
 
   const onChangePage = useCallback(
     (event: unknown, newPage: number) => {
-      const params = new URLSearchParams(querySignature);
-      const limit = Number(params.get('MaxResultCount')) || currentLimit;
-      createQueryString([{ name: 'SkipCount', value: String(newPage * limit) }]);
+      createQueryString([{ name: 'page', value: String(newPage + 1) }]);
     },
-    [createQueryString, currentLimit, querySignature]
+    [createQueryString]
   );
 
   const onSelectRow = useCallback((id: string) => {
