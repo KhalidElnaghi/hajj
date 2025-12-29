@@ -41,7 +41,16 @@ import Iconify from 'src/components/iconify';
 import { PageHeader } from 'src/components/custom-page-headding';
 import { useCreatePilgrim } from 'src/services/mutations/pilgrims';
 import { useFetchPilgrimInitData } from 'src/services/queries/pilgrims';
-import { pilgrimInitialValues } from './utils/constants';
+import {
+  accommodationAreas,
+  campStatuses,
+  gatheringPoints,
+  gatheringPointTypes,
+  healthStatuses,
+  permits,
+  pilgrimInitialValues,
+  // prominentOptions,
+} from './utils/constants';
 import { createPilgrimValidationSchema } from './utils/validation';
 import { PilgrimFormValues } from './utils/types';
 
@@ -111,45 +120,6 @@ export default function AddEditPilgrimForm() {
   const nationalities = useMemo(() => {
     return initData?.countries;
   }, [initData?.countries]);
-  const permits = [
-    { value: 'hajj', label: 'حج' },
-    { value: 'umrah', label: 'عمرة' },
-  ];
-
-  const gatheringPointTypes = [
-    { value: 'hotel', label: 'فندق' },
-    { value: 'camp', label: 'مخيم' },
-    { value: 'other', label: 'أخرى' },
-  ];
-
-  const gatheringPoints = [
-    { value: 'point1', label: 'نقطة 1' },
-    { value: 'point2', label: 'نقطة 2' },
-    { value: 'point3', label: 'نقطة 3' },
-  ];
-
-  const accommodationAreas = [
-    { value: 'mina', label: 'منى' },
-    { value: 'arafat', label: 'عرفات' },
-    { value: 'muzdalifah', label: 'مزدلفة' },
-  ];
-
-  const prominentOptions = [
-    { value: 'yes', label: t('Label.yes') },
-    { value: 'no', label: t('Label.no') },
-  ];
-
-  const campStatuses = [
-    { value: 'confirmed', label: 'مؤكد' },
-    { value: 'pending', label: 'قيد الانتظار' },
-  ];
-
-  const healthStatuses = [
-    { value: 'excellent', label: 'ممتاز' },
-    { value: 'good', label: 'جيد' },
-    { value: 'fair', label: 'متوسط' },
-    { value: 'poor', label: 'ضعيف' },
-  ];
 
   const supervisorOptions = useMemo(() => {
     if (!initData?.employees) return [];
@@ -832,7 +802,7 @@ export default function AddEditPilgrimForm() {
                     </Box>
                   </Grid>
 
-                  <Grid size={{ xs: 12, md: 4 }}>
+                  {/* <Grid size={{ xs: 12, md: 4 }}>
                     <Box sx={{ width: '100%' }}>
                       <Typography
                         variant="body2"
@@ -850,12 +820,12 @@ export default function AddEditPilgrimForm() {
                         </MenuItem>
                         {prominentOptions.map((option) => (
                           <MenuItem key={option.value} value={option.value}>
-                            {option.label}
+                            {t(`Label.${option.label}`)}
                           </MenuItem>
                         ))}
                       </RHFSelect>
                     </Box>
-                  </Grid>
+                  </Grid> */}
                 </Grid>
               </Box>
 
