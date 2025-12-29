@@ -39,6 +39,8 @@ import AccommodationTab from './components/pilgrim-details/accommodation-tab';
 import TransportationTab from './components/pilgrim-details/transportation-tab';
 import HealthStatusTab from './components/pilgrim-details/health-status-tab';
 import SupervisionTab from './components/pilgrim-details/supervision-tab';
+import PilgrimErrorState from './components/pilgrim-details/pilgrim-error-state';
+import PilgrimLoadingSkeleton from './components/pilgrim-details/pilgrim-loading-skeleton';
 
 type PilgrimDetailsViewProps = {
   pilgrimId: string;
@@ -213,34 +215,11 @@ export default function PilgrimDetailsView({
 
   // Loading state
   if (isLoadingPilgrim) {
-    return (
-      <Container maxWidth="xl">
-        <Box
-          sx={{
-            py: 4,
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            minHeight: '50vh',
-          }}
-        >
-          <CircularProgress />
-        </Box>
-      </Container>
-    );
+    return <PilgrimLoadingSkeleton />;
   }
 
-  // Error state
   if (isErrorPilgrim || !pilgrimData) {
-    return (
-      <Container maxWidth="xl">
-        <Box sx={{ py: 4, textAlign: 'center' }}>
-          <Typography variant="h6" color="error">
-            {t('Message.error_loading_pilgrim')}
-          </Typography>
-        </Box>
-      </Container>
-    );
+    return <PilgrimErrorState />;
   }
 
   const pilgrim = pilgrimData;
@@ -339,7 +318,6 @@ export default function PilgrimDetailsView({
               </Stack>
             </Box>
 
-            {/* Tabs */}
             <Box sx={{ borderBottom: 1, borderColor: 'divider', px: 3 }}>
               <Tabs
                 value={activeTab}
@@ -352,6 +330,9 @@ export default function PilgrimDetailsView({
                     textTransform: 'none',
                     fontSize: '0.875rem',
                     fontWeight: 600,
+                  },
+                  '& .MuiTabs-indicator': {
+                    display: 'none',
                   },
                 }}
               >
