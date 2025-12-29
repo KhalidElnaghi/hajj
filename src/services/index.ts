@@ -8,5 +8,9 @@ export * from './api';
 export * from './queries';
 
 // Mutation hooks
-export * from './mutations';
+export {
+  useCreatePilgrim,
+  useUpdatePilgrim,
+  useDeletePilgrim as useDeletePilgrimMutation // renamed to avoid conflict
+} from './mutations';
 

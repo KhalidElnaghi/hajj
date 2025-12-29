@@ -130,8 +130,8 @@ export default function AddEditPilgrimForm() {
     return initData.employees.map((employee) => {
       const name = employee.name;
       const label = isRtl
-        ? employee.name_ar || (typeof name === 'string' ? name : name?.ar || '')
-        : employee.name_en || (typeof name === 'string' ? name : name?.en || '');
+        ? employee.name.ar || (typeof name === 'string' ? name : name?.ar || '')
+        : employee.name.en || (typeof name === 'string' ? name : name?.en || '');
 
       return {
         value: String(employee.id),
