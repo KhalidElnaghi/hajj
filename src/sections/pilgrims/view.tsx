@@ -1,6 +1,6 @@
 'use client';
 
-import { Fragment, ReactNode, useMemo, useState } from 'react';
+import { Fragment, ReactNode, useMemo, useState, useEffect } from 'react';
 
 import {
   Box,
@@ -11,7 +11,14 @@ import {
   InputAdornment,
   Menu,
   MenuItem,
+  Skeleton,
   Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
   TextField,
   Typography,
 } from '@mui/material';
@@ -30,195 +37,13 @@ import { BulkActionsDialog } from './components/bulk-actions';
 import { ImportDialog } from './components/import-dialog';
 import FilterDialog from './components/filter-dialog';
 import { paths } from 'src/routes/paths';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { useFetchPilgrims } from 'src/services/queries/pilgrims';
+import { useRouter, useSearchParams, usePathname } from 'next/navigation';
+import { useFetchPilgrims, useDeletePilgrim } from 'src/services/queries/pilgrims';
+import { Pilgrim } from 'src/services/api/pilgrims';
+import { useSnackbar } from 'notistack';
+import { ConfirmDialog } from 'src/components/custom-dialog';
 
 // ----------------------------------------------------------------------
-
-type Pilgrim = {
-  id: number;
-  name: string;
-  idNumber: string;
-  bookingNumber: string;
-  registrationStatus: string;
-  gender: string;
-  city: string;
-  healthStatus: string;
-  accommodation: string;
-  hajjOperations: string;
-  busStatus: string;
-  funding: string;
-  sponsor: string;
-  phone: string;
-  gatheringPointType: string;
-  nationality: string;
-  package: string;
-  bus: string;
-};
-
-// Dummy data for pilgrims
-const dummyPilgrims: Pilgrim[] = [
-  {
-    id: 1,
-    name: 'حامد الصرفي',
-    idNumber: '3234567991011',
-    bookingNumber: '9370323330',
-    registrationStatus: 'completed',
-    gender: 'Male',
-    city: 'اليمن',
-    healthStatus: 'good',
-    accommodation: 'منى - الرجال الأول',
-    hajjOperations: '',
-    busStatus: 'error',
-    funding: 'مصر',
-    sponsor: 'غير متوفر خالد',
-    phone: '+99657839475',
-    gatheringPointType: 'جده',
-    nationality: 'اليمن',
-    package: 'اقتصادية',
-    bus: 'الاولى',
-  },
-  {
-    id: 2,
-    name: 'حامد الصرفي',
-    idNumber: '3234567991011',
-    bookingNumber: '12303239066',
-    registrationStatus: 'pending',
-    gender: 'Male',
-    city: 'الإمارات',
-    healthStatus: 'good',
-    accommodation: 'منى - الرجال الأول',
-    hajjOperations: '',
-    busStatus: 'error',
-    funding: 'مصر',
-    sponsor: 'غير متوفر',
-    phone: '+99657839475',
-    gatheringPointType: 'جده',
-    nationality: 'الإمارات',
-    package: 'اقتصادية',
-    bus: 'الثانية',
-  },
-  {
-    id: 3,
-    name: 'محمد إسماعيل',
-    idNumber: '3234567991011',
-    bookingNumber: '9370323330',
-    registrationStatus: 'completed',
-    gender: 'Male',
-    city: 'ليبيا',
-    healthStatus: 'good',
-    accommodation: 'منى - الرجال الأول',
-    hajjOperations: '',
-    busStatus: 'error',
-    funding: 'سوريا',
-    sponsor: 'غير متوفر',
-    phone: '+99657839475',
-    gatheringPointType: 'الرياض',
-    nationality: 'ليبيا',
-    package: 'VIP',
-    bus: 'الرابعة',
-  },
-  {
-    id: 4,
-    name: 'محمد إسماعيل',
-    idNumber: '3234567991011',
-    bookingNumber: '9370323330',
-    registrationStatus: 'cancelled',
-    gender: 'Female',
-    city: 'الفلبين',
-    healthStatus: 'attention',
-    accommodation: 'منى - الرجال الأول',
-    hajjOperations: '',
-    busStatus: 'error',
-    funding: 'مصر',
-    sponsor: 'غير متوفر خالد',
-    phone: '+99657839475',
-    gatheringPointType: 'الرياض',
-    nationality: 'الفلبين',
-    package: 'مميزة',
-    bus: 'الاولى',
-  },
-  {
-    id: 5,
-    name: 'محمد الصرفي',
-    idNumber: '3234567991011',
-    bookingNumber: '9370323330',
-    registrationStatus: 'pending',
-    gender: 'Male',
-    city: 'مصر',
-    healthStatus: 'attention',
-    accommodation: 'منى - الرجال الأول',
-    hajjOperations: '',
-    busStatus: 'error',
-    funding: 'مصر',
-    sponsor: 'المستر',
-    phone: '+99657839475',
-    gatheringPointType: 'الدمام',
-    nationality: 'الفلبين',
-    package: 'شؤون',
-    bus: 'الثانية',
-  },
-  {
-    id: 6,
-    name: 'يحيى المسالاني',
-    idNumber: '3234567991011',
-    bookingNumber: '9370323330',
-    registrationStatus: 'confirmed',
-    gender: 'Male',
-    city: 'السعودية',
-    healthStatus: 'good',
-    accommodation: 'منى - الرجال الأول',
-    hajjOperations: '',
-    busStatus: 'warning',
-    funding: 'مصر',
-    sponsor: 'غير متوفر',
-    phone: '+99657839475',
-    gatheringPointType: 'الدمام',
-    nationality: 'السعودية',
-    package: 'شؤون',
-    bus: 'الخامسة',
-  },
-  {
-    id: 7,
-    name: 'شوبكتا بريامايل',
-    idNumber: '3234567991011',
-    bookingNumber: '9370323330',
-    registrationStatus: 'completed',
-    gender: 'Male',
-    city: 'اليمن',
-    healthStatus: 'good',
-    accommodation: 'منى - الرجال الأول',
-    hajjOperations: '',
-    busStatus: 'error',
-    funding: 'مصر',
-    sponsor: 'بانفس',
-    phone: '+99657839475',
-    gatheringPointType: 'الدمام',
-    nationality: 'اليمن',
-    package: 'VIP',
-    bus: 'الاولى',
-  },
-  {
-    id: 8,
-    name: 'عطاءاللة الشيخ',
-    idNumber: '3234567991011',
-    bookingNumber: '9370323330',
-    registrationStatus: 'confirmed',
-    gender: 'Male',
-    city: 'حقة',
-    healthStatus: 'attention',
-    accommodation: 'منى - الرجال الأول',
-    hajjOperations: '',
-    busStatus: 'error',
-    funding: 'مصر',
-    sponsor: 'غير متوفر خالد',
-    phone: '+99657839475',
-    gatheringPointType: 'جده',
-    nationality: 'اليمن',
-    package: 'مميزة',
-    bus: 'الاولى',
-  },
-];
 
 // ----------------------------------------------------------------------
 
@@ -228,19 +53,82 @@ export default function PilgrimsView() {
   const bulkDialog = useDisclosure();
   const filterDialog = useDisclosure();
   const importDialog = useDisclosure();
+  const deleteDialog = useDisclosure();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [genderFilter, setGenderFilter] = useState<string>('all');
   const [filterAnchorEl, setFilterAnchorEl] = useState<null | HTMLElement>(null);
   const filterMenuOpen = Boolean(filterAnchorEl);
   const router = useRouter();
+  const pathname = usePathname();
   const searchParams = useSearchParams();
+  const { enqueueSnackbar } = useSnackbar();
   // Applied filters from dialog
   const [appliedFilters, setAppliedFilters] = useState<any>({});
+  const [pilgrimToDelete, setPilgrimToDelete] = useState<Pilgrim | null>(null);
 
-  // Get pagination from URL params
+  // Get pagination and filters from URL params
   const currentPage = Number(searchParams.get('page')) || 1;
-  const currentLimit = Number(searchParams.get('MaxResultCount')) || 10;
+  const currentLimit = Number(searchParams.get('per_page')) || 10;
+
+  // Get filter params from URL
+  const urlFilters = {
+    query: searchParams.get('query') || undefined,
+    package_id: searchParams.get('package_id') || undefined,
+    city_id: searchParams.get('city_id') || undefined,
+    nationality_id: searchParams.get('nationality_id') || undefined,
+    transport_id: searchParams.get('transport_id') || undefined,
+    pilgrim_type_id: searchParams.get('pilgrim_type_id') || undefined,
+    source: searchParams.get('source') || undefined,
+    gender: searchParams.get('gender') || undefined,
+    departure_status: searchParams.get('departure_status') || undefined,
+    muhrim_status: searchParams.get('muhrim_status') || undefined,
+    status: searchParams.get('status') || undefined,
+  };
+
+  // Initialize appliedFilters and searchTerm from URL params on mount
+  useEffect(() => {
+    const filtersFromUrl: any = {};
+
+    if (searchParams.get('query')) setSearchTerm(searchParams.get('query') || '');
+    if (searchParams.get('package_id')) filtersFromUrl.package = searchParams.get('package_id');
+    if (searchParams.get('city_id')) filtersFromUrl.city = searchParams.get('city_id');
+    if (searchParams.get('nationality_id'))
+      filtersFromUrl.nationality = searchParams.get('nationality_id');
+    if (searchParams.get('transport_id'))
+      filtersFromUrl.transport = searchParams.get('transport_id');
+    if (searchParams.get('pilgrim_type_id'))
+      filtersFromUrl.pilgrimType = searchParams.get('pilgrim_type_id');
+    if (searchParams.get('source')) filtersFromUrl.source = searchParams.get('source');
+    if (searchParams.get('gender')) filtersFromUrl.gender = searchParams.get('gender');
+    if (searchParams.get('departure_status'))
+      filtersFromUrl.marriedLate = searchParams.get('departure_status');
+    if (searchParams.get('muhrim_status'))
+      filtersFromUrl.muhrimStatus = searchParams.get('muhrim_status');
+    if (searchParams.get('status')) filtersFromUrl.pilgrimStatus = searchParams.get('status');
+
+    setAppliedFilters(filtersFromUrl);
+  }, [searchParams]);
+
+  // Update URL query parameter when search term changes (with debounce)
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      const params = new URLSearchParams(searchParams.toString());
+
+      if (searchTerm) {
+        params.set('query', searchTerm);
+      } else {
+        params.delete('query');
+      }
+
+      // Reset to page 1 when search changes
+      params.set('page', '1');
+
+      router.push(`${pathname}?${params.toString()}`);
+    }, 500); // 500ms debounce
+
+    return () => clearTimeout(timeoutId);
+  }, [searchTerm]);
 
   // Fetch pilgrims data using React Query
   const {
@@ -251,11 +139,12 @@ export default function PilgrimsView() {
   } = useFetchPilgrims({
     page: currentPage,
     limit: currentLimit,
-    searchParam: searchTerm || undefined,
+    // Use filter params from URL (including query)
+    ...urlFilters,
   });
 
-  // Console log the data
-  console.log('Pilgrims Data:', pilgrimsData);
+  // Delete pilgrim mutation
+  const deleteMutation = useDeletePilgrim();
 
   const filterOptions = [
     { key: 'gathering_point_type', label: t('Label.gathering_point_type') },
@@ -284,10 +173,86 @@ export default function PilgrimsView() {
 
   const handleApplyFilters = (filters: any) => {
     setAppliedFilters(filters);
+
+    // Update URL query parameters
+    const params = new URLSearchParams(searchParams.toString());
+
+    // Remove old filter params
+    params.delete('package_id');
+    params.delete('city_id');
+    params.delete('nationality_id');
+    params.delete('transport_id');
+    params.delete('pilgrim_type_id');
+    params.delete('source');
+    params.delete('gender');
+    params.delete('departure_status');
+    params.delete('muhrim_status');
+    params.delete('status');
+
+    // Add new filter params
+    if (filters.package) params.set('package_id', filters.package);
+    if (filters.city) params.set('city_id', filters.city);
+    if (filters.nationality) params.set('nationality_id', filters.nationality);
+    if (filters.transport) params.set('transport_id', filters.transport);
+    if (filters.pilgrimType) params.set('pilgrim_type_id', filters.pilgrimType);
+    if (filters.source) params.set('source', filters.source);
+    if (filters.gender) params.set('gender', filters.gender);
+    if (filters.marriedLate) params.set('departure_status', filters.marriedLate);
+    if (filters.muhrimStatus) params.set('muhrim_status', filters.muhrimStatus);
+    if (filters.pilgrimStatus) params.set('status', filters.pilgrimStatus);
+
+    // Reset to page 1 when filters change
+    params.set('page', '1');
+
+    // Update URL
+    router.push(`${pathname}?${params.toString()}`);
+  };
+
+  // Count active filters from URL params
+  const activeFiltersCount = useMemo(() => {
+    let count = 0;
+    if (urlFilters.package_id) count++;
+    if (urlFilters.city_id) count++;
+    if (urlFilters.nationality_id) count++;
+    if (urlFilters.transport_id) count++;
+    if (urlFilters.pilgrim_type_id) count++;
+    if (urlFilters.source) count++;
+    if (urlFilters.gender) count++;
+    if (urlFilters.departure_status) count++;
+    if (urlFilters.muhrim_status) count++;
+    if (urlFilters.status) count++;
+    return count;
+  }, [urlFilters]);
+
+  // Clear all filters
+  const handleClearAllFilters = () => {
+    setAppliedFilters({});
+    setSearchTerm('');
+
+    // Clear filter params from URL
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete('query');
+    params.delete('package_id');
+    params.delete('city_id');
+    params.delete('nationality_id');
+    params.delete('transport_id');
+    params.delete('pilgrim_type_id');
+    params.delete('source');
+    params.delete('gender');
+    params.delete('departure_status');
+    params.delete('muhrim_status');
+    params.delete('status');
+
+    // Reset to page 1
+    params.set('page', '1');
+
+    // Update URL
+    router.push(`${pathname}?${params.toString()}`);
   };
 
   const handleClearFilterSection = (section: string) => {
     const updatedFilters = { ...appliedFilters };
+    const params = new URLSearchParams(searchParams.toString());
 
     switch (section) {
       case 'personal':
@@ -298,6 +263,18 @@ export default function PilgrimsView() {
         updatedFilters.gender = '';
         updatedFilters.marriedLate = '';
         updatedFilters.bookingStatus = '';
+        updatedFilters.pilgrimType = '';
+        updatedFilters.muhrimStatus = '';
+        updatedFilters.pilgrimStatus = '';
+        // Clear URL params
+        params.delete('nationality_id');
+        params.delete('city_id');
+        params.delete('package_id');
+        params.delete('gender');
+        params.delete('departure_status');
+        params.delete('pilgrim_type_id');
+        params.delete('muhrim_status');
+        params.delete('status');
         break;
       case 'gathering':
         updatedFilters.gatheringPointType = '';
@@ -310,14 +287,21 @@ export default function PilgrimsView() {
         updatedFilters.campStatus = '';
         break;
       case 'transportation':
-        updatedFilters.busNumber = '';
+        updatedFilters.transport = '';
+        // Clear URL params
+        params.delete('transport_id');
         break;
       case 'health':
         updatedFilters.healthStatus = '';
         break;
       case 'supervision':
-        updatedFilters.supervisors = [];
+        updatedFilters.supervisor = null;
+        break;
+      case 'import':
         updatedFilters.importFile = '';
+        updatedFilters.source = '';
+        // Clear URL params
+        params.delete('source');
         break;
       case 'shipping':
         updatedFilters.shippingManagement = '';
@@ -326,6 +310,12 @@ export default function PilgrimsView() {
     }
 
     setAppliedFilters(updatedFilters);
+
+    // Reset to page 1
+    params.set('page', '1');
+
+    // Update URL
+    router.push(`${pathname}?${params.toString()}`);
   };
 
   const getActiveFilterSections = () => {
@@ -338,7 +328,10 @@ export default function PilgrimsView() {
       appliedFilters.badge ||
       appliedFilters.gender ||
       appliedFilters.marriedLate ||
-      appliedFilters.bookingStatus
+      appliedFilters.bookingStatus ||
+      appliedFilters.pilgrimType ||
+      appliedFilters.muhrimStatus ||
+      appliedFilters.pilgrimStatus
     ) {
       sections.push({ key: 'personal', label: t('Label.personal_information') });
     }
@@ -359,7 +352,7 @@ export default function PilgrimsView() {
       sections.push({ key: 'accommodation', label: t('Label.accommodation') });
     }
 
-    if (appliedFilters.busNumber) {
+    if (appliedFilters.transport) {
       sections.push({ key: 'transportation', label: t('Label.transportation_data') });
     }
 
@@ -367,8 +360,12 @@ export default function PilgrimsView() {
       sections.push({ key: 'health', label: t('Label.health_status_data') });
     }
 
-    if (appliedFilters.supervisors?.length > 0 || appliedFilters.importFile) {
+    if (appliedFilters.supervisor) {
       sections.push({ key: 'supervision', label: t('Label.supervision_organization') });
+    }
+
+    if (appliedFilters.importFile || appliedFilters.source) {
+      sections.push({ key: 'import', label: t('Label.import_file') });
     }
 
     if (appliedFilters.shippingManagement || appliedFilters.shipmentStatus) {
@@ -382,22 +379,43 @@ export default function PilgrimsView() {
   const activeFilterCount = activeFilterSections.length;
 
   const tableHead: headCellType[] = [
+    { id: 'haj_no', label: 'Pilgrims.Label.haj_no' },
     { id: 'name', label: 'Pilgrims.Label.name' },
-    { id: 'idNumber', label: 'Pilgrims.Label.identity_number' },
-    { id: 'bookingNumber', label: 'Pilgrims.Label.booking_number' },
-    { id: 'phone', label: 'Pilgrims.Label.phone' },
-    { id: 'registrationStatus', label: 'Pilgrims.Label.status' },
-    { id: 'gatheringPointType', label: 'Pilgrims.Label.gathering_point' },
+    { id: 'national_id', label: 'Pilgrims.Label.identity_number' },
+    { id: 'reservation_no', label: 'Pilgrims.Label.booking_number' },
+    { id: 'mobile', label: 'Pilgrims.Label.phone' },
+    { id: 'status_name', label: 'Pilgrims.Label.status' },
     { id: 'nationality', label: 'Pilgrims.Label.nationality' },
-    { id: 'gender', label: 'Pilgrims.Label.gender' },
+    { id: 'gender_name', label: 'Pilgrims.Label.gender' },
     { id: 'city', label: 'Pilgrims.Label.city' },
     { id: 'package', label: 'Pilgrims.Label.package' },
-    { id: 'bus', label: 'Pilgrims.Label.bus' },
-    { id: 'accommodation', label: 'Pilgrims.Label.housing' },
+    { id: 'transport', label: 'Pilgrims.Label.transport' },
   ];
 
   const handleRowClick = (row: Pilgrim) => {
     router.push(paths.dashboard.pilgrims.view(String(row.id)));
+  };
+
+  const handleDeleteClick = (row: Pilgrim) => {
+    setPilgrimToDelete(row);
+    deleteDialog.onOpen();
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!pilgrimToDelete) return;
+
+    console.log('Deleting pilgrim:', pilgrimToDelete.id);
+
+    try {
+      const result = await deleteMutation.mutateAsync(pilgrimToDelete.id);
+      console.log('Delete result:', result);
+      enqueueSnackbar(t('Message.delete_success'), { variant: 'success' });
+      deleteDialog.onClose();
+      setPilgrimToDelete(null);
+    } catch (error) {
+      console.error('Delete error:', error);
+      enqueueSnackbar(t('Message.delete_error'), { variant: 'error' });
+    }
   };
 
   const actions: Action<Pilgrim>[] = [
@@ -414,17 +432,19 @@ export default function PilgrimsView() {
     {
       label: t('Label.edit'),
       icon: '/assets/icons/table/edit.svg',
-      onClick: (row) =>
-        router.push(`${paths.dashboard.pilgrims.view(String(row.id))}?isEdit=true`),
+      onClick: (row) => router.push(`${paths.dashboard.pilgrims.view(String(row.id))}?isEdit=true`),
     },
     {
       label: t('Label.delete'),
       icon: '/assets/icons/table/delete.svg',
-      onClick: (row) => console.log('delete pilgrim', row.id),
+      onClick: handleDeleteClick,
     },
   ];
 
   const registrationStatusColors: Record<string, { bg: string; color: string; label: string }> = {
+    Active: { bg: '#E8F5E9', color: '#2E7D32', label: 'نشط' },
+    Inactive: { bg: '#F3E5F5', color: '#7B1FA2', label: 'غير نشط' },
+    Cancelled: { bg: '#FFEBEE', color: '#C62828', label: 'ملغي' },
     completed: { bg: '#E8F5E9', color: '#2E7D32', label: 'مكتمل' },
     pending: { bg: '#F3E5F5', color: '#7B1FA2', label: 'مؤكد' },
     confirmed: { bg: '#FFEDD4', color: '#F54900', label: 'قيد التأكيد' },
@@ -437,6 +457,9 @@ export default function PilgrimsView() {
   };
 
   const packageColors: Record<string, { bg: string; color: string }> = {
+    'باقة 1': { bg: '#E3F2FD', color: '#1976D2' },
+    'باقة 2': { bg: '#F3E5F5', color: '#7B1FA2' },
+    'باقة 3': { bg: '#E8F5E9', color: '#388E3C' },
     اقتصادية: { bg: '#FEF9E7', color: '#D4A017' },
     VIP: { bg: '#FFF8E1', color: '#F9A825' },
     مميزة: { bg: '#F3E5F5', color: '#9C27B0' },
@@ -444,11 +467,28 @@ export default function PilgrimsView() {
   };
 
   const customRender: Partial<Record<keyof Pilgrim, (row: Pilgrim) => ReactNode>> = {
-    registrationStatus: (row) => {
-      const statusInfo = registrationStatusColors[row.registrationStatus] || {
+    name: (row) => (
+      <Typography variant="body2" sx={{ fontSize: 13 }}>
+        {row.name?.ar || t('Label.not_available')}
+      </Typography>
+    ),
+    mobile: (row) => (
+      <Box sx={{ direction: 'ltr', textAlign: 'left' }}>
+        {row.mobile ? `+966${row.mobile}` : t('Label.not_available')}
+      </Box>
+    ),
+    status_name: (row) => {
+      if (!row.status_name) {
+        return (
+          <Typography variant="body2" sx={{ fontSize: 13, color: 'text.secondary' }}>
+            {t('Label.not_available')}
+          </Typography>
+        );
+      }
+      const statusInfo = registrationStatusColors[row.status_name] || {
         bg: '#F5F5F5',
         color: '#666',
-        label: row.registrationStatus,
+        label: row.status_name,
       };
       return (
         <Box
@@ -468,65 +508,50 @@ export default function PilgrimsView() {
         </Box>
       );
     },
-    gender: (row) => (
+    gender_name: (row) => (
       <Typography variant="body2" sx={{ fontSize: 13 }}>
-        {row.gender === 'Male' ? 'ذكر' : 'أنثى'}
+        {t(`Label.${row.gender_name}`) || t('Label.not_available')}
       </Typography>
     ),
-    healthStatus: (row) => {
-      const statusInfo = healthStatusColors[row.healthStatus] || {
-        bg: '#F5F5F5',
-        color: '#666',
-        label: row.healthStatus,
-      };
+    nationality: (row) => {
+      if (!row.nationality?.country) {
+        return (
+          <Typography variant="body2" sx={{ fontSize: 13, color: 'text.secondary' }}>
+            {t('Label.not_available')}
+          </Typography>
+        );
+      }
       return (
-        <Box
-          component="span"
-          sx={{
-            px: 1.5,
-            py: 0.5,
-            borderRadius: 1,
-            bgcolor: statusInfo.bg,
-            color: statusInfo.color,
-            fontSize: 12,
-            fontWeight: 600,
-            display: 'inline-block',
-          }}
-        >
-          {statusInfo.label}
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          {row.nationality.country.flag?.svg && (
+            <Image
+              src={row.nationality.country.flag.svg}
+              alt={row.nationality.country.name?.ar || 'Flag'}
+              width={20}
+              height={15}
+              style={{ borderRadius: 2 }}
+            />
+          )}
+          <Typography variant="body2" sx={{ fontSize: 13 }}>
+            {row.nationality.country.name?.ar || t('Label.not_available')}
+          </Typography>
         </Box>
       );
     },
-    accommodation: (row) => (
-      <Typography variant="body2" sx={{ fontSize: 13, color: 'text.secondary' }}>
-        {row.accommodation || '-'}
+    city: (row) => (
+      <Typography variant="body2" sx={{ fontSize: 13 }}>
+        {row.city?.city?.name?.ar || t('Label.not_available')}
       </Typography>
-    ),
-    bus: (row) => (
-      <Typography variant="body2" sx={{ fontSize: 13, color: 'text.secondary' }}>
-        {row.bus || '-'}
-      </Typography>
-    ),
-    hajjOperations: (row) => (
-      <Typography variant="body2" sx={{ fontSize: 13, color: 'text.secondary' }}>
-        {row.hajjOperations || '-'}
-      </Typography>
-    ),
-    phone: (row) => <Box sx={{ direction: 'rtl' }}>{row.phone || '-'}</Box>,
-    gatheringPointType: (row) => (
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.9 }}>
-        <Image
-          src={`/assets/images/pilgrims/dot.svg`}
-          alt={row.gatheringPointType}
-          width={8}
-          height={8}
-        />
-        {row.gatheringPointType || '-'}
-      </Box>
     ),
     package: (row) => {
-      if (!row.package) return <Typography variant="body2">-</Typography>;
-      const pkgInfo = packageColors[row.package] || {
+      if (!row.package?.name?.ar) {
+        return (
+          <Typography variant="body2" sx={{ fontSize: 13, color: 'text.secondary' }}>
+            {t('Label.not_available')}
+          </Typography>
+        );
+      }
+      const pkgInfo = packageColors[row.package.name.ar] || {
         bg: '#F5F5F5',
         color: '#666',
       };
@@ -544,36 +569,92 @@ export default function PilgrimsView() {
             display: 'inline-block',
           }}
         >
-          {row.package}
+          {row.package.name.ar}
         </Box>
       );
     },
+    transport: (row) => (
+      <Typography variant="body2" sx={{ fontSize: 13 }}>
+        {row.transport?.name?.ar || t('Label.not_available')}
+      </Typography>
+    ),
   };
 
-  const filteredPilgrims = useMemo(() => {
-    const searchLower = searchTerm.toLowerCase();
-    return dummyPilgrims.filter((pilgrim) => {
-      const matchesSearch =
-        !searchLower ||
-        pilgrim.name.toLowerCase().includes(searchLower) ||
-        pilgrim.bookingNumber.toLowerCase().includes(searchLower) ||
-        pilgrim.idNumber.toLowerCase().includes(searchLower);
-      const matchesStatus = statusFilter === 'all' || pilgrim.registrationStatus === statusFilter;
-      const matchesGender = genderFilter === 'all' || pilgrim.gender === genderFilter;
-      return matchesSearch && matchesStatus && matchesGender;
-    });
-  }, [genderFilter, searchTerm, statusFilter]);
+  // Use API data directly for server-side pagination
+  const pilgrims = useMemo(() => {
+    return pilgrimsData?.data || [];
+  }, [pilgrimsData]);
 
   const selectedPilgrims = useMemo(
-    () => filteredPilgrims.filter((pilgrim) => (table.selected ?? []).includes(String(pilgrim.id))),
-    [filteredPilgrims, table.selected]
+    () => pilgrims.filter((pilgrim) => (table.selected ?? []).includes(String(pilgrim.id))),
+    [pilgrims, table.selected]
   );
+
+  // Skeleton loader component for table
+  const TableSkeleton = () => {
+    const skeletonRows = currentLimit || 10;
+    const skeletonCols = tableHead.length + 2; // +2 for checkbox and order columns
+
+    return (
+      <TableContainer>
+        <Table
+          sx={{
+            minWidth: 400,
+            borderCollapse: 'separate',
+            '& .MuiTableCell-root': {
+              border: 'none',
+              padding: '12px 16px',
+            },
+          }}
+        >
+          <TableHead>
+            <TableRow>
+              {/* Checkbox column */}
+              <TableCell sx={{ width: 52 }}>
+                <Skeleton variant="rectangular" width={20} height={20} />
+              </TableCell>
+              {/* Order column */}
+              <TableCell sx={{ width: 40 }}>
+                <Skeleton variant="text" width={20} />
+              </TableCell>
+              {/* Data columns */}
+              {tableHead.map((head) => (
+                <TableCell key={head.id}>
+                  <Skeleton variant="text" width="80%" />
+                </TableCell>
+              ))}
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {Array.from({ length: skeletonRows }).map((_, rowIndex) => (
+              <TableRow key={rowIndex}>
+                {/* Checkbox column */}
+                <TableCell>
+                  <Skeleton variant="rectangular" width={20} height={20} />
+                </TableCell>
+                {/* Order column */}
+                <TableCell>
+                  <Skeleton variant="text" width={20} />
+                </TableCell>
+                {/* Data columns */}
+                {tableHead.map((head) => (
+                  <TableCell key={head.id}>
+                    <Skeleton variant="text" width="90%" />
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    );
+  };
 
   const stats = [
     {
       key: 'pilgrims',
       label: t('Label.total_pilgrims'),
-      value: '1,422',
+      value: pilgrimsData?.meta?.total?.toLocaleString() || '0',
       icon: '/assets/images/pilgrims/total.svg',
     },
     {
@@ -1012,18 +1093,28 @@ export default function PilgrimsView() {
             </Stack>
           </Stack>
 
-          <SharedTable<Pilgrim>
-            tableHead={tableHead}
-            data={filteredPilgrims}
-            count={filteredPilgrims.length}
-            actions={actions}
-            customRender={customRender}
-            disablePagination={false}
-            order={true}
-            enableSelection
-            table={table}
-            onRowClick={handleRowClick}
-          />
+          {pilgrimsError ? (
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', py: 10 }}>
+              <Typography variant="body1" color="error">
+                Error loading pilgrims. Please try again.
+              </Typography>
+            </Box>
+          ) : pilgrimsLoading ? (
+            <TableSkeleton />
+          ) : (
+            <SharedTable<Pilgrim>
+              tableHead={tableHead}
+              data={pilgrims}
+              count={pilgrimsData?.meta?.total || 0}
+              actions={actions}
+              customRender={customRender}
+              disablePagination={false}
+              order={true}
+              enableSelection
+              table={table}
+              onRowClick={handleRowClick}
+            />
+          )}
         </Card>
       </Box>
 
@@ -1033,7 +1124,7 @@ export default function PilgrimsView() {
         onClose={bulkDialog.onClose}
         selectedCount={table.selected.length}
         selectedPilgrims={selectedPilgrims}
-        allPilgrims={filteredPilgrims}
+        allPilgrims={pilgrims}
         onClearSelection={() => table.setSelected([])}
       />
 
@@ -1047,6 +1138,22 @@ export default function PilgrimsView() {
 
       {/* Import Dialog */}
       <ImportDialog open={importDialog.open} onClose={importDialog.onClose} />
+
+      {/* Delete Confirmation Dialog */}
+      <ConfirmDialog
+        open={deleteDialog.open}
+        onClose={deleteDialog.onClose}
+        title={t('Title.delete_pilgrim')}
+        content={
+          pilgrimToDelete
+            ? t('Message.delete_pilgrim_confirm', { name: pilgrimToDelete.name?.ar || '' })
+            : ''
+        }
+        buttonTitle={t('Button.delete')}
+        buttonColor="error"
+        handleConfirmDelete={handleDeleteConfirm}
+        loading={deleteMutation.isPending}
+      />
     </Container>
   );
 }

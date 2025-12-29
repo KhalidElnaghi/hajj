@@ -6,10 +6,15 @@ export const createPilgrimValidationSchema = (t: TranslateFunction) => {
   return Yup.object().shape({
     nameAr: Yup.string()
       .required(t('Message.name_ar_required'))
-      .min(2, t('Message.name_min_length')),
+      .min(2, t('Message.name_min_length'))
+      .matches(
+        /^[\u0600-\u06FF]+(\s+[\u0600-\u06FF]+)+\s*$/,
+        t('Message.name_ar_two_words_required')
+      ),
     nameEn: Yup.string()
       .required(t('Message.name_en_required'))
-      .min(2, t('Message.name_min_length')),
+      .min(2, t('Message.name_min_length'))
+      .matches(/^[a-zA-Z]+(\s+[a-zA-Z]+)+\s*$/, t('Message.name_en_two_words_required')),
     idNumber: Yup.string()
       .required(t('Message.id_number_required'))
       .length(10, t('Message.id_number_length'))

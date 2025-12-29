@@ -129,6 +129,7 @@
     "academic_degree": "الدرجة العلمية",
     "academic_degrees": "الدرجات العلمية",
     "no_data": "لا توجد بيانات",
+    "not_available": "غير متوفر",
     "page": "صفحة",
     "of": "من",
     "number": "الرقم",
@@ -446,7 +447,8 @@
       "group_actions": "إجراءات جماعية",
       "import_pilgrim_data": "استيراد بيانات الحجاج",
       "pilgrims_management": "إدارة الحجاج",
-      "add_edit_pilgrim": "إضافة / تعديل حاج"
+      "add_edit_pilgrim": "إضافة / تعديل حاج",
+      "delete_pilgrim": "حذف حاج"
     },
     "Description": {
       "accommodation_description": "عرض بيانات توزيع الحجاج على المخيمات لضمان التنظيم والراحة.",
@@ -462,6 +464,9 @@
       "search": "ابحث عن ما تريد...",
       "breadcrumb_home": "الصفحة الرئيسية",
       "absolute_filter": "التصفية المطلقة",
+      "not_available": "غير متوفر",
+      "haj_no": "رقم الحاج",
+      "transport": "وسيلة النقل",
       "accommodation": "السكن",
       "accommodation_capacity": "المسكنين",
       "accommodation_deleted": "تم حذف من الإسكان",
@@ -496,6 +501,7 @@
       "gathering_point": "نقطة التجمع",
       "gathering_point_type": "نوع نقطة التجمع",
       "gathering_points": "نقاط التجمع",
+      "gathering_date": "تاريخ التجمع",
       "gender": "الجنس",
       "gender_female": "أنثى",
       "gender_male": "ذكر",
@@ -579,6 +585,12 @@
       "tag_vip_section": "قسم كبار الشخصيات",
       "tag_wheelchair_accessible": "مناسب لذوي الاحتياجات الخاصة",
       "tags": "الوسوم",
+      "pilgrim_type": "نوع الحاج",
+      "muhrim_status": "حالة المحرم",
+      "pilgrim_status": "حالة الحاج",
+      "source": "المصدر",
+      "active_filters": "فلاتر نشطة",
+      "all": "الكل",
       "total_pilgrims": "إجمالي الحجاج",
       "total_pilgrims_today": "إجمالي الحجاج المُرسَل إليهم",
       "total_records": "إجمالي السجل",
@@ -620,18 +632,23 @@
       "supervisor_notes_placeholder": "ما يخطر ببالك....",
       "clear_fields": "تفريغ الحقول",
       "save": "حفظ",
-      "saving": "جاري الحفظ"
+      "saving": "جاري الحفظ",
+      "Female": "أنثى",
+      "Male": "ذكر"
     },
     "Button": {
       "add": "إضافة",
       "add_pilgrim": "إضافة حاج",
       "cancel": "إلغاء",
+      "clear_all": "مسح الكل",
       "clear_fields": "تفريغ الحقول",
       "filter": "فلتر",
       "import_data": "إستيراد البيانات",
       "import_from_excel": "إستيراد من اكسل",
       "save": "حفظ",
-      "send": "إرسال"
+      "send": "إرسال",
+      "delete": "حذف",
+      "deleting": "جاري الحذف..."
     },
     "Placeholder": {
       "search_and_add_pilgrim": "ابحث وأضف حاج جديد",
@@ -670,6 +687,9 @@
       "error_deleting_pilgrim": "خطأ في حذف الحاج",
       "error_loading_pilgrim": "حدث خطأ أثناء تحميل بيانات الحاج",
       "delete_pilgrim_confirmation": "هل أنت متأكد من أنك تريد حذف هذا الحاج؟ لا يمكن التراجع عن هذا الإجراء.",
+      "delete_success": "تم حذف الحاج بنجاح",
+      "delete_error": "خطأ في حذف الحاج",
+      "delete_pilgrim_confirm": "هل أنت متأكد من أنك تريد حذف الحاج {name}؟ لا يمكن التراجع عن هذا الإجراء.",
       "saving": "جاري الحفظ...",
       "id_number_saudi_format": "يجب أن يكون رقم الهوية هوية وطنية سعودية صحيحة (تبدأ بـ 1 أو 2) أو إقامة (تبدأ بـ 3 أو 4)",
       "phone_saudi_invalid": "يجب أن يكون رقم الجوال رقم هاتف سعودي صحيح",
@@ -678,7 +698,10 @@
       "age_required": "العمر مطلوب",
       "mobile_required": "رقم الجوال مطلوب",
       "package_required": "الباقة مطلوبة",
-      "city_required": "المدينة مطلوبة"
+      "city_required": "المدينة مطلوبة",
+      "name_ar_arabic_only": "يجب أن يكون الاسم بالعربية فقط",
+      "name_en_two_words_required": "يجب أن يكون الاسم بالإنجليزية ويحتوي على على كلمتين على الأقل",
+      "name_ar_two_words_required": "يجب أن يكون الاسم بالعربية ويحتوي على على كلمتين على الأقل"
     },
     "Dialog": {
       "Delete": "حذف",

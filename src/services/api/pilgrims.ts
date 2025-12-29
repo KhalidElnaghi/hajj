@@ -13,27 +13,148 @@ export interface GetPilgrimsParams {
   city?: string;
   healthStatus?: string;
   nationality?: string;
+  // Filter parameters
+  package_id?: string;
+  city_id?: string;
+  nationality_id?: string;
+  transport_id?: string;
+  pilgrim_type_id?: string;
+  source?: string;
+  departure_status?: string;
+  muhrim_status?: string;
 }
 
+// Pilgrim interface matching the actual API response
 export interface Pilgrim {
   id: number;
-  name: string;
-  idNumber: string;
-  bookingNumber: string;
-  registrationStatus: string;
-  gender: string;
-  city: string;
-  healthStatus: string;
-  accommodation: string;
-  hajjOperations: string;
-  busStatus: string;
-  funding: string;
-  sponsor: string;
-  phone: string;
-  gatheringPointType: string;
-  nationality: string;
-  package: string;
-  bus: string;
+  haj_no: number;
+  name: {
+    ar: string;
+    en: string;
+  };
+  reservation_no: string;
+  national_id: string;
+  mobile: string;
+  mobile2: string | null;
+  gender: number;
+  gender_name: string;
+  birthdate: string;
+  birthdate_hijri: string | null;
+  age: number | null;
+  pilgrim_photo: string | null;
+  whatsapp_active: boolean;
+  status: number;
+  status_name: string;
+  source: number;
+  source_name: string;
+  departure_status: number;
+  departure_status_name: string;
+  muhrim_status: number;
+  muhrim_status_name: string;
+  notes: string | null;
+  pilgrim_style: string;
+  booking_via: string;
+  booking_date: string;
+  payment_mechanism: string;
+  payment_status: string;
+  package: {
+    id: number;
+    name: {
+      ar: string;
+      en: string;
+    };
+    status: boolean;
+  };
+  city: {
+    id: number;
+    city_id: number;
+    city: {
+      id: number;
+      country_id: number;
+      name: {
+        ar: string;
+        en: string;
+      };
+      latitude: string;
+      longitude: string;
+      created_at: string;
+      updated_at: string;
+    };
+    created_at: string;
+    updated_at: string;
+  };
+  nationality: {
+    id: number;
+    country_id: number;
+    country: {
+      id: number;
+      name: {
+        ar: string;
+        en: string;
+      };
+      code: string;
+      phone_code: string;
+      currency: {
+        code: string;
+        name: string;
+        symbol: string;
+      };
+      flag: {
+        alt: string;
+        png: string;
+        svg: string;
+      };
+      coat_of_arms: {
+        png: string;
+        svg: string;
+      };
+      latitude: string;
+      longitude: string;
+      official: {
+        ar: string;
+        en: string;
+      };
+      google_map: string;
+      open_street_map: string;
+      region: string;
+      created_at: string;
+      updated_at: string;
+    };
+    created_at: string;
+    updated_at: string;
+  };
+  transport: {
+    id: number;
+    name: {
+      ar: string;
+      en: string;
+    };
+    status: boolean;
+    created_at: string;
+    updated_at: string;
+  };
+  pilgrim_type: {
+    id: number;
+    name: {
+      ar: string;
+      en: string;
+    };
+    status: boolean;
+    created_at: string;
+    updated_at: string;
+  };
+  reservation: {
+    id: number;
+    name: {
+      ar: string;
+      en: string;
+    };
+    status: boolean;
+  };
+  supervisors: any[];
+  tags: any[];
+  created_at: string;
+  updated_at: string;
 }
 
 export interface PilgrimsResponse {
@@ -51,7 +172,7 @@ export const getPilgrims = async (params: GetPilgrimsParams = {}): Promise<Pilgr
   const { page, limit, searchParam, search, ...restParams } = params;
 
   const queryParams = new URLSearchParams();
-  if (limit) queryParams.append('limit', limit.toString());
+  if (limit) queryParams.append('per_page', limit.toString());
   if (page) queryParams.append('page', page.toString());
   if (searchParam) queryParams.append('search', searchParam);
   if (search) queryParams.append('search', search);
@@ -66,7 +187,22 @@ export const getPilgrims = async (params: GetPilgrimsParams = {}): Promise<Pilgr
   const queryString = queryParams.toString();
   const url = `/pilgrims/pilgrims${queryString ? `?${queryString}` : ''}`;
 
-  return API.get<PilgrimsResponse>(url);
+  const response = await API.get<Pilgrim[] | PilgrimsResponse>(url);
+
+  // Handle both array response and object response
+  if (Array.isArray(response)) {
+    return {
+      data: response,
+      meta: {
+        total: response.length,
+        page: page || 1,
+        limit: limit || response.length,
+        totalPages: 1,
+      },
+    };
+  }
+
+  return response as PilgrimsResponse;
 };
 
 export interface PilgrimDetailsResponse {
@@ -187,26 +323,121 @@ export const getPilgrimDetails = async (id: string | number): Promise<PilgrimDet
 // Init Data Interfaces
 export interface InitDataOption {
   id: number;
-  name: string;
+  name: {
+    ar: string;
+    en: string;
+  };
   name_ar?: string;
   name_en?: string;
+  status?: boolean;
+  created_at?: string;
+  updated_at?: string;
   [key: string]: any; // Allow additional properties
+}
+
+export interface Employee {
+  id: number;
+  emp_no: number;
+  name: {
+    ar: string;
+    en: string;
+  };
+  job_id: number;
+  role: number;
+  national_id: string;
+  mobile: string;
+  ID_expire_dt: string;
+  gender: boolean;
+  nationality_id: number;
+  job_number: string;
+  bank_account: string;
+  bank_name: string;
+  iban: string;
+  image: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Tag {
+  id: number;
+  name: {
+    ar: string;
+    en: string;
+  };
+  color: string;
+  status: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface InitDataSimpleOption {
+  value: number;
+  label: string;
 }
 
 export interface PilgrimInitDataResponse {
   data: {
     packages: InitDataOption[];
-    cities: InitDataOption[];
-    countries: InitDataOption[];
+    cities: Array<{
+      id: number;
+      city_id: number;
+      created_at: string;
+      updated_at: string;
+      city: {
+        id: number;
+        country_id: number;
+        name: {
+          ar: string;
+          en: string;
+        };
+        name_en: string;
+        name_ar: string;
+        latitude: string;
+        longitude: string;
+        created_at: string;
+        updated_at: string;
+      };
+    }>;
+    countries: Array<{
+      id: number;
+      country_id: number;
+      created_at: string;
+      updated_at: string;
+      country: {
+        id: number;
+        name: {
+          ar: string;
+          en: string;
+        };
+        name_ar: string;
+        name_en: string;
+        code: string;
+        phone_code: string;
+        flag: {
+          alt: string;
+          png: string;
+          svg: string;
+        };
+        currency: {
+          code: string;
+          name: string;
+          symbol: string;
+        };
+        official: {
+          ar: string;
+          en: string;
+        };
+      };
+    }>;
     transports: InitDataOption[];
     pilgrimTypes: InitDataOption[];
-    employees: InitDataOption[];
-    tags: InitDataOption[];
-    muhrimStatuses: InitDataOption[];
-    genders: InitDataOption[];
-    pilgrimStatuses: InitDataOption[];
-    sources: InitDataOption[];
-    departureStatuses: InitDataOption[];
+    employees: Employee[];
+    tags: Tag[];
+    muhrimStatuses: InitDataSimpleOption[];
+    genders: InitDataSimpleOption[];
+    pilgrimStatuses: InitDataSimpleOption[];
+    sources: InitDataSimpleOption[];
+    departureStatuses: InitDataSimpleOption[];
   };
 }
 
@@ -505,24 +736,28 @@ export const createPilgrim = async (data: CreatePilgrimData): Promise<CreatePilg
 
   // Add photo to FormData if provided (same logic as your example)
   // Check if photo exists and is a valid File object (not empty object or null)
-  const hasValidPhoto = data.photo && 
-    (data.photo instanceof File || 
-     (typeof data.photo === 'object' && 
-      data.photo !== null && 
-      Object.keys(data.photo as object).length > 0 && 
-      'preview' in data.photo));
+  const hasValidPhoto =
+    data.photo &&
+    (data.photo instanceof File ||
+      (typeof data.photo === 'object' &&
+        data.photo !== null &&
+        Object.keys(data.photo as object).length > 0 &&
+        'preview' in data.photo));
 
   if (hasValidPhoto && data.photo) {
     console.log('Photo data received:', {
       type: typeof data.photo,
       isFile: data.photo instanceof File,
       hasPreview: typeof data.photo === 'object' && data.photo !== null && 'preview' in data.photo,
-      isEmptyObject: typeof data.photo === 'object' && data.photo !== null && Object.keys(data.photo as object).length === 0,
+      isEmptyObject:
+        typeof data.photo === 'object' &&
+        data.photo !== null &&
+        Object.keys(data.photo as object).length === 0,
     });
 
     // Extract File object (handle both File and File with preview property)
     let photoFile: File | null = null;
-    
+
     if (data.photo instanceof File) {
       photoFile = data.photo;
       console.log('Photo is a File:', { name: photoFile.name, type: photoFile.type });
@@ -530,16 +765,19 @@ export const createPilgrim = async (data: CreatePilgrimData): Promise<CreatePilg
       // Check if it's a File object with preview property
       // Try to access the File object directly
       const fileWithPreview = data.photo as any;
-      
+
       // Check if it's actually a File object (even with preview property)
       if (fileWithPreview instanceof File) {
         photoFile = fileWithPreview;
-        console.log('Photo is a File with preview:', { name: photoFile.name, type: photoFile.type });
+        console.log('Photo is a File with preview:', {
+          name: photoFile.name,
+          type: photoFile.type,
+        });
       } else if (fileWithPreview.constructor?.name === 'File' || fileWithPreview instanceof Blob) {
         // Sometimes File objects lose their instanceof check but are still Files
         photoFile = fileWithPreview as File;
-        console.log('Photo is a File (via constructor check):', { 
-          name: photoFile.name, 
+        console.log('Photo is a File (via constructor check):', {
+          name: photoFile.name,
           type: photoFile.type,
           constructor: fileWithPreview.constructor?.name,
         });
@@ -799,12 +1037,16 @@ export const updatePilgrim = async (
   bodyData.general_health_status = safeString(data.generalHealthStatus);
 
   // Optional fields with defaults or from data
-  bodyData.pilgrim_type_id = data.pilgrim_type_id !== undefined ? safeInteger(data.pilgrim_type_id) : 2;
-  bodyData.reservation_id = data.reservation_id !== undefined ? safeInteger(data.reservation_id) : 1;
+  bodyData.pilgrim_type_id =
+    data.pilgrim_type_id !== undefined ? safeInteger(data.pilgrim_type_id) : 2;
+  bodyData.reservation_id =
+    data.reservation_id !== undefined ? safeInteger(data.reservation_id) : 1;
   bodyData.status = data.status !== undefined ? safeInteger(data.status) : 1; // 1=active, 2=inactive, 3=cancelled
   bodyData.source = data.source !== undefined ? safeInteger(data.source) : 1; // 1=website, 2=excel, 3=api
-  bodyData.whatsapp_active = data.whatsapp_active !== undefined ? safeInteger(data.whatsapp_active) : 0;
-  bodyData.departure_status = data.departure_status !== undefined ? safeInteger(data.departure_status) : 0; // 0=early, 1=late
+  bodyData.whatsapp_active =
+    data.whatsapp_active !== undefined ? safeInteger(data.whatsapp_active) : 0;
+  bodyData.departure_status =
+    data.departure_status !== undefined ? safeInteger(data.departure_status) : 0; // 0=early, 1=late
   bodyData.muhrim_status = data.muhrim_status !== undefined ? safeInteger(data.muhrim_status) : 0; // 0=without, 1=with
 
   // Additional optional fields
@@ -819,21 +1061,22 @@ export const updatePilgrim = async (
   const formData = new FormData();
 
   // Add photo to FormData if provided
-  const hasValidPhoto = data.photo && 
-    (data.photo instanceof File || 
-     (typeof data.photo === 'object' && 
-      data.photo !== null && 
-      Object.keys(data.photo as object).length > 0 && 
-      'preview' in data.photo));
+  const hasValidPhoto =
+    data.photo &&
+    (data.photo instanceof File ||
+      (typeof data.photo === 'object' &&
+        data.photo !== null &&
+        Object.keys(data.photo as object).length > 0 &&
+        'preview' in data.photo));
 
   if (hasValidPhoto && data.photo) {
     let photoFile: File | null = null;
-    
+
     if (data.photo instanceof File) {
       photoFile = data.photo;
     } else if (typeof data.photo === 'object' && data.photo !== null && 'preview' in data.photo) {
       const fileWithPreview = data.photo as any;
-      
+
       if (fileWithPreview instanceof File) {
         photoFile = fileWithPreview;
       } else if (fileWithPreview.constructor?.name === 'File' || fileWithPreview instanceof Blob) {
@@ -890,6 +1133,33 @@ export const updatePilgrim = async (
       method: error?.config?.method,
     });
     // Re-throw the error so it can be handled by the mutation
+    throw error;
+  }
+};
+
+export interface DeletePilgrimResponse {
+  success: boolean;
+  message: string;
+  data: null;
+}
+
+export const deletePilgrim = async (id: number): Promise<DeletePilgrimResponse> => {
+  console.log('deletePilgrim called with id:', id);
+  console.log('API endpoint:', `/pilgrims/pilgrims/${id}`);
+
+  try {
+    const response = await API.delete<DeletePilgrimResponse>(`/pilgrims/pilgrims/${id}`);
+    console.log('Delete API response:', response);
+    return response;
+  } catch (error: any) {
+    console.error('Delete API error:', {
+      message: error?.message,
+      status: error?.response?.status,
+      statusText: error?.response?.statusText,
+      data: error?.response?.data,
+      url: error?.config?.url,
+      method: error?.config?.method,
+    });
     throw error;
   }
 };

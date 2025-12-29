@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -28,6 +28,21 @@ import {
 import { useTranslations } from 'next-intl';
 import Iconify from 'src/components/iconify';
 import Image from 'next/image';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { useFetchPilgrimInitData } from 'src/services/queries/pilgrims';
+import FilterDropdown from './filter-dialog/FilterDropdown';
+import FilterToggleGroup from './filter-dialog/FilterToggleGroup';
+import {
+  transformPackagesToOptions,
+  transformCitiesToOptions,
+  transformCountriesToOptions,
+  transformTransportsToOptions,
+  transformPilgrimTypesToOptions,
+  transformSimpleToDropdownOptions,
+  transformSimpleToToggleOptions,
+  transformEmployeesToOptions,
+  transformTagsToOptions,
+} from './filter-dialog/utils';
 
 // ----------------------------------------------------------------------
 
@@ -47,6 +62,71 @@ export default function FilterDialog({
   const t = useTranslations('Pilgrims');
   const [searchTerm, setSearchTerm] = useState('');
   const [expandedSections, setExpandedSections] = useState<string[]>([]);
+
+  // Fetch init data for dropdowns
+  const { data: initData, isLoading: initDataLoading } = useFetchPilgrimInitData();
+
+  // Transform API data to dropdown options
+  const packageOptions = useMemo(
+    () => transformPackagesToOptions(initData?.data?.packages),
+    [initData?.data?.packages]
+  );
+
+  const cityOptions = useMemo(
+    () => transformCitiesToOptions(initData?.data?.cities),
+    [initData?.data?.cities]
+  );
+
+  const nationalityOptions = useMemo(
+    () => transformCountriesToOptions(initData?.data?.countries),
+    [initData?.data?.countries]
+  );
+
+  const transportOptions = useMemo(
+    () => transformTransportsToOptions(initData?.data?.transports),
+    [initData?.data?.transports]
+  );
+
+  const pilgrimTypeOptions = useMemo(
+    () => transformPilgrimTypesToOptions(initData?.data?.pilgrimTypes),
+    [initData?.data?.pilgrimTypes]
+  );
+
+  const muhrimStatusOptions = useMemo(
+    () => transformSimpleToDropdownOptions(initData?.data?.muhrimStatuses),
+    [initData?.data?.muhrimStatuses]
+  );
+
+  const pilgrimStatusOptions = useMemo(
+    () => transformSimpleToDropdownOptions(initData?.data?.pilgrimStatuses),
+    [initData?.data?.pilgrimStatuses]
+  );
+
+  const sourceOptions = useMemo(
+    () => transformSimpleToDropdownOptions(initData?.data?.sources),
+    [initData?.data?.sources]
+  );
+
+  const genderToggleOptions = useMemo(
+    () => transformSimpleToToggleOptions(initData?.data?.genders),
+    [initData?.data?.genders]
+  );
+
+  const departureToggleOptions = useMemo(
+    () => transformSimpleToToggleOptions(initData?.data?.departureStatuses),
+    [initData?.data?.departureStatuses]
+  );
+
+  const tagOptions = useMemo(
+    () => transformTagsToOptions(initData?.data?.tags),
+    [initData?.data?.tags]
+  );
+
+  const employeeOptions = useMemo(
+    () => transformEmployeesToOptions(initData?.data?.employees),
+    [initData?.data?.employees]
+  );
+
   const searchValue = searchTerm.trim().toLowerCase();
   const matchesSearch = (texts: (string | undefined)[]) =>
     !searchValue || texts.some((text) => text?.toLowerCase().includes(searchValue));
@@ -61,6 +141,9 @@ export default function FilterDialog({
       t('Label.gender'),
       t('Label.early_late'),
       t('Label.booking_status'),
+      t('Label.pilgrim_type'),
+      t('Label.muhrim_status'),
+      t('Label.pilgrim_status'),
     ],
     gathering: [
       t('Label.gathering_points'),
@@ -74,9 +157,10 @@ export default function FilterDialog({
       t('Label.accommodation_destination'),
       t('Label.camp_status'),
     ],
-    transportation: [t('Label.transportation'), t('Label.bus_number')],
+    transportation: [t('Label.transportation'), t('Label.transport')],
     health: [t('Label.health_status')],
-    supervision: [t('Label.supervision'), t('Label.supervisors'), t('Label.upload_file')],
+    supervision: [t('Label.supervision'), t('Label.supervisors')],
+    import: [t('Label.import_file'), t('Label.source')],
     shipping: [
       t('Label.shipping_operations'),
       t('Label.shipping_management'),
@@ -91,20 +175,24 @@ export default function FilterDialog({
     transportation: matchesSearch(sectionKeywords.transportation),
     health: matchesSearch(sectionKeywords.health),
     supervision: matchesSearch(sectionKeywords.supervision),
+    import: matchesSearch(sectionKeywords.import),
     shipping: matchesSearch(sectionKeywords.shipping),
   };
 
   const labelColor = (key: string) =>
     searchValue && t(key)?.toLowerCase().includes(searchValue) ? 'primary.main' : '#64748B';
 
-  // Sample supervisors list - replace with actual data from API
-  const supervisorsList = [
-    { id: '1', name: 'محمد فيصل' },
-    { id: '2', name: 'أحمد علي' },
-    { id: '3', name: 'خالد محمود' },
-    { id: '4', name: 'عمر حسن' },
-    { id: '5', name: 'سعيد عبدالله' },
-  ];
+  // Get supervisors list from init data
+  const supervisorsList = initData?.data?.employees || [];
+
+  // Employee interface for autocomplete
+  interface EmployeeOption {
+    id: number;
+    name: {
+      ar: string;
+      en: string;
+    };
+  }
 
   // Form state
   const [filters, setFilters] = useState({
@@ -116,11 +204,15 @@ export default function FilterDialog({
     marriedLate: '',
     bookingStatus: '',
     package: '',
+    pilgrimType: '',
+    muhrimStatus: '',
+    pilgrimStatus: '',
 
     // Assembly Points
     gatheringPointType: '',
     gatheringPoint: '',
     destination: '',
+    gatheringDate: null as any,
 
     // Accommodation
     roomNumber: '',
@@ -128,14 +220,17 @@ export default function FilterDialog({
     campStatus: '',
 
     // Transportation
-    busNumber: '',
+    transport: '',
 
     // Health Status
     healthStatus: '',
 
     // Supervision
-    supervisors: [] as any[],
+    supervisor: null as EmployeeOption | null,
+
+    // Import File
     importFile: '',
+    source: '',
 
     // Shipping Operations
     shippingManagement: '',
@@ -153,16 +248,21 @@ export default function FilterDialog({
         marriedLate: externalFilters.marriedLate || '',
         bookingStatus: externalFilters.bookingStatus || '',
         package: externalFilters.package || '',
+        pilgrimType: externalFilters.pilgrimType || '',
+        muhrimStatus: externalFilters.muhrimStatus || '',
+        pilgrimStatus: externalFilters.pilgrimStatus || '',
         gatheringPointType: externalFilters.gatheringPointType || '',
         gatheringPoint: externalFilters.gatheringPoint || '',
         destination: externalFilters.destination || '',
+        gatheringDate: externalFilters.gatheringDate || null,
         roomNumber: externalFilters.roomNumber || '',
         accommodationDestination: externalFilters.accommodationDestination || '',
         campStatus: externalFilters.campStatus || '',
-        busNumber: externalFilters.busNumber || '',
+        transport: externalFilters.transport || '',
         healthStatus: externalFilters.healthStatus || '',
-        supervisors: externalFilters.supervisors || [],
+        supervisor: externalFilters.supervisor || null,
         importFile: externalFilters.importFile || '',
+        source: externalFilters.source || '',
         shippingManagement: externalFilters.shippingManagement || '',
         shipmentStatus: externalFilters.shipmentStatus || '',
       };
@@ -179,7 +279,10 @@ export default function FilterDialog({
         updatedFilters.badge ||
         updatedFilters.gender ||
         updatedFilters.marriedLate ||
-        updatedFilters.bookingStatus
+        updatedFilters.bookingStatus ||
+        updatedFilters.pilgrimType ||
+        updatedFilters.muhrimStatus ||
+        updatedFilters.pilgrimStatus
       ) {
         sectionsToExpand.push('personal');
       }
@@ -200,7 +303,7 @@ export default function FilterDialog({
         sectionsToExpand.push('accommodation');
       }
 
-      if (updatedFilters.busNumber) {
+      if (updatedFilters.transport) {
         sectionsToExpand.push('transportation');
       }
 
@@ -208,8 +311,12 @@ export default function FilterDialog({
         sectionsToExpand.push('health');
       }
 
-      if (updatedFilters.supervisors?.length > 0 || updatedFilters.importFile) {
+      if (updatedFilters.supervisor) {
         sectionsToExpand.push('supervision');
+      }
+
+      if (updatedFilters.importFile || updatedFilters.source) {
+        sectionsToExpand.push('import');
       }
 
       if (updatedFilters.shippingManagement || updatedFilters.shipmentStatus) {
@@ -236,16 +343,21 @@ export default function FilterDialog({
       gender: '',
       marriedLate: '',
       bookingStatus: '',
+      pilgrimType: '',
+      muhrimStatus: '',
+      pilgrimStatus: '',
       gatheringPointType: '',
       gatheringPoint: '',
       destination: '',
+      gatheringDate: null,
       roomNumber: '',
       accommodationDestination: '',
       campStatus: '',
-      busNumber: '',
+      transport: '',
       healthStatus: '',
-      supervisors: [],
+      supervisor: null,
       importFile: '',
+      source: '',
       shippingManagement: '',
       shipmentStatus: '',
     });
@@ -413,185 +525,83 @@ export default function FilterDialog({
               <AccordionDetails sx={{ px: 3, pt: 3, pb: 3, bgcolor: 'transparent' }}>
                 <Stack spacing={2.5}>
                   <Stack direction="row" spacing={2}>
-                    <FormControl fullWidth>
-                      <Typography
-                        sx={{
-                          mb: 1,
-                          color: labelColor('Label.nationality'),
-                          fontSize: 16,
-                          fontWeight: 400,
-                          lineHeight: '22px',
-                          textTransform: 'capitalize',
-                        }}
-                      >
-                        {t('Label.nationality')}
-                      </Typography>
-                      <Select
-                        value={filters.nationality}
-                        onChange={(e) => setFilters({ ...filters, nationality: e.target.value })}
-                        displayEmpty
-                        sx={{ borderRadius: 1 }}
-                      >
-                        <MenuItem value="">{t('Label.select')}</MenuItem>
-                        <MenuItem value="yemen">اليمن</MenuItem>
-                        <MenuItem value="egypt">مصر</MenuItem>
-                        <MenuItem value="saudi">السعودية</MenuItem>
-                      </Select>
-                    </FormControl>
-                    <FormControl fullWidth>
-                      <Typography
-                        sx={{
-                          mb: 1,
-                          color: labelColor('Label.city'),
-                          fontSize: 16,
-                          fontWeight: 400,
-                          lineHeight: '22px',
-                          textTransform: 'capitalize',
-                        }}
-                      >
-                        {t('Label.city')}
-                      </Typography>
-                      <Select
-                        value={filters.city}
-                        onChange={(e) => setFilters({ ...filters, city: e.target.value })}
-                        displayEmpty
-                        sx={{ borderRadius: 1 }}
-                      >
-                        <MenuItem value="">{t('Label.select')}</MenuItem>
-                        <MenuItem value="jeddah">جدة</MenuItem>
-                        <MenuItem value="riyadh">الرياض</MenuItem>
-                        <MenuItem value="mecca">مكة</MenuItem>
-                      </Select>
-                    </FormControl>
+                    <FilterDropdown
+                      label={t('Label.nationality')}
+                      value={filters.nationality}
+                      onChange={(value: string) => setFilters({ ...filters, nationality: value })}
+                      options={nationalityOptions}
+                      allLabel={t('Label.all')}
+                      disabled={initDataLoading}
+                      highlighted={
+                        !!(
+                          searchValue && t('Label.nationality')?.toLowerCase().includes(searchValue)
+                        )
+                      }
+                    />
+                    <FilterDropdown
+                      label={t('Label.city')}
+                      value={filters.city}
+                      onChange={(value: string) => setFilters({ ...filters, city: value })}
+                      options={cityOptions}
+                      allLabel={t('Label.all')}
+                      disabled={initDataLoading}
+                      highlighted={
+                        !!(searchValue && t('Label.city')?.toLowerCase().includes(searchValue))
+                      }
+                    />
                   </Stack>
 
                   <Stack direction="row" spacing={2}>
-                    <FormControl fullWidth>
-                      <Typography
-                        sx={{
-                          mb: 1,
-                          color: labelColor('Label.package_name'),
-                          fontSize: 16,
-                          fontWeight: 400,
-                          lineHeight: '22px',
-                          textTransform: 'capitalize',
-                        }}
-                      >
-                        {t('Label.package_name')}
-                      </Typography>
-                      <Select
-                        value={filters.package}
-                        onChange={(e) => setFilters({ ...filters, package: e.target.value })}
-                        displayEmpty
-                        sx={{ borderRadius: 1 }}
-                      >
-                        <MenuItem value="">{t('Label.select')}</MenuItem>
-                        <MenuItem value="vip">VIP</MenuItem>
-                        <MenuItem value="premium">مميزة</MenuItem>
-                        <MenuItem value="economic">اقتصادية</MenuItem>
-                      </Select>
-                    </FormControl>
-                    <FormControl fullWidth>
-                      <Typography
-                        sx={{
-                          mb: 1,
-                          color: labelColor('Label.tags'),
-                          fontSize: 16,
-                          fontWeight: 400,
-                          lineHeight: '22px',
-                          textTransform: 'capitalize',
-                        }}
-                      >
-                        {t('Label.tags')}
-                      </Typography>
-                      <Select
-                        value={filters.badge}
-                        onChange={(e) => setFilters({ ...filters, badge: e.target.value })}
-                        displayEmpty
-                        sx={{ borderRadius: 1 }}
-                      >
-                        <MenuItem value="">{t('Label.select')}</MenuItem>
-                        <MenuItem value="near_bathroom">قريب من دورة مياة</MenuItem>
-                        <MenuItem value="central">قريب من مركز طبي</MenuItem>
-                        <MenuItem value="near_mosque">قريب من مسجد</MenuItem>
-                        <MenuItem value="near_transport">قريب من خدمة نقل</MenuItem>
-                        <MenuItem value="near_restaurant">قريب من خدمة غسيل</MenuItem>
-                        <MenuItem value="tent_entrance">قريب من مدخل المخيم</MenuItem>
-                      </Select>
-                    </FormControl>
+                    <FilterDropdown
+                      label={t('Label.package_name')}
+                      value={filters.package}
+                      onChange={(value: string) => setFilters({ ...filters, package: value })}
+                      options={packageOptions}
+                      allLabel={t('Label.all')}
+                      disabled={initDataLoading}
+                      highlighted={
+                        !!(
+                          searchValue &&
+                          t('Label.package_name')?.toLowerCase().includes(searchValue)
+                        )
+                      }
+                    />
+                    <FilterDropdown
+                      label={t('Label.tags')}
+                      value={filters.badge}
+                      onChange={(value: string) => setFilters({ ...filters, badge: value })}
+                      options={tagOptions}
+                      allLabel={t('Label.all')}
+                      disabled={initDataLoading}
+                      highlighted={
+                        !!(searchValue && t('Label.tags')?.toLowerCase().includes(searchValue))
+                      }
+                    />
                   </Stack>
                   <Stack direction="row" spacing={2}>
-                    <Box sx={{ width: '100%' }}>
-                      <Typography
-                        sx={{
-                          mb: 1.5,
-                          color: labelColor('Label.gender'),
-                          fontSize: 16,
-                          fontWeight: 400,
-                          lineHeight: '22px',
-                          textTransform: 'capitalize',
-                        }}
-                      >
-                        {t('Label.gender')}
-                      </Typography>
-                      <ToggleButtonGroup
-                        value={filters.gender}
-                        exclusive
-                        onChange={(e, value) => setFilters({ ...filters, gender: value })}
-                        fullWidth
-                        sx={{
-                          '& .MuiToggleButton-root': {
-                            borderRadius: 1,
-                            border: '1px solid #e0e0e0',
-                            py: 1,
-                            '&.Mui-selected': {
-                              bgcolor: '#f3f7ff',
-                              color: '#0d6efd',
-                              borderColor: '#0d6efd',
-                            },
-                          },
-                        }}
-                      >
-                        <ToggleButton value="male">{t('Label.male')}</ToggleButton>
-                        <ToggleButton value="female">{t('Label.female')}</ToggleButton>
-                      </ToggleButtonGroup>
-                    </Box>
+                    <FilterToggleGroup
+                      label={t('Label.gender')}
+                      value={filters.gender}
+                      onChange={(value: string) => setFilters({ ...filters, gender: value })}
+                      options={genderToggleOptions}
+                      disabled={initDataLoading}
+                      highlighted={
+                        !!(searchValue && t('Label.gender')?.toLowerCase().includes(searchValue))
+                      }
+                    />
 
-                    <Box sx={{ width: '100%' }}>
-                      <Typography
-                        sx={{
-                          mb: 1.5,
-                          color: labelColor('Label.early_late'),
-                          fontSize: 16,
-                          fontWeight: 400,
-                          lineHeight: '22px',
-                          textTransform: 'capitalize',
-                        }}
-                      >
-                        {t('Label.early_late')}
-                      </Typography>
-                      <ToggleButtonGroup
-                        value={filters.marriedLate}
-                        exclusive
-                        onChange={(e, value) => setFilters({ ...filters, marriedLate: value })}
-                        fullWidth
-                        sx={{
-                          '& .MuiToggleButton-root': {
-                            borderRadius: 1,
-                            border: '1px solid #e0e0e0',
-                            py: 1,
-                            '&.Mui-selected': {
-                              bgcolor: '#f3f7ff',
-                              color: '#0d6efd',
-                              borderColor: '#0d6efd',
-                            },
-                          },
-                        }}
-                      >
-                        <ToggleButton value="early">{t('Label.early')}</ToggleButton>
-                        <ToggleButton value="late">{t('Label.late')}</ToggleButton>
-                      </ToggleButtonGroup>
-                    </Box>
+                    <FilterToggleGroup
+                      label={t('Label.early_late')}
+                      value={filters.marriedLate}
+                      onChange={(value: string) => setFilters({ ...filters, marriedLate: value })}
+                      options={departureToggleOptions}
+                      disabled={initDataLoading}
+                      highlighted={
+                        !!(
+                          searchValue && t('Label.early_late')?.toLowerCase().includes(searchValue)
+                        )
+                      }
+                    />
                   </Stack>
                   <FormControl fullWidth>
                     <Typography
@@ -619,6 +629,53 @@ export default function FilterDialog({
                       <MenuItem value="cancelled">ملغي</MenuItem>
                     </Select>
                   </FormControl>
+
+                  <Stack direction="row" spacing={2}>
+                    <FilterDropdown
+                      label={t('Label.pilgrim_type')}
+                      value={filters.pilgrimType}
+                      onChange={(value: string) => setFilters({ ...filters, pilgrimType: value })}
+                      options={pilgrimTypeOptions}
+                      allLabel={t('Label.all')}
+                      disabled={initDataLoading}
+                      highlighted={
+                        !!(
+                          searchValue &&
+                          t('Label.pilgrim_type')?.toLowerCase().includes(searchValue)
+                        )
+                      }
+                    />
+
+                    <FilterDropdown
+                      label={t('Label.muhrim_status')}
+                      value={filters.muhrimStatus}
+                      onChange={(value: string) => setFilters({ ...filters, muhrimStatus: value })}
+                      options={muhrimStatusOptions}
+                      allLabel={t('Label.all')}
+                      disabled={initDataLoading}
+                      highlighted={
+                        !!(
+                          searchValue &&
+                          t('Label.muhrim_status')?.toLowerCase().includes(searchValue)
+                        )
+                      }
+                    />
+                  </Stack>
+
+                  <FilterDropdown
+                    label={t('Label.pilgrim_status')}
+                    value={filters.pilgrimStatus}
+                    onChange={(value: string) => setFilters({ ...filters, pilgrimStatus: value })}
+                    options={pilgrimStatusOptions}
+                    allLabel={t('Label.all')}
+                    disabled={initDataLoading}
+                    highlighted={
+                      !!(
+                        searchValue &&
+                        t('Label.pilgrim_status')?.toLowerCase().includes(searchValue)
+                      )
+                    }
+                  />
                 </Stack>
               </AccordionDetails>
             </Accordion>
@@ -736,29 +793,55 @@ export default function FilterDialog({
                       </Select>
                     </FormControl>
                   </Stack>
+                  <Stack direction="row" spacing={2}>
+                    <FormControl fullWidth>
+                      <Typography
+                        sx={{
+                          mb: 1,
+                          color: labelColor('Label.destination'),
+                          fontSize: 16,
+                          fontWeight: 400,
+                          lineHeight: '22px',
+                          textTransform: 'capitalize',
+                        }}
+                      >
+                        {t('Label.destination')}
+                      </Typography>
+                      <Select
+                        value={filters.destination}
+                        onChange={(e) => setFilters({ ...filters, destination: e.target.value })}
+                        displayEmpty
+                        sx={{ borderRadius: 1 }}
+                      >
+                        <MenuItem value="">{t('Label.select')}</MenuItem>
+                      </Select>
+                    </FormControl>
 
-                  <FormControl fullWidth>
-                    <Typography
-                      sx={{
-                        mb: 1,
-                        color: labelColor('Label.destination'),
-                        fontSize: 16,
-                        fontWeight: 400,
-                        lineHeight: '22px',
-                        textTransform: 'capitalize',
-                      }}
-                    >
-                      {t('Label.destination')}
-                    </Typography>
-                    <Select
-                      value={filters.destination}
-                      onChange={(e) => setFilters({ ...filters, destination: e.target.value })}
-                      displayEmpty
-                      sx={{ borderRadius: 1 }}
-                    >
-                      <MenuItem value="">{t('Label.select')}</MenuItem>
-                    </Select>
-                  </FormControl>
+                    <FormControl fullWidth>
+                      <Typography
+                        sx={{
+                          mb: 1,
+                          color: labelColor('Label.gathering_date'),
+                          fontSize: 16,
+                          fontWeight: 400,
+                          lineHeight: '22px',
+                          textTransform: 'capitalize',
+                        }}
+                      >
+                        {t('Label.gathering_date')}
+                      </Typography>
+                      <DatePicker
+                        value={filters.gatheringDate}
+                        onChange={(newValue) => setFilters({ ...filters, gatheringDate: newValue })}
+                        slotProps={{
+                          textField: {
+                            fullWidth: true,
+                            placeholder: t('Label.select'),
+                          },
+                        }}
+                      />
+                    </FormControl>
+                  </Stack>
                 </Stack>
               </AccordionDetails>
             </Accordion>
@@ -840,26 +923,6 @@ export default function FilterDialog({
                       >
                         {t('Label.room_group_number')}
                       </Typography>
-                      <TextField
-                        value={filters.roomNumber}
-                        onChange={(e) => setFilters({ ...filters, roomNumber: e.target.value })}
-                        placeholder="A12"
-                        sx={{ '& .MuiOutlinedInput-root': { borderRadius: 1 } }}
-                      />
-                    </FormControl>
-                    <FormControl fullWidth>
-                      <Typography
-                        sx={{
-                          mb: 1,
-                          color: labelColor('Label.destination'),
-                          fontSize: 16,
-                          fontWeight: 400,
-                          lineHeight: '22px',
-                          textTransform: 'capitalize',
-                        }}
-                      >
-                        {t('Label.destination')}
-                      </Typography>
                       <Select
                         value={filters.accommodationDestination}
                         onChange={(e) =>
@@ -872,29 +935,6 @@ export default function FilterDialog({
                       </Select>
                     </FormControl>
                   </Stack>
-
-                  <FormControl fullWidth>
-                    <Typography
-                      sx={{
-                        mb: 1,
-                        color: labelColor('Label.camp_status'),
-                        fontSize: 16,
-                        fontWeight: 400,
-                        lineHeight: '22px',
-                        textTransform: 'capitalize',
-                      }}
-                    >
-                      {t('Label.camp_status')}
-                    </Typography>
-                    <Select
-                      value={filters.campStatus}
-                      onChange={(e) => setFilters({ ...filters, campStatus: e.target.value })}
-                      displayEmpty
-                      sx={{ borderRadius: 1 }}
-                    >
-                      <MenuItem value="">{t('Label.select')}</MenuItem>
-                    </Select>
-                  </FormControl>
                 </Stack>
               </AccordionDetails>
             </Accordion>
@@ -961,31 +1001,17 @@ export default function FilterDialog({
                 </Typography>
               </AccordionSummary>
               <AccordionDetails sx={{ px: 3, pt: 3, pb: 3, bgcolor: 'transparent' }}>
-                <FormControl fullWidth>
-                  <Typography
-                    sx={{
-                      mb: 1,
-                      color: labelColor('Label.bus_number'),
-                      fontSize: 16,
-                      fontWeight: 400,
-                      lineHeight: '22px',
-                      textTransform: 'capitalize',
-                    }}
-                  >
-                    {t('Label.bus_number')}
-                  </Typography>
-                  <Select
-                    value={filters.busNumber}
-                    onChange={(e) => setFilters({ ...filters, busNumber: e.target.value })}
-                    displayEmpty
-                    sx={{ borderRadius: 1 }}
-                  >
-                    <MenuItem value="">{t('Label.select')}</MenuItem>
-                    <MenuItem value="1">الأولى</MenuItem>
-                    <MenuItem value="2">الثانية</MenuItem>
-                    <MenuItem value="3">الثالثة</MenuItem>
-                  </Select>
-                </FormControl>
+                <FilterDropdown
+                  label={t('Label.transport')}
+                  value={filters.transport}
+                  onChange={(value: string) => setFilters({ ...filters, transport: value })}
+                  options={transportOptions}
+                  allLabel={t('Label.all')}
+                  disabled={initDataLoading}
+                  highlighted={
+                    !!(searchValue && t('Label.transport')?.toLowerCase().includes(searchValue))
+                  }
+                />
               </AccordionDetails>
             </Accordion>
           )}
@@ -1140,59 +1166,116 @@ export default function FilterDialog({
               </AccordionSummary>
               <AccordionDetails sx={{ px: 3, pt: 3, pb: 3, bgcolor: 'transparent' }}>
                 <Stack spacing={2.5}>
+                  <FormControl fullWidth>
+                    <Typography
+                      sx={{
+                        mb: 1,
+                        color: labelColor('Label.supervisors'),
+                        fontSize: 16,
+                        fontWeight: 400,
+                        lineHeight: '22px',
+                        textTransform: 'capitalize',
+                      }}
+                    >
+                      {t('Label.supervisors')}
+                    </Typography>
+                    <Autocomplete
+                      value={filters.supervisor}
+                      onChange={(event, newValue) => {
+                        setFilters({ ...filters, supervisor: newValue as EmployeeOption | null });
+                      }}
+                      options={supervisorsList}
+                      getOptionLabel={(option) => option.name.ar}
+                      getOptionKey={(option) => option.id}
+                      isOptionEqualToValue={(option, value) => option.id === value.id}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          placeholder={t('Label.select')}
+                          sx={{
+                            '& .MuiOutlinedInput-root': {
+                              borderRadius: 1,
+                            },
+                          }}
+                        />
+                      )}
+                      renderOption={(props, option) => {
+                        const { key, ...otherProps } = props as any;
+                        return (
+                          <li key={option.id} {...otherProps}>
+                            {option.name.ar}
+                          </li>
+                        );
+                      }}
+                    />
+                  </FormControl>
+                </Stack>
+              </AccordionDetails>
+            </Accordion>
+          )}
+
+          {/* Import File */}
+          {showSection.import && (
+            <Accordion
+              expanded={
+                expandedSections.includes('import') || (!!searchValue && showSection.import)
+              }
+              onChange={handleAccordionChange('import')}
+              sx={{
+                boxShadow: 'none !important',
+                border: 'none',
+                '&:before': { display: 'none' },
+                mb: 0,
+              }}
+            >
+              <AccordionSummary
+                expandIcon={
+                  expandedSections.includes('import') ? (
+                    <Iconify icon="mdi:chevron-down" width={20} color="#64748B" />
+                  ) : (
+                    <Iconify icon="mdi:plus" width={20} color="#64748B" />
+                  )
+                }
+                sx={{
+                  px: 0,
+                  minHeight: 56,
+                  '& .MuiAccordionSummary-content': { my: 1.5, mx: 3 },
+                  '& .MuiAccordionSummary-content.Mui-expanded': { my: 1.5, mx: 3 },
+                  '& .MuiAccordionSummary-expandIconWrapper': { mr: 3 },
+                  bgcolor: 'transparent',
+                  position: 'relative',
+                  '&::after': {
+                    content: '""',
+                    position: 'absolute',
+                    bottom: 0,
+                    left: 24,
+                    right: 24,
+                    height: '1px',
+                    bgcolor: 'divider',
+                  },
+                  '&:hover': {
+                    bgcolor: 'transparent',
+                  },
+                  '&.Mui-expanded': {
+                    minHeight: 56,
+                    bgcolor: 'transparent',
+                  },
+                }}
+              >
+                <Typography
+                  sx={{
+                    color: '#64748B',
+                    fontSize: 18,
+                    fontWeight: 400,
+                    lineHeight: '23px',
+                  }}
+                >
+                  {t('Label.import_file')}
+                </Typography>
+              </AccordionSummary>
+              <AccordionDetails sx={{ px: 3, pt: 3, pb: 3, bgcolor: 'transparent' }}>
+                <Stack spacing={2.5}>
                   <Stack direction="row" spacing={2}>
-                    <FormControl fullWidth>
-                      <Typography
-                        sx={{
-                          mb: 1,
-                          color: labelColor('Label.supervisors'),
-                          fontSize: 16,
-                          fontWeight: 400,
-                          lineHeight: '22px',
-                          textTransform: 'capitalize',
-                        }}
-                      >
-                        {t('Label.supervisors')}
-                      </Typography>
-                      <Autocomplete
-                        multiple
-                        value={filters.supervisors}
-                        onChange={(event, newValue) => {
-                          setFilters({ ...filters, supervisors: newValue });
-                        }}
-                        options={supervisorsList.filter(
-                          (supervisor) =>
-                            !filters.supervisors?.some((selected) => selected.id === supervisor.id)
-                        )}
-                        getOptionLabel={(option) => option.name}
-                        renderInput={(params) => (
-                          <TextField
-                            {...params}
-                            placeholder={t('Label.select')}
-                            sx={{
-                              '& .MuiOutlinedInput-root': {
-                                borderRadius: 1,
-                              },
-                            }}
-                          />
-                        )}
-                        renderTags={(value, getTagProps) =>
-                          value.map((option, index) => (
-                            <Chip
-                              {...getTagProps({ index })}
-                              key={option.id}
-                              avatar={
-                                <Avatar sx={{ width: 24, height: 24 }}>
-                                  {option.name.charAt(0)}
-                                </Avatar>
-                              }
-                              label={option.name}
-                              sx={{ borderRadius: 1 }}
-                            />
-                          ))
-                        }
-                      />
-                    </FormControl>
                     <FormControl fullWidth>
                       <Typography
                         sx={{
@@ -1215,6 +1298,18 @@ export default function FilterDialog({
                         <MenuItem value="">{t('Label.select')}</MenuItem>
                       </Select>
                     </FormControl>
+
+                    <FilterDropdown
+                      label={t('Label.source')}
+                      value={filters.source}
+                      onChange={(value: string) => setFilters({ ...filters, source: value })}
+                      options={sourceOptions}
+                      allLabel={t('Label.all')}
+                      disabled={initDataLoading}
+                      highlighted={
+                        !!(searchValue && t('Label.source')?.toLowerCase().includes(searchValue))
+                      }
+                    />
                   </Stack>
                 </Stack>
               </AccordionDetails>
@@ -1222,7 +1317,7 @@ export default function FilterDialog({
           )}
 
           {/* Shipping Operations */}
-          {showSection.shipping && (
+          {/* {showSection.shipping && (
             <Accordion
               expanded={
                 expandedSections.includes('shipping') || (!!searchValue && showSection.shipping)
@@ -1333,7 +1428,7 @@ export default function FilterDialog({
                 </Stack>
               </AccordionDetails>
             </Accordion>
-          )}
+          )} */}
         </Box>
       </DialogContent>
 

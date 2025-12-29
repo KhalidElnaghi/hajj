@@ -23,12 +23,17 @@ export default function PersonalInfoTab({ isReadOnly, initData, isRtl }: Persona
 
   const cities = useMemo(() => {
     if (!initData?.cities) return [];
-    return initData.cities.map((city) => ({
-      value: String(city?.city?.id || city?.id),
-      label: isRtl
-        ? city?.city?.name_ar || city?.name_ar || city?.city?.name || city?.name
-        : city?.city?.name_en || city?.name_en || city?.city?.name || city?.name,
-    }));
+    return initData.cities.map((city) => {
+      const name = city?.city?.name;
+      const label = isRtl
+        ? city?.city?.name_ar || (typeof name === 'string' ? name : name?.ar || '')
+        : city?.city?.name_en || (typeof name === 'string' ? name : name?.en || '');
+
+      return {
+        value: String(city?.city?.id || city?.id),
+        label,
+      };
+    });
   }, [initData?.cities, isRtl]);
 
   const packages = useMemo(() => initData?.packages, [initData?.packages]);
@@ -194,11 +199,18 @@ export default function PersonalInfoTab({ isReadOnly, initData, isRtl }: Persona
             <MenuItem value="">
               <em>None</em>
             </MenuItem>
-            {packages?.map((pkg) => (
-              <MenuItem key={pkg?.id} value={String(pkg?.id)}>
-                {isRtl ? pkg?.name_ar || pkg?.name : pkg?.name_en || pkg?.name}
-              </MenuItem>
-            ))}
+            {packages?.map((pkg) => {
+              const name = pkg?.name;
+              const displayName = isRtl
+                ? pkg?.name_ar || (typeof name === 'string' ? name : name?.ar || '')
+                : pkg?.name_en || (typeof name === 'string' ? name : name?.en || '');
+
+              return (
+                <MenuItem key={pkg?.id} value={String(pkg?.id)}>
+                  {displayName}
+                </MenuItem>
+              );
+            })}
           </RHFSelect>
         </Box>
       </Grid>
@@ -220,13 +232,18 @@ export default function PersonalInfoTab({ isReadOnly, initData, isRtl }: Persona
             <MenuItem value="">
               <em>None</em>
             </MenuItem>
-            {nationalities?.map((nat) => (
-              <MenuItem key={nat?.country?.id} value={String(nat?.country?.id)}>
-                {isRtl
-                  ? nat?.country?.name_ar || nat?.country?.name
-                  : nat?.country?.name_en || nat?.country?.name}
-              </MenuItem>
-            ))}
+            {nationalities?.map((nat) => {
+              const name = nat?.country?.name;
+              const displayName = isRtl
+                ? nat?.country?.name_ar || (typeof name === 'string' ? name : name?.ar || '')
+                : nat?.country?.name_en || (typeof name === 'string' ? name : name?.en || '');
+
+              return (
+                <MenuItem key={nat?.country?.id} value={String(nat?.country?.id)}>
+                  {displayName}
+                </MenuItem>
+              );
+            })}
           </RHFSelect>
         </Box>
       </Grid>

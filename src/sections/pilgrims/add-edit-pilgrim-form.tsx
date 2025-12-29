@@ -71,7 +71,7 @@ export default function AddEditPilgrimForm() {
   const methods = useForm<PilgrimFormValues>({
     resolver: yupResolver(PilgrimSchema) as any,
     defaultValues,
-    mode: 'onBlur',
+    mode: 'onChange',
     reValidateMode: 'onChange',
   });
 
@@ -91,10 +91,9 @@ export default function AddEditPilgrimForm() {
       },
       onError: (error: any) => {
         console.error('Error submitting form:', error);
+        console.log(error?.response?.data?.message);
         enqueueSnackbar(
-          error?.response?.data?.message ||
-            error?.message ||
-            t('Message.error_creating_pilgrim'),
+          error?.response?.data?.message || error?.message || t('Message.error_creating_pilgrim'),
           { variant: 'error' }
         );
       },
@@ -107,12 +106,17 @@ export default function AddEditPilgrimForm() {
 
   const cities = useMemo(() => {
     if (!initData?.cities) return [];
-    return initData.cities.map((city) => ({
-      value: String(city?.city?.id),
-      label: isRtl
-        ? city?.city?.name_ar || city?.city?.name
-        : city?.city?.name_en || city?.city?.name,
-    }));
+    return initData.cities.map((city) => {
+      const name = city?.city?.name;
+      const label = isRtl
+        ? city?.city?.name_ar || (typeof name === 'string' ? name : name?.ar || '')
+        : city?.city?.name_en || (typeof name === 'string' ? name : name?.en || '');
+
+      return {
+        value: String(city?.city?.id),
+        label,
+      };
+    });
   }, [initData?.cities, isRtl]);
 
   const packages = useMemo(() => initData?.packages, [initData?.packages]);
@@ -123,10 +127,17 @@ export default function AddEditPilgrimForm() {
 
   const supervisorOptions = useMemo(() => {
     if (!initData?.employees) return [];
-    return initData.employees.map((employee) => ({
-      value: String(employee.id),
-      label: isRtl ? employee.name_ar || employee.name : employee.name_en || employee.name,
-    }));
+    return initData.employees.map((employee) => {
+      const name = employee.name;
+      const label = isRtl
+        ? employee.name.ar || (typeof name === 'string' ? name : name?.ar || '')
+        : employee.name.en || (typeof name === 'string' ? name : name?.en || '');
+
+      return {
+        value: String(employee.id),
+        label,
+      };
+    });
   }, [initData?.employees, isRtl]);
 
   const renderSectionHeader = (icon: string, title: string) => (
@@ -376,13 +387,18 @@ export default function AddEditPilgrimForm() {
                         <MenuItem value="">
                           <em>None</em>
                         </MenuItem>
-                        {nationalities?.map((nat) => (
-                          <MenuItem key={nat?.country?.id} value={nat?.country?.id}>
-                            {isRtl
-                              ? nat?.country?.name_ar || nat?.country?.name
-                              : nat?.country?.name_en || nat?.country?.name}
-                          </MenuItem>
-                        ))}
+                        {nationalities?.map((nat) => {
+                          const name = nat?.country?.name;
+                          const displayName = isRtl
+                            ? nat?.country?.name_ar || (typeof name === 'string' ? name : name?.ar)
+                            : nat?.country?.name_en || (typeof name === 'string' ? name : name?.en);
+
+                          return (
+                            <MenuItem key={nat?.country?.id} value={nat?.country?.id}>
+                              {displayName}
+                            </MenuItem>
+                          );
+                        })}
                       </RHFSelect>
                     </Box>
                   </Grid>
@@ -687,9 +703,7 @@ export default function AddEditPilgrimForm() {
                                     fontSize: '0.875rem',
                                   }}
                                 >
-                                  {fileName ||
-                                    t('Label.select_image') ||
-                                    'Select an image'}
+                                  {fileName || t('Label.select_image') || 'Select an image'}
                                 </Box>
                                 {file && (
                                   <IconButton
@@ -965,10 +979,7 @@ export default function AddEditPilgrimForm() {
 
               {/* Health Status Section */}
               <Box>
-                {renderSectionHeader(
-                  'solar:heart-pulse-outline',
-                  t('Label.health_status_data')
-                )}
+                {renderSectionHeader('solar:heart-pulse-outline', t('Label.health_status_data'))}
                 <Grid container spacing={3}>
                   <Grid size={{ xs: 12, md: 6 }}>
                     <Box sx={{ width: '100%' }}>
@@ -1073,9 +1084,7 @@ export default function AddEditPilgrimForm() {
                     ) : null
                   }
                 >
-                  {createPilgrimMutation.isPending
-                    ? t('Label.saving')
-                    : t('Label.save')}
+                  {createPilgrimMutation.isPending ? t('Label.saving') : t('Label.save')}
                 </Button>
               </Stack>
             </Stack>

@@ -6,6 +6,7 @@ import { Box, Typography } from '@mui/material';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
+import { LoadingButton } from '@mui/lab';
 
 import { ConfirmDialogProps } from './types';
 import CloseButton from '../dialog/CloseButton';
@@ -21,6 +22,7 @@ export default function ConfirmDialog({
   open,
   onClose,
   handleConfirmDelete,
+  loading = false,
   ...other
 }: ConfirmDialogProps) {
   const t = useTranslations();
@@ -47,10 +49,15 @@ export default function ConfirmDialog({
         </Box>
       </DialogContent>
       <DialogActions>
-        <Button variant="contained" color={buttonColor || 'error'} onClick={handleConfirmDelete}>
+        <LoadingButton 
+          variant="contained" 
+          color={buttonColor || 'error'} 
+          onClick={handleConfirmDelete}
+          loading={loading}
+        >
           {typeof buttonTitle === 'string' ? buttonTitle : t('Dialog.Delete')}
-        </Button>
-        <Button variant="outlined" color="inherit" onClick={onClose}>
+        </LoadingButton>
+        <Button variant="outlined" color="inherit" onClick={onClose} disabled={loading}>
           {t('Dialog.Cancel')}
         </Button>
       </DialogActions>
