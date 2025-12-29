@@ -370,20 +370,28 @@ export default function PilgrimDetailsView({
                   },
                 }}
               >
-                {tabs.map((tab) => (
-                  <Tab
-                    key={tab.value}
-                    value={tab.value}
-                    label={t(tab.label)}
-                    icon={<Iconify icon={tab.icon} width={24} />}
-                    iconPosition="start"
-                    sx={{
-                      '&.Mui-selected': {
-                        color: 'primary.main',
-                      },
-                    }}
-                  />
-                ))}
+                {tabs.map((tab) => {
+                  const iconElement =
+                    typeof tab.icon === 'string' ? (
+                      <Iconify icon={tab.icon} width={24} />
+                    ) : (
+                      <tab.icon sx={{ fontSize: 19 }} />
+                    );
+                  return (
+                    <Tab
+                      key={tab.value}
+                      value={tab.value}
+                      label={t(tab.label)}
+                      icon={iconElement}
+                      iconPosition="start"
+                      sx={{
+                        '&.Mui-selected': {
+                          color: 'primary.main',
+                        },
+                      }}
+                    />
+                  );
+                })}
               </Tabs>
             </Box>
 
