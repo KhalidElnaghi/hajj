@@ -196,7 +196,13 @@ export default function PilgrimDetailsView({
           router.push(pathname);
         },
         onError: (error: any) => {
-          console.error('Error updating pilgrim:', error);
+          console.error('Error updating pilgrim:', {
+            message: error?.message,
+            status: error?.response?.status,
+            statusText: error?.response?.statusText,
+            data: error?.response?.data,
+            url: error?.config?.url,
+          });
           enqueueSnackbar(
             error?.response?.data?.message || error?.message || t('Message.error_updating_pilgrim'),
             { variant: 'error' }

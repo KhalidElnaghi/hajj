@@ -881,7 +881,14 @@ export const updatePilgrim = async (
   try {
     return await API.post<UpdatePilgrimResponse>(`/pilgrims/pilgrims/${id}`, formData);
   } catch (error: any) {
-    console.error('Error in updatePilgrim API call:', error);
+    console.error('Error in updatePilgrim API call:', {
+      message: error?.message,
+      status: error?.response?.status,
+      statusText: error?.response?.statusText,
+      data: error?.response?.data,
+      url: error?.config?.url,
+      method: error?.config?.method,
+    });
     // Re-throw the error so it can be handled by the mutation
     throw error;
   }

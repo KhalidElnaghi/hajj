@@ -55,7 +55,7 @@ import { createPilgrimValidationSchema } from './utils/validation';
 import { PilgrimFormValues } from './utils/types';
 
 export default function AddEditPilgrimForm() {
-  const t = useTranslations();
+  const t = useTranslations('Pilgrims');
   const router = useRouter();
   const { currentLang } = useLocales();
   const isRtl = currentLang?.value === 'ar';
@@ -84,7 +84,7 @@ export default function AddEditPilgrimForm() {
   const onSubmit = handleSubmit(async (data) => {
     createPilgrimMutation.mutate(data, {
       onSuccess: () => {
-        enqueueSnackbar(t('Pilgrims.Message.pilgrim_created_successfully'), {
+        enqueueSnackbar(t('Message.pilgrim_created_successfully'), {
           variant: 'success',
         });
         router.push(paths.dashboard.pilgrims.root);
@@ -94,7 +94,7 @@ export default function AddEditPilgrimForm() {
         enqueueSnackbar(
           error?.response?.data?.message ||
             error?.message ||
-            t('Pilgrims.Message.error_creating_pilgrim'),
+            t('Message.error_creating_pilgrim'),
           { variant: 'error' }
         );
       },
@@ -162,8 +162,8 @@ export default function AddEditPilgrimForm() {
     <Container maxWidth="xl" sx={{ width: '100%' }}>
       <Box sx={{ py: 4, width: '100%' }}>
         <PageHeader
-          headding={t('Pilgrims.Label.add_new_pilgrim')}
-          subHeadding={t('Pilgrims.Label.add_new_pilgrim_description')}
+          headding={t('Label.add_new_pilgrim')}
+          subHeadding={t('Label.add_new_pilgrim_description')}
           backTo={'/pilgrims'}
         />
 
@@ -180,7 +180,7 @@ export default function AddEditPilgrimForm() {
             <Stack spacing={6}>
               {/* Personal Information Section */}
               <Box>
-                {renderSectionHeader('solar:user-bold', t('Pilgrims.Label.personal_information'))}
+                {renderSectionHeader('solar:user-bold', t('Label.personal_information'))}
                 <Grid container spacing={3} sx={{ width: '100%' }}>
                   {/* Row 1: Name Arabic & English - 2 fields */}
                   <Grid size={{ xs: 12, md: 6 }}>
@@ -195,7 +195,7 @@ export default function AddEditPilgrimForm() {
                           display: 'block',
                         }}
                       >
-                        {t('Pilgrims.Label.name_in_arabic')}
+                        {t('Label.name_in_arabic')}
                         <Box
                           component="span"
                           sx={{
@@ -221,7 +221,7 @@ export default function AddEditPilgrimForm() {
                           display: 'block',
                         }}
                       >
-                        {t('Pilgrims.Label.name_in_english')}
+                        {t('Label.name_in_english')}
                         <Box
                           component="span"
                           sx={{
@@ -247,7 +247,7 @@ export default function AddEditPilgrimForm() {
                           color: 'text.secondary',
                         }}
                       >
-                        {t('Pilgrims.Label.booking_number')}
+                        {t('Label.booking_number')}
                       </Typography>
                       <RHFTextField name="bookingNumber" placeholder="" />
                     </Box>
@@ -264,7 +264,7 @@ export default function AddEditPilgrimForm() {
                           display: 'block',
                         }}
                       >
-                        {t('Pilgrims.Label.id_number')}
+                        {t('Label.id_number')}
                         <Box
                           component="span"
                           sx={{
@@ -290,7 +290,7 @@ export default function AddEditPilgrimForm() {
                           display: 'block',
                         }}
                       >
-                        {t('Pilgrims.Label.city')}
+                        {t('Label.city')}
                         <Box
                           component="span"
                           sx={{
@@ -326,7 +326,7 @@ export default function AddEditPilgrimForm() {
                           display: 'block',
                         }}
                       >
-                        {t('Pilgrims.Label.package_name')}
+                        {t('Label.package_name')}
                         <Box
                           component="span"
                           sx={{
@@ -361,7 +361,7 @@ export default function AddEditPilgrimForm() {
                           display: 'block',
                         }}
                       >
-                        {t('Pilgrims.Label.nationality')}
+                        {t('Label.nationality')}
                         <Box
                           component="span"
                           sx={{
@@ -398,7 +398,7 @@ export default function AddEditPilgrimForm() {
                           display: 'block',
                         }}
                       >
-                        {t('Pilgrims.Label.gender')}
+                        {t('Label.gender')}
                         <Box
                           component="span"
                           sx={{
@@ -416,9 +416,9 @@ export default function AddEditPilgrimForm() {
                         {initData?.genders.map((gender) => {
                           const genderKey =
                             gender.value === 0
-                              ? 'Pilgrims.Label.gender_female'
+                              ? 'Label.gender_female'
                               : gender.value === 1
-                                ? 'Pilgrims.Label.gender_male'
+                                ? 'Label.gender_male'
                                 : null;
 
                           return (
@@ -441,7 +441,7 @@ export default function AddEditPilgrimForm() {
                           color: 'text.secondary',
                         }}
                       >
-                        {t('Pilgrims.Label.arrival_date')}
+                        {t('Label.arrival_date')}
                       </Typography>
                       <RHFDatePicker name="arrivalDate" />
                     </Box>
@@ -456,7 +456,7 @@ export default function AddEditPilgrimForm() {
                           color: 'text.secondary',
                         }}
                       >
-                        {t('Pilgrims.Label.departure_date')}
+                        {t('Label.departure_date')}
                       </Typography>
                       <RHFDatePicker name="departureDate" />
                     </Box>
@@ -471,7 +471,7 @@ export default function AddEditPilgrimForm() {
                           color: 'text.secondary',
                         }}
                       >
-                        {t('Pilgrims.Label.permit')}
+                        {t('Label.permit')}
                       </Typography>
                       <RHFSelect name="permit">
                         <MenuItem value="">
@@ -498,7 +498,7 @@ export default function AddEditPilgrimForm() {
                           display: 'block',
                         }}
                       >
-                        {t('Pilgrims.Label.gregorian_birth_date')}
+                        {t('Label.gregorian_birth_date')}
                         <Box
                           component="span"
                           sx={{
@@ -524,7 +524,7 @@ export default function AddEditPilgrimForm() {
                           display: 'block',
                         }}
                       >
-                        {t('Pilgrims.Label.hijri_birth_date')}
+                        {t('Label.hijri_birth_date')}
                         <Box
                           component="span"
                           sx={{
@@ -550,7 +550,7 @@ export default function AddEditPilgrimForm() {
                           display: 'block',
                         }}
                       >
-                        {t('Pilgrims.Label.age')}
+                        {t('Label.age')}
                         <Box
                           component="span"
                           sx={{
@@ -577,7 +577,7 @@ export default function AddEditPilgrimForm() {
                           display: 'block',
                         }}
                       >
-                        {t('Pilgrims.Label.mobile_number')}
+                        {t('Label.mobile_number')}
                         <Box
                           component="span"
                           sx={{
@@ -601,7 +601,7 @@ export default function AddEditPilgrimForm() {
                           color: 'text.secondary',
                         }}
                       >
-                        {t('Pilgrims.Label.another_mobile_number')}
+                        {t('Label.another_mobile_number')}
                       </Typography>
                       <RHFTextField name="anotherMobileNumber" placeholder="" />
                     </Box>
@@ -618,7 +618,7 @@ export default function AddEditPilgrimForm() {
                           display: 'block',
                         }}
                       >
-                        {t('Pilgrims.Label.add_photo')}
+                        {t('Label.add_photo')}
                       </Typography>
                       <Controller
                         name="photo"
@@ -688,7 +688,7 @@ export default function AddEditPilgrimForm() {
                                   }}
                                 >
                                   {fileName ||
-                                    t('Pilgrims.Label.select_image') ||
+                                    t('Label.select_image') ||
                                     'Select an image'}
                                 </Box>
                                 {file && (
@@ -750,7 +750,7 @@ export default function AddEditPilgrimForm() {
               <Divider />
 
               <Box>
-                {renderSectionHeader('solar:bus-outline', t('Pilgrims.Label.gathering_points'))}
+                {renderSectionHeader('solar:bus-outline', t('Label.gathering_points'))}
                 <Grid container spacing={3}>
                   <Grid size={{ xs: 12, md: 4 }}>
                     <Box sx={{ width: '100%' }}>
@@ -762,7 +762,7 @@ export default function AddEditPilgrimForm() {
                           color: 'text.secondary',
                         }}
                       >
-                        {t('Pilgrims.Label.gathering_point_type')}
+                        {t('Label.gathering_point_type')}
                       </Typography>
                       <RHFSelect name="gatheringPointType">
                         <MenuItem value="">
@@ -787,7 +787,7 @@ export default function AddEditPilgrimForm() {
                           color: 'text.secondary',
                         }}
                       >
-                        {t('Pilgrims.Label.gathering_point')}
+                        {t('Label.gathering_point')}
                       </Typography>
                       <RHFSelect name="gatheringPoint">
                         <MenuItem value="">
@@ -812,7 +812,7 @@ export default function AddEditPilgrimForm() {
                           color: 'text.secondary',
                         }}
                       >
-                        {t('Pilgrims.Label.prominent')}
+                        {t('Label.prominent')}
                       </Typography>
                       <RHFSelect name="prominent">
                         <MenuItem value="">
@@ -834,7 +834,7 @@ export default function AddEditPilgrimForm() {
               <Box>
                 {renderSectionHeader(
                   'solar:home-angle-outline',
-                  t('Pilgrims.Label.accommodation_residence')
+                  t('Label.accommodation_residence')
                 )}
                 <Stack
                   direction="row"
@@ -890,7 +890,7 @@ export default function AddEditPilgrimForm() {
                           color: 'text.secondary',
                         }}
                       >
-                        {t('Pilgrims.Label.tent_room_number')}
+                        {t('Label.tent_room_number')}
                       </Typography>
                       <RHFTextField name="tentRoomNumber" placeholder="" />
                     </Box>
@@ -905,7 +905,7 @@ export default function AddEditPilgrimForm() {
                           color: 'text.secondary',
                         }}
                       >
-                        {t('Pilgrims.Label.camp_status')}
+                        {t('Label.camp_status')}
                       </Typography>
                       <RHFSelect name="campStatus">
                         <MenuItem value="">
@@ -926,7 +926,7 @@ export default function AddEditPilgrimForm() {
 
               {/* Transportation Section */}
               <Box>
-                {renderSectionHeader('solar:bus-outline', t('Pilgrims.Label.transportation_data'))}
+                {renderSectionHeader('solar:bus-outline', t('Label.transportation_data'))}
                 <Grid container spacing={3}>
                   <Grid size={{ xs: 12, md: 6 }}>
                     <Box sx={{ width: '100%' }}>
@@ -938,7 +938,7 @@ export default function AddEditPilgrimForm() {
                           color: 'text.secondary',
                         }}
                       >
-                        {t('Pilgrims.Label.bus_number')}
+                        {t('Label.bus_number')}
                       </Typography>
                       <RHFTextField name="busNumber" placeholder="" />
                     </Box>
@@ -953,7 +953,7 @@ export default function AddEditPilgrimForm() {
                           color: 'text.secondary',
                         }}
                       >
-                        {t('Pilgrims.Label.seat_number')}
+                        {t('Label.seat_number')}
                       </Typography>
                       <RHFTextField name="seatNumber" placeholder="" />
                     </Box>
@@ -967,7 +967,7 @@ export default function AddEditPilgrimForm() {
               <Box>
                 {renderSectionHeader(
                   'solar:heart-pulse-outline',
-                  t('Pilgrims.Label.health_status_data')
+                  t('Label.health_status_data')
                 )}
                 <Grid container spacing={3}>
                   <Grid size={{ xs: 12, md: 6 }}>
@@ -980,7 +980,7 @@ export default function AddEditPilgrimForm() {
                           color: 'text.secondary',
                         }}
                       >
-                        {t('Pilgrims.Label.general_health_status')}
+                        {t('Label.general_health_status')}
                       </Typography>
                       <RHFSelect name="generalHealthStatus">
                         <MenuItem value="">
@@ -1000,10 +1000,10 @@ export default function AddEditPilgrimForm() {
               <Divider />
 
               <Box>
-                {renderSectionTitle(t('Pilgrims.Label.other_details_section'))}
+                {renderSectionTitle(t('Label.other_details_section'))}
                 <RHFTextarea
                   name="healthDetails"
-                  placeholder={t('Pilgrims.Label.health_status_placeholder_alt')}
+                  placeholder={t('Label.health_status_placeholder_alt')}
                   rows={4}
                 />
               </Box>
@@ -1014,17 +1014,17 @@ export default function AddEditPilgrimForm() {
               <Box>
                 {renderSectionHeader(
                   'solar:users-group-rounded-outline',
-                  t('Pilgrims.Label.supervision_organization')
+                  t('Label.supervision_organization')
                 )}
                 <Grid container spacing={3}>
                   <Grid size={{ xs: 12 }}>
                     <Box sx={{ width: '100%' }}>
                       <RHFMultiSelect
                         name="supervisors"
-                        label={t('Pilgrims.Label.supervisors')}
+                        label={t('Label.supervisors')}
                         options={supervisorOptions}
                         chip
-                        placeholder={t('Pilgrims.Label.supervisors')}
+                        placeholder={t('Label.supervisors')}
                         sx={{ width: '100%' }}
                       />
                     </Box>
@@ -1036,10 +1036,10 @@ export default function AddEditPilgrimForm() {
 
               {/* Supervisor Notes Section */}
               <Box>
-                {renderSectionTitle(t('Pilgrims.Label.supervisor_notes'))}
+                {renderSectionTitle(t('Label.supervisor_notes'))}
                 <RHFTextarea
                   name="supervisorNotes"
-                  placeholder={t('Pilgrims.Label.supervisor_notes_placeholder')}
+                  placeholder={t('Label.supervisor_notes_placeholder')}
                   rows={4}
                 />
               </Box>
@@ -1051,7 +1051,7 @@ export default function AddEditPilgrimForm() {
                   color="error"
                   sx={{ minWidth: 120, px: 3, borderWidth: 2 }}
                 >
-                  {t('Pilgrims.Label.delete')}
+                  {t('Label.delete')}
                 </Button> */}
                 <Button
                   variant="outlined"
@@ -1059,7 +1059,7 @@ export default function AddEditPilgrimForm() {
                   onClick={handleClearFields}
                   sx={{ minWidth: 140, px: 3, borderWidth: 2 }}
                 >
-                  {t('Pilgrims.Label.clear_fields')}
+                  {t('Label.clear_fields')}
                 </Button>
                 <Button
                   type="submit"
@@ -1074,8 +1074,8 @@ export default function AddEditPilgrimForm() {
                   }
                 >
                   {createPilgrimMutation.isPending
-                    ? t('Pilgrims.Label.saving')
-                    : t('Pilgrims.Label.save')}
+                    ? t('Label.saving')
+                    : t('Label.save')}
                 </Button>
               </Stack>
             </Stack>
