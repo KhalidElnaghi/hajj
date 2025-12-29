@@ -7,12 +7,11 @@ export const useDeletePilgrim = () => {
 
   return useMutation({
     mutationFn: async (id: string | number) => {
-      return API.delete(`/pilgrims/${id}`);
+      return API.delete(`/pilgrims/pilgrims/${id}`);
     },
-    onSuccess: () => {
-      // Invalidate and refetch pilgrims list
+    onSuccess: (_, id) => {
       queryClient.invalidateQueries({ queryKey: queryKeys.pilgrims.lists() });
+      queryClient.removeQueries({ queryKey: queryKeys.pilgrims.detail(id) });
     },
   });
 };
-

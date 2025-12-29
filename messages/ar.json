@@ -319,7 +319,11 @@
     "clear": "مسح",
     "download": "تحميل"
   },
-  "Dialog": {},
+  "Dialog": {
+    "Delete": "حذف",
+    "Cancel": "إلغاء",
+    "delete_confirm_generic": "هل أنت متأكد من أنك تريد الحذف؟"
+  },
   "Message": {
     "Error": {
       "unknown_error": "خطأ غير معروف",
@@ -660,9 +664,12 @@
       "age_max": "يجب أن يكون العمر أقل من 150",
       "pilgrim_created_successfully": "تم إنشاء الحاج بنجاح",
       "pilgrim_updated_successfully": "تم تحديث الحاج بنجاح",
+      "pilgrim_deleted_successfully": "تم حذف الحاج بنجاح",
       "error_creating_pilgrim": "خطأ في إنشاء الحاج",
       "error_updating_pilgrim": "خطأ في تحديث الحاج",
+      "error_deleting_pilgrim": "خطأ في حذف الحاج",
       "error_loading_pilgrim": "حدث خطأ أثناء تحميل بيانات الحاج",
+      "delete_pilgrim_confirmation": "هل أنت متأكد من أنك تريد حذف هذا الحاج؟ لا يمكن التراجع عن هذا الإجراء.",
       "saving": "جاري الحفظ...",
       "id_number_saudi_format": "يجب أن يكون رقم الهوية هوية وطنية سعودية صحيحة (تبدأ بـ 1 أو 2) أو إقامة (تبدأ بـ 3 أو 4)",
       "phone_saudi_invalid": "يجب أن يكون رقم الجوال رقم هاتف سعودي صحيح",
@@ -672,6 +679,10 @@
       "mobile_required": "رقم الجوال مطلوب",
       "package_required": "الباقة مطلوبة",
       "city_required": "المدينة مطلوبة"
+    },
+    "Dialog": {
+      "Delete": "حذف",
+      "Cancel": "إلغاء"
     }
   },
   "None": {

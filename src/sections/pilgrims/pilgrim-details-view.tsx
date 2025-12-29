@@ -26,10 +26,12 @@ import { useLocales } from 'src/locales';
 
 import FormProvider from 'src/components/hook-form/form-provider';
 import Iconify from 'src/components/iconify';
+import ConfirmDialog from 'src/components/custom-dialog/confirm-dialog';
+import { useDisclosure } from 'src/hooks/useDisclosure';
 import { useFetchPilgrimDetails } from 'src/services/queries/pilgrims';
-import { useUpdatePilgrim } from 'src/services/mutations/pilgrims';
+import { useUpdatePilgrim, useDeletePilgrim } from 'src/services/mutations/pilgrims';
 import { useFetchPilgrimInitData } from 'src/services/queries/pilgrims';
-import { pilgrimInitialValues, createPilgrimValidationSchema } from './utils';
+import { pilgrimInitialValues, createPilgrimValidationSchema, tabs } from './utils';
 import { PilgrimFormValues } from './utils/types';
 
 // Tab components
@@ -78,17 +80,17 @@ export default function PilgrimDetailsView({
     isError: isErrorPilgrim,
   } = useFetchPilgrimDetails(pilgrimId, !!pilgrimId);
 
-  // Extract data from response (API returns { success, data, message })
   const pilgrimData = pilgrimResponse?.data;
 
-  // Fetch init data for dropdowns
   const { data: initDataResponse } = useFetchPilgrimInitData();
   const initData = initDataResponse?.data;
 
-  // Update mutation
   const updatePilgrimMutation = useUpdatePilgrim();
 
-  // Form setup
+  const deletePilgrimMutation = useDeletePilgrim();
+
+  const deleteDialog = useDisclosure();
+
   const PilgrimSchema = useMemo(() => createPilgrimValidationSchema(t), [t]);
 
   const defaultValues = useMemo<PilgrimFormValues>(() => pilgrimInitialValues, []);
@@ -150,20 +152,15 @@ export default function PilgrimDetailsView({
     }
   }, [pilgrimData, reset]);
 
-  // Handle edit button click
   const handleEditClick = () => {
     setIsEditMode(true);
-    // Update URL to include isEdit=true
     const currentPath = pathname;
     router.push(`${currentPath}?isEdit=true`);
   };
 
-  // Handle save
   const onSubmit = handleSubmit(async (formData) => {
-    // Prepare update data with all required fields
     const updateData: any = {
       ...formData,
-      // Include additional fields from original pilgrim data if not in form
       transport_id: pilgrimData?.transport?.id,
       status: pilgrimData?.status !== undefined ? pilgrimData.status : 1,
       source: pilgrimData?.source !== undefined ? pilgrimData.source : 1,
@@ -207,13 +204,29 @@ export default function PilgrimDetailsView({
     );
   });
 
-  // Handle delete
   const handleDelete = () => {
-    // TODO: Implement delete functionality
-    console.log('Delete pilgrim:', pilgrimId);
+    deleteDialog.onOpen();
   };
 
-  // Loading state
+  const handleConfirmDelete = () => {
+    deletePilgrimMutation.mutate(pilgrimId, {
+      onSuccess: () => {
+        enqueueSnackbar(t('Message.pilgrim_deleted_successfully'), {
+          variant: 'success',
+        });
+        deleteDialog.onClose();
+        router.push(paths.dashboard.pilgrims.root);
+      },
+      onError: (error: any) => {
+        console.error('Error deleting pilgrim:', error);
+        enqueueSnackbar(
+          error?.response?.data?.message || error?.message || t('Message.error_deleting_pilgrim'),
+          { variant: 'error' }
+        );
+      },
+    });
+  };
+
   if (isLoadingPilgrim) {
     return <PilgrimLoadingSkeleton />;
   }
@@ -227,23 +240,6 @@ export default function PilgrimDetailsView({
     ? pilgrim.name?.ar || pilgrim.name?.en || ''
     : pilgrim.name?.en || pilgrim.name?.ar || '';
   const bookingNumber = pilgrim.reservation_no || '';
-
-  const tabs = [
-    { value: 'personal', label: t('Label.personal_information'), icon: 'solar:user-bold' },
-    { value: 'gathering', label: t('Label.gathering_points'), icon: 'solar:map-point-bold' },
-    {
-      value: 'accommodation',
-      label: t('Label.accommodation_residence'),
-      icon: 'solar:home-angle-outline',
-    },
-    { value: 'transportation', label: t('Label.transportation_data'), icon: 'solar:bus-outline' },
-    { value: 'health', label: t('Label.health_status_data'), icon: 'solar:heart-pulse-outline' },
-    {
-      value: 'supervision',
-      label: t('Label.supervision_organization'),
-      icon: 'solar:users-group-rounded-outline',
-    },
-  ];
 
   return (
     <Container maxWidth="xl" sx={{ width: '100%' }}>
@@ -340,7 +336,7 @@ export default function PilgrimDetailsView({
                   <Tab
                     key={tab.value}
                     value={tab.value}
-                    label={tab.label}
+                    label={t(tab.label)}
                     icon={<Iconify icon={tab.icon} width={24} />}
                     iconPosition="start"
                     sx={{
@@ -414,6 +410,17 @@ export default function PilgrimDetailsView({
             )}
           </Card>
         </FormProvider>
+
+        {/* Delete Confirmation Dialog */}
+        <ConfirmDialog
+          open={deleteDialog.open}
+          onClose={deleteDialog.onClose}
+          title={t('Dialog.Delete')}
+          content={t('Message.delete_pilgrim_confirmation')}
+          buttonTitle={t('Dialog.Delete')}
+          buttonColor="error"
+          handleConfirmDelete={handleConfirmDelete}
+        />
       </Box>
     </Container>
   );

@@ -69,3 +69,20 @@ export const healthStatuses = [
   { value: 'fair', label: 'متوسط' },
   { value: 'poor', label: 'ضعيف' },
 ];
+
+export const tabs = [
+  { value: 'personal', label: 'Label.personal_information', icon: 'solar:user-bold' },
+  { value: 'gathering', label: 'Label.gathering_points', icon: 'solar:map-point-bold' },
+  {
+    value: 'accommodation',
+    label: 'Label.accommodation_residence',
+    icon: 'solar:home-angle-outline',
+  },
+  { value: 'transportation', label: 'Label.transportation_data', icon: 'solar:bus-outline' },
+  { value: 'health', label: 'Label.health_status_data', icon: 'solar:heart-pulse-outline' },
+  {
+    value: 'supervision',
+    label: 'Label.supervision_organization',
+    icon: 'solar:users-group-rounded-outline',
+  },
+];
