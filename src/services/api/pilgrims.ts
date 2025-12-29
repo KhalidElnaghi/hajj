@@ -376,11 +376,14 @@ export const createPilgrim = async (data: CreatePilgrimData): Promise<CreatePilg
 
   // Mobile numbers as integers
   // mobile is REQUIRED
-  bodyData.mobile = safeInteger(data.mobileNumber);
+  // Remove country code prefix (699+, 966+, +699, +966, 699, 966) if present
+  const cleanMobile = String(data.mobileNumber || '').replace(/^(\+?699|\+?966)/, '');
+  bodyData.mobile = safeInteger(cleanMobile);
 
   // mobile2 is OPTIONAL - only send if provided and valid (Saudi phone number)
   if (isValidValue(data.anotherMobileNumber)) {
-    const mobile2 = safeInteger(data.anotherMobileNumber);
+    const cleanMobile2 = String(data.anotherMobileNumber).replace(/^(\+?699|\+?966)/, '');
+    const mobile2 = safeInteger(cleanMobile2);
     if (mobile2 > 0) {
       bodyData.mobile2 = mobile2;
     }
@@ -620,4 +623,266 @@ export const createPilgrim = async (data: CreatePilgrimData): Promise<CreatePilg
   // API.post will automatically handle FormData and remove Content-Type header
   // so browser can set it with the correct boundary
   return API.post<CreatePilgrimResponse>('/pilgrims/pilgrims', formData);
+};
+
+// Update Pilgrim Data interface (same as CreatePilgrimData)
+export interface UpdatePilgrimData extends CreatePilgrimData {
+  // Additional fields that might be needed for update
+  transport_id?: number;
+  status?: number;
+  source?: number;
+  whatsapp_active?: number;
+  departure_status?: number;
+  muhrim_status?: number;
+  pilgrim_type_id?: number;
+  reservation_id?: number;
+  pilgrim_style?: string;
+  booking_via?: string;
+  booking_date?: string;
+  payment_mechanism?: string;
+  payment_status?: string;
+  tag_ids?: string;
+}
+
+export interface UpdatePilgrimResponse {
+  data: Pilgrim;
+  message?: string;
+}
+
+export const updatePilgrim = async (
+  id: string | number,
+  data: UpdatePilgrimData
+): Promise<UpdatePilgrimResponse> => {
+  // Prepare JSON body data (all data except photo)
+  const bodyData: any = {};
+
+  // Add _method: PATCH for Laravel form method spoofing (as shown in API example)
+  bodyData._method = 'PATCH';
+
+  // Transform name fields to API format: name as JSON string
+  // The API expects: name = { "ar": "...", "en": "..." } as a JSON string
+  const nameObj = {
+    ar: safeString(data.nameAr),
+    en: safeString(data.nameEn),
+  };
+  bodyData.name = JSON.stringify(nameObj);
+
+  // Map idNumber to national_id (integer)
+  bodyData.national_id = safeInteger(data.idNumber);
+
+  // Map nationality to nationality_id integer
+  let nationalityIdValue: number = 0;
+
+  if (isValidValue(data.nationality)) {
+    const parsedId = parseInt(String(data.nationality), 10);
+    if (!isNaN(parsedId) && parsedId > 0 && Number.isInteger(parsedId)) {
+      nationalityIdValue = parsedId;
+    } else {
+      console.error('Invalid nationality_id:', {
+        value: data.nationality,
+        parsedId: parsedId,
+      });
+      nationalityIdValue = 0;
+    }
+  }
+
+  bodyData.nationality_id = Math.floor(nationalityIdValue);
+
+  // Map gender to integer
+  if (isValidValue(data.gender)) {
+    const parsedId = parseInt(String(data.gender), 10);
+    if (!isNaN(parsedId) && Number.isInteger(parsedId)) {
+      bodyData.gender = parsedId;
+    } else {
+      // Fallback: try old mapping for backward compatibility
+      const genderId = genderMap[String(data.gender).toLowerCase()];
+      if (genderId !== undefined) {
+        bodyData.gender = genderId;
+      } else {
+        bodyData.gender = 0;
+      }
+    }
+  } else {
+    bodyData.gender = 0;
+  }
+
+  // Mobile numbers as integers
+  // Remove country code prefix (699+, 966+, +699, +966, 699, 966) if present
+  const cleanMobile = String(data.mobileNumber || '').replace(/^(\+?699|\+?966)/, '');
+  bodyData.mobile = safeInteger(cleanMobile);
+
+  // mobile2 is OPTIONAL - only send if provided and valid
+  if (isValidValue(data.anotherMobileNumber)) {
+    const cleanMobile2 = String(data.anotherMobileNumber).replace(/^(\+?699|\+?966)/, '');
+    const mobile2 = safeInteger(cleanMobile2);
+    if (mobile2 > 0) {
+      bodyData.mobile2 = mobile2;
+    }
+  }
+
+  // Birth dates as strings
+  bodyData.birthdate = safeString(data.gregorianBirthDate);
+  bodyData.birthdate_hijri = safeString(data.hijriBirthDate);
+
+  // Age as integer
+  bodyData.age = safeInteger(data.age);
+
+  // Handle supervisors array as JSON string: [2,3]
+  if (data.supervisors && Array.isArray(data.supervisors) && data.supervisors.length > 0) {
+    const supervisorIds = data.supervisors
+      .map((item) => {
+        const id = safeInteger(item);
+        return id > 0 ? id : null;
+      })
+      .filter((id): id is number => id !== null);
+
+    if (supervisorIds.length > 0) {
+      bodyData.supervisor_ids = JSON.stringify(supervisorIds);
+    }
+  }
+
+  // Map packageName to package_id (integer)
+  let packageIdValue: number = 0;
+
+  if (isValidValue(data.packageName)) {
+    const parsedId = parseInt(String(data.packageName), 10);
+    if (!isNaN(parsedId) && parsedId > 0 && Number.isInteger(parsedId)) {
+      packageIdValue = parsedId;
+    } else {
+      console.error('Invalid package_id:', {
+        value: data.packageName,
+        parsedId: parsedId,
+      });
+      packageIdValue = 0;
+    }
+  }
+
+  bodyData.package_id = Math.floor(packageIdValue);
+
+  // Map city to city_id (integer)
+  let cityIdValue: number = 0;
+
+  if (isValidValue(data.city)) {
+    const parsedId = parseInt(String(data.city), 10);
+    if (!isNaN(parsedId) && parsedId > 0 && Number.isInteger(parsedId)) {
+      cityIdValue = parsedId;
+    } else {
+      console.error('Invalid city_id:', {
+        value: data.city,
+        parsedId: parsedId,
+      });
+      cityIdValue = 0;
+    }
+  }
+
+  bodyData.city_id = Math.floor(cityIdValue);
+
+  // Transport ID (optional)
+  if (data.transport_id !== undefined && data.transport_id !== null) {
+    bodyData.transport_id = safeInteger(data.transport_id);
+  }
+
+  // String fields
+  bodyData.booking_date = data.arrivalDate ? safeString(data.arrivalDate) : '';
+  bodyData.departure_date = data.departureDate ? safeString(data.departureDate) : '';
+  bodyData.permit = safeString(data.permit);
+  bodyData.notes = safeString(data.supervisorNotes);
+  bodyData.health_details = safeString(data.healthDetails);
+  bodyData.tent_room_number = safeString(data.tentRoomNumber);
+  bodyData.bus_number = safeString(data.busNumber);
+  bodyData.seat_number = safeString(data.seatNumber);
+  bodyData.gathering_point_type = safeString(data.gatheringPointType);
+  bodyData.gathering_point = safeString(data.gatheringPoint);
+  bodyData.prominent = safeString(data.prominent);
+  bodyData.accommodation_area = safeString(data.accommodationArea);
+  bodyData.camp_status = safeString(data.campStatus);
+  bodyData.general_health_status = safeString(data.generalHealthStatus);
+
+  // Optional fields with defaults or from data
+  bodyData.pilgrim_type_id = data.pilgrim_type_id !== undefined ? safeInteger(data.pilgrim_type_id) : 2;
+  bodyData.reservation_id = data.reservation_id !== undefined ? safeInteger(data.reservation_id) : 1;
+  bodyData.status = data.status !== undefined ? safeInteger(data.status) : 1; // 1=active, 2=inactive, 3=cancelled
+  bodyData.source = data.source !== undefined ? safeInteger(data.source) : 1; // 1=website, 2=excel, 3=api
+  bodyData.whatsapp_active = data.whatsapp_active !== undefined ? safeInteger(data.whatsapp_active) : 0;
+  bodyData.departure_status = data.departure_status !== undefined ? safeInteger(data.departure_status) : 0; // 0=early, 1=late
+  bodyData.muhrim_status = data.muhrim_status !== undefined ? safeInteger(data.muhrim_status) : 0; // 0=without, 1=with
+
+  // Additional optional fields
+  if (data.pilgrim_style) bodyData.pilgrim_style = safeString(data.pilgrim_style);
+  if (data.booking_via) bodyData.booking_via = safeString(data.booking_via);
+  if (data.booking_date) bodyData.booking_date = safeString(data.booking_date);
+  if (data.payment_mechanism) bodyData.payment_mechanism = safeString(data.payment_mechanism);
+  if (data.payment_status !== undefined) bodyData.payment_status = safeString(data.payment_status);
+  if (data.tag_ids) bodyData.tag_ids = safeString(data.tag_ids);
+
+  // Handle photo - send in FormData if provided
+  const formData = new FormData();
+
+  // Add photo to FormData if provided
+  const hasValidPhoto = data.photo && 
+    (data.photo instanceof File || 
+     (typeof data.photo === 'object' && 
+      data.photo !== null && 
+      Object.keys(data.photo as object).length > 0 && 
+      'preview' in data.photo));
+
+  if (hasValidPhoto && data.photo) {
+    let photoFile: File | null = null;
+    
+    if (data.photo instanceof File) {
+      photoFile = data.photo;
+    } else if (typeof data.photo === 'object' && data.photo !== null && 'preview' in data.photo) {
+      const fileWithPreview = data.photo as any;
+      
+      if (fileWithPreview instanceof File) {
+        photoFile = fileWithPreview;
+      } else if (fileWithPreview.constructor?.name === 'File' || fileWithPreview instanceof Blob) {
+        photoFile = fileWithPreview as File;
+      }
+    }
+
+    if (photoFile) {
+      const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+      if (validTypes.includes(photoFile.type)) {
+        formData.append('photo', photoFile, photoFile.name);
+      } else {
+        formData.append('photo', photoFile, photoFile.name);
+      }
+    }
+  }
+
+  // Append all body data to FormData
+  Object.entries(bodyData).forEach(([key, value]) => {
+    if (value !== null && value !== undefined) {
+      if (typeof value === 'number') {
+        formData.append(key, value.toString());
+      } else if (typeof value === 'boolean') {
+        formData.append(key, value ? '1' : '0');
+      } else {
+        formData.append(key, String(value));
+      }
+    }
+  });
+
+  // Log FormData contents for debugging (only in development)
+  if (process.env.NODE_ENV === 'development') {
+    console.log('Update Pilgrim FormData contents:');
+    for (const [key, value] of formData.entries()) {
+      if (value instanceof File) {
+        console.log(`${key}:`, 'File', { name: value.name, type: value.type, size: value.size });
+      } else {
+        console.log(`${key}:`, value);
+      }
+    }
+  }
+
+  // Use POST with _method: PATCH (Laravel method spoofing) as shown in API example
+  // API.post will automatically handle FormData and remove Content-Type header
+  try {
+    return await API.post<UpdatePilgrimResponse>(`/pilgrims/pilgrims/${id}`, formData);
+  } catch (error: any) {
+    console.error('Error in updatePilgrim API call:', error);
+    // Re-throw the error so it can be handled by the mutation
+    throw error;
+  }
 };

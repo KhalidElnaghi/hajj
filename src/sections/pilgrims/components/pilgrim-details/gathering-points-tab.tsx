@@ -12,11 +12,13 @@ type GatheringPointsTabProps = {
   isRtl: boolean;
 };
 
-export default function GatheringPointsTab({ isReadOnly, initData, isRtl }: GatheringPointsTabProps) {
+export default function GatheringPointsTab({
+  isReadOnly,
+  initData,
+  isRtl,
+}: GatheringPointsTabProps) {
   const t = useTranslations('Pilgrims');
 
-  // For destination, we'll use the same options as gathering points for now
-  // You can adjust this based on your API response
   const destinations = gatheringPoints;
 
   return (
@@ -33,7 +35,7 @@ export default function GatheringPointsTab({ isReadOnly, initData, isRtl }: Gath
           >
             {t('Label.gathering_point_type')}
           </Typography>
-          <RHFSelect name="gatheringPointType" disabled={isReadOnly}>
+          <RHFSelect name="gatheringPointType" isReadOnly={isReadOnly}>
             <MenuItem value="">
               <em>None</em>
             </MenuItem>
@@ -58,7 +60,7 @@ export default function GatheringPointsTab({ isReadOnly, initData, isRtl }: Gath
           >
             {t('Label.gathering_point')}
           </Typography>
-          <RHFSelect name="gatheringPoint" disabled={isReadOnly}>
+          <RHFSelect name="gatheringPoint" isReadOnly={isReadOnly}>
             <MenuItem value="">
               <em>None</em>
             </MenuItem>
@@ -71,7 +73,7 @@ export default function GatheringPointsTab({ isReadOnly, initData, isRtl }: Gath
         </Box>
       </Grid>
 
-      <Grid size={{ xs: 12, md: 4 }}>
+      {/* <Grid size={{ xs: 12, md: 4 }}>
         <Box sx={{ width: '100%' }}>
           <Typography
             variant="body2"
@@ -83,7 +85,7 @@ export default function GatheringPointsTab({ isReadOnly, initData, isRtl }: Gath
           >
             {t('Label.destination')}
           </Typography>
-          <RHFSelect name="prominent" disabled={isReadOnly}>
+          <RHFSelect name="prominent" isReadOnly={isReadOnly}>
             <MenuItem value="">
               <em>None</em>
             </MenuItem>
@@ -94,8 +96,7 @@ export default function GatheringPointsTab({ isReadOnly, initData, isRtl }: Gath
             ))}
           </RHFSelect>
         </Box>
-      </Grid>
+      </Grid> */}
     </Grid>
   );
 }
-

@@ -24,7 +24,7 @@ export const createPilgrimValidationSchema = (t: TranslateFunction) => {
       .required(t('Message.gender_required'))
       .oneOf(['0', '1'], t('Message.gender_invalid')),
     gregorianBirthDate: Yup.string().required(t('Message.birthdate_required')),
-    hijriBirthDate: Yup.string().required(t('Message.birthdate_hijri_required')),
+    hijriBirthDate: Yup.string().notRequired().nullable(),
     age: Yup.number()
       .required(t('Message.age_required'))
       .min(0, t('Message.age_invalid'))
@@ -86,4 +86,3 @@ export const createPilgrimValidationSchema = (t: TranslateFunction) => {
     supervisorNotes: Yup.string().default(''),
   });
 };
-

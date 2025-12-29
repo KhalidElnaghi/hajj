@@ -31,11 +31,11 @@ export default function TransportationTab({ isReadOnly, initData, isRtl }: Trans
           <RHFTextField
             name="busNumber"
             placeholder=""
-            InputProps={{ readOnly: isReadOnly }}
+            isReadOnly={isReadOnly}
             sx={{
               '& .MuiInputBase-input.Mui-readOnly': {
                 cursor: 'default',
-                backgroundColor: isReadOnly ? 'action.disabledBackground' : 'background.paper',
+                // backgroundColor: isReadOnly ? 'action.disabledBackground' : 'background.paper',
               },
             }}
           />
@@ -56,11 +56,11 @@ export default function TransportationTab({ isReadOnly, initData, isRtl }: Trans
           <RHFTextField
             name="seatNumber"
             placeholder=""
-            InputProps={{ readOnly: isReadOnly }}
+            isReadOnly={isReadOnly}
             sx={{
               '& .MuiInputBase-input.Mui-readOnly': {
                 cursor: 'default',
-                backgroundColor: isReadOnly ? 'action.disabledBackground' : 'background.paper',
+                // backgroundColor: isReadOnly ? 'action.disabledBackground' : 'background.paper',
               },
             }}
           />
@@ -69,4 +69,3 @@ export default function TransportationTab({ isReadOnly, initData, isRtl }: Trans
     </Grid>
   );
 }
-

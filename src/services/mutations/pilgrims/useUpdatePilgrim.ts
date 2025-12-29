@@ -1,19 +1,13 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import API from '../../shared/functions/axios';
+import { updatePilgrim, UpdatePilgrimData } from '../../api/pilgrims';
 import { queryKeys } from '../../shared/query-keys';
-import { Pilgrim } from '../../api/pilgrims';
-
-export interface UpdatePilgrimData {
-  // Add your update pilgrim data type fields here
-  [key: string]: any;
-}
 
 export const useUpdatePilgrim = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async ({ id, data }: { id: string | number; data: UpdatePilgrimData }) => {
-      return API.put<Pilgrim>(`/pilgrims/${id}`, data);
+      return updatePilgrim(id, data);
     },
     onSuccess: (_, variables) => {
       // Invalidate and refetch pilgrims list and specific pilgrim details
@@ -22,4 +16,3 @@ export const useUpdatePilgrim = () => {
     },
   });
 };
-

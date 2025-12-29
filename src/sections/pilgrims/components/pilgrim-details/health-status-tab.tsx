@@ -1,7 +1,7 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { Box, Grid, Typography } from '@mui/material';
+import { Box, Grid, MenuItem, Typography } from '@mui/material';
 import { RHFSelect, RHFTextarea } from 'src/components/hook-form';
 import { PilgrimInitDataResponse } from 'src/services/api/pilgrims';
 import { healthStatuses } from '../../utils/constants';
@@ -58,11 +58,11 @@ export default function HealthStatusTab({ isReadOnly, initData, isRtl }: HealthS
           name="healthDetails"
           placeholder={t('Label.health_status_placeholder_alt')}
           rows={4}
-          InputProps={{ readOnly: isReadOnly }}
+          isReadOnly={isReadOnly}
           sx={{
             '& .MuiInputBase-input.Mui-readOnly': {
               cursor: 'default',
-              backgroundColor: isReadOnly ? 'action.disabledBackground' : 'background.paper',
+              // backgroundColor: isReadOnly ? 'action.disabledBackground' : 'background.paper',
             },
           }}
         />
@@ -70,4 +70,3 @@ export default function HealthStatusTab({ isReadOnly, initData, isRtl }: HealthS
     </>
   );
 }
-

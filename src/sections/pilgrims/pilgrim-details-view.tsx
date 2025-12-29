@@ -15,7 +15,6 @@ import {
   Container,
   Typography,
   Avatar,
-  IconButton,
   Tabs,
   Tab,
   Divider,
@@ -158,10 +157,34 @@ export default function PilgrimDetailsView({
   };
 
   // Handle save
-  const onSubmit = handleSubmit(async (data) => {
-    // TODO: Map form data to API format
+  const onSubmit = handleSubmit(async (formData) => {
+    // Prepare update data with all required fields
+    const updateData: any = {
+      ...formData,
+      // Include additional fields from original pilgrim data if not in form
+      transport_id: pilgrimData?.transport?.id,
+      status: pilgrimData?.status !== undefined ? pilgrimData.status : 1,
+      source: pilgrimData?.source !== undefined ? pilgrimData.source : 1,
+      whatsapp_active:
+        pilgrimData?.whatsapp_active !== undefined ? (pilgrimData.whatsapp_active ? 1 : 0) : 0,
+      departure_status:
+        pilgrimData?.departure_status !== undefined ? pilgrimData.departure_status : 0,
+      muhrim_status: pilgrimData?.muhrim_status !== undefined ? pilgrimData.muhrim_status : 0,
+      pilgrim_type_id: pilgrimData?.pilgrim_type?.id || 2,
+      reservation_id: pilgrimData?.reservation?.id || 1,
+      pilgrim_style: pilgrimData?.pilgrim_style || '',
+      booking_via: pilgrimData?.booking_via || '',
+      booking_date: formData.arrivalDate || pilgrimData?.booking_date || '',
+      payment_mechanism: pilgrimData?.payment_mechanism || '',
+      payment_status: pilgrimData?.payment_status || '',
+      tag_ids:
+        Array.isArray(pilgrimData?.tags) && pilgrimData.tags.length > 0
+          ? JSON.stringify(pilgrimData.tags.map((tag: any) => tag.id))
+          : '',
+    };
+
     updatePilgrimMutation.mutate(
-      { id: pilgrimId, data: data as any },
+      { id: pilgrimId, data: updateData },
       {
         onSuccess: () => {
           enqueueSnackbar(t('Message.pilgrim_updated_successfully'), {
@@ -226,7 +249,6 @@ export default function PilgrimDetailsView({
     : pilgrim.name?.en || pilgrim.name?.ar || '';
   const bookingNumber = pilgrim.reservation_no || '';
 
-  // Tab configuration
   const tabs = [
     { value: 'personal', label: t('Label.personal_information'), icon: 'solar:user-bold' },
     { value: 'gathering', label: t('Label.gathering_points'), icon: 'solar:map-point-bold' },
@@ -305,7 +327,7 @@ export default function PilgrimDetailsView({
                     {t('Label.edit')}
                   </Button>
                 )}
-                <IconButton
+                {/* <IconButton
                   sx={{
                     bgcolor: 'primary.lighter',
                     color: 'primary.main',
@@ -313,7 +335,7 @@ export default function PilgrimDetailsView({
                   }}
                 >
                   <Iconify icon="solar:letter-bold" width={24} />
-                </IconButton>
+                </IconButton> */}
               </Stack>
             </Box>
 
@@ -382,7 +404,6 @@ export default function PilgrimDetailsView({
                     display: 'flex',
                     justifyContent: 'flex-end',
                     gap: 2,
-                    flexDirection: isRTL ? 'row-reverse' : 'row',
                   }}
                 >
                   <Button
@@ -403,7 +424,7 @@ export default function PilgrimDetailsView({
                         <CircularProgress size={16} color="inherit" />
                       ) : null
                     }
-                    sx={{ minWidth: 120 }}
+                    sx={{ minWidth: 120, px: 3 }}
                   >
                     {updatePilgrimMutation.isPending ? t('Label.saving') : t('Label.save')}
                   </Button>

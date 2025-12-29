@@ -87,11 +87,11 @@ export default function AccommodationTab({ isReadOnly, initData, isRtl }: Accomm
             <RHFTextField
               name="tentRoomNumber"
               placeholder=""
-              InputProps={{ readOnly: isReadOnly }}
+              isReadOnly={isReadOnly}
               sx={{
                 '& .MuiInputBase-input.Mui-readOnly': {
                   cursor: 'default',
-                  backgroundColor: isReadOnly ? 'action.disabledBackground' : 'background.paper',
+                  // backgroundColor: isReadOnly ? 'action.disabledBackground' : 'background.paper',
                 },
               }}
             />
@@ -109,7 +109,7 @@ export default function AccommodationTab({ isReadOnly, initData, isRtl }: Accomm
             >
               {t('Label.camp_status')}
             </Typography>
-            <RHFSelect name="campStatus" disabled={isReadOnly}>
+            <RHFSelect name="campStatus" isReadOnly={isReadOnly}>
               <MenuItem value="">
                 <em>None</em>
               </MenuItem>
@@ -125,4 +125,3 @@ export default function AccommodationTab({ isReadOnly, initData, isRtl }: Accomm
     </>
   );
 }
-
