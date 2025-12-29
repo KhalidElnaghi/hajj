@@ -23,6 +23,7 @@ import {
 
 import { paths } from 'src/routes/paths';
 import { useLocales } from 'src/locales';
+import { useResponsive } from 'src/hooks/use-responsive';
 
 import FormProvider from 'src/components/hook-form/form-provider';
 import Iconify from 'src/components/iconify';
@@ -67,6 +68,7 @@ export default function PilgrimDetailsView({
   const searchParams = useSearchParams();
   const { isRTL } = useLocales();
   const { enqueueSnackbar } = useSnackbar();
+  const mdDown = useResponsive('down', 'md');
 
   // Check if isEdit is in URL params
   const urlIsEdit = searchParams.get('isEdit') === 'true';
@@ -256,31 +258,60 @@ export default function PilgrimDetailsView({
             {/* Header Section */}
             <Box
               sx={{
-                p: 3,
+                p: { xs: 2, md: 3 },
                 display: 'flex',
-                alignItems: 'center',
+                flexDirection: { xs: 'column', md: 'row' },
+                alignItems: { xs: 'flex-start', md: 'center' },
                 justifyContent: 'space-between',
+                gap: { xs: 2, md: 0 },
               }}
             >
               {/* Profile Info */}
-              <Stack direction="row" spacing={2} alignItems="center">
+              <Stack 
+                direction="row" 
+                spacing={2} 
+                alignItems="center"
+                sx={{ width: { xs: '100%', md: 'auto' } }}
+              >
                 <Avatar
                   src={pilgrim.pilgrim_photo || undefined}
                   alt={pilgrimName}
-                  sx={{ width: 64, height: 64 }}
+                  sx={{ width: { xs: 48, md: 64 }, height: { xs: 48, md: 64 } }}
                 >
                   {pilgrimName.charAt(0)}
                 </Avatar>
-                <Box>
-                  <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                    {t('Label.name')}:{' '}
-                    {isRTL && pilgrimName_ar
-                      ? pilgrimName_ar
-                      : !isRTL && pilgrimName_en
-                        ? pilgrimName_en
-                        : pilgrimName}
+                <Box sx={{ flex: 1, minWidth: 0 }}>
+                  <Typography 
+                    variant={mdDown ? 'subtitle1' : 'h6'} 
+                    sx={{ fontWeight: 600 }}
+                  >
+                    {mdDown ? (
+                      <>
+                        {isRTL && pilgrimName_ar
+                          ? pilgrimName_ar
+                          : !isRTL && pilgrimName_en
+                            ? pilgrimName_en
+                            : pilgrimName}
+                      </>
+                    ) : (
+                      <>
+                        {t('Label.name')}:{' '}
+                        {isRTL && pilgrimName_ar
+                          ? pilgrimName_ar
+                          : !isRTL && pilgrimName_en
+                            ? pilgrimName_en
+                            : pilgrimName}
+                      </>
+                    )}
                   </Typography>
-                  <Typography variant="body2" sx={{ color: 'text.secondary', mt: 0.5 }}>
+                  <Typography 
+                    variant="body2" 
+                    sx={{ 
+                      color: 'text.secondary', 
+                      mt: 0.5,
+                      fontSize: { xs: '0.75rem', md: '0.875rem' }
+                    }}
+                  >
                     {t('Label.booking_number')}: {bookingNumber}
                   </Typography>
                 </Box>
@@ -290,14 +321,21 @@ export default function PilgrimDetailsView({
               <Stack
                 direction="row"
                 spacing={1.5}
-                sx={{ flexDirection: isRTL ? 'row-reverse' : 'row' }}
+                sx={{ 
+                  flexDirection: isRTL ? 'row-reverse' : 'row',
+                  width: { xs: '100%', md: 'auto' },
+                  justifyContent: { xs: 'flex-end', md: 'flex-start' }
+                }}
               >
                 {!isEditMode && (
                   <Button
                     variant="contained"
                     color="primary"
                     onClick={handleEditClick}
-                    sx={{ minWidth: 120 }}
+                    sx={{ 
+                      minWidth: { xs: 100, md: 120 },
+                      fontSize: { xs: '0.875rem', md: '1rem' }
+                    }}
                   >
                     {t('Label.edit')}
                   </Button>
