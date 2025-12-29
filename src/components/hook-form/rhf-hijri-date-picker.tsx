@@ -101,8 +101,8 @@ export default function RHFHijriDatePicker({
                 },
                 '& .rmdp-input': {
                   width: '100%',
-                  padding: '16.5px 14px',
-                  paddingLeft: '48px',
+                  padding: '26px 14px',
+                  paddingLeft: '40px',
                   border: error ? '1px solid #d32f2f' : '1px solid rgba(0, 0, 0, 0.23)',
                   borderRadius: '4px',
                   fontSize: '1rem',
@@ -118,6 +118,9 @@ export default function RHFHijriDatePicker({
                     outline: 'none',
                   },
                 },
+                '& .rmdp-container': {
+                  width: '100%',
+                },
               }}
             >
               <Box
@@ -125,7 +128,7 @@ export default function RHFHijriDatePicker({
                   position: 'absolute',
                   left: '14px',
                   top: '50%',
-                  transform: 'translateY(-50%)',
+                  transform: 'translateY(-40%)',
                   zIndex: 1,
                   pointerEvents: 'none',
                 }}
@@ -146,6 +149,14 @@ export default function RHFHijriDatePicker({
                 inputClass="rmdp-input"
                 containerClassName="custom-hijri-date-picker"
                 required={required}
+                // style={{
+                //   width: '100%',
+                //   paddingTop: '27px',
+                //   paddingBottom: '27px',
+                //   display: 'flex',
+                //   alignItems: 'center',
+                //   justifyContent: 'center',
+                // }}
               />
             </Box>
             {(error || helperText) && (

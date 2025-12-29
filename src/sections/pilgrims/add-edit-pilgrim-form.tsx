@@ -383,7 +383,7 @@ export default function AddEditPilgrimForm() {
                           *
                         </Box>
                       </Typography>
-                      <RHFTextField name="nameAr" required placeholder="" />
+                      <RHFTextField name="nameAr"  placeholder="" />
                     </Box>
                   </Grid>
                   <Grid size={{ xs: 12, md: 6 }}>
@@ -409,7 +409,7 @@ export default function AddEditPilgrimForm() {
                           *
                         </Box>
                       </Typography>
-                      <RHFTextField name="nameEn" required placeholder="" />
+                      <RHFTextField name="nameEn"  placeholder="" />
                     </Box>
                   </Grid>
 
@@ -452,7 +452,7 @@ export default function AddEditPilgrimForm() {
                           *
                         </Box>
                       </Typography>
-                      <RHFTextField name="idNumber" required placeholder="" />
+                      <RHFTextField name="idNumber"  placeholder="" />
                     </Box>
                   </Grid>
                   <Grid size={{ xs: 12, md: 4 }}>
@@ -478,7 +478,7 @@ export default function AddEditPilgrimForm() {
                           *
                         </Box>
                       </Typography>
-                      <RHFSelect name="city" required>
+                      <RHFSelect name="city" >
                         <MenuItem value="">
                           <em>None</em>
                         </MenuItem>
@@ -515,7 +515,7 @@ export default function AddEditPilgrimForm() {
                           *
                         </Box>
                       </Typography>
-                      <RHFSelect name="packageName" required>
+                      <RHFSelect name="packageName" >
                         <MenuItem value="">
                           <em>None</em>
                         </MenuItem>
@@ -550,7 +550,7 @@ export default function AddEditPilgrimForm() {
                           *
                         </Box>
                       </Typography>
-                      <RHFSelect name="nationality" required>
+                      <RHFSelect name="nationality" >
                         <MenuItem value="">
                           <em>None</em>
                         </MenuItem>
@@ -587,7 +587,7 @@ export default function AddEditPilgrimForm() {
                           *
                         </Box>
                       </Typography>
-                      <RHFSelect name="gender" required>
+                      <RHFSelect name="gender" >
                         <MenuItem value="">
                           <em>None</em>
                         </MenuItem>
@@ -715,7 +715,7 @@ export default function AddEditPilgrimForm() {
                           *
                         </Box>
                       </Typography>
-                      <RHFHijriDatePicker name="hijriBirthDate" required placeholder="YYYY/MM/DD" />
+                      <RHFHijriDatePicker name="hijriBirthDate"  placeholder="DD/MM/YYYY" />
                     </Box>
                   </Grid>
                   <Grid size={{ xs: 12, md: 4 }}>
@@ -741,7 +741,7 @@ export default function AddEditPilgrimForm() {
                           *
                         </Box>
                       </Typography>
-                      <RHFTextField name="age" type="number" required placeholder="" />
+                      <RHFTextField name="age" type="number"  placeholder="" />
                     </Box>
                   </Grid>
 
@@ -768,7 +768,7 @@ export default function AddEditPilgrimForm() {
                           *
                         </Box>
                       </Typography>
-                      <RHFTextField name="mobileNumber" required placeholder="" />
+                      <RHFTextField name="mobileNumber"  placeholder="" />
                     </Box>
                   </Grid>
                   <Grid size={{ xs: 12, md: 4 }}>
