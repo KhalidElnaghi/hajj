@@ -396,6 +396,10 @@ export default function PilgrimsView() {
     { id: 'accommodation', label: 'Pilgrims.Label.housing' },
   ];
 
+  const handleRowClick = (row: Pilgrim) => {
+    router.push(paths.dashboard.pilgrims.view(String(row.id)));
+  };
+
   const actions: Action<Pilgrim>[] = [
     {
       label: t('Label.message'),
@@ -405,12 +409,13 @@ export default function PilgrimsView() {
     {
       label: t('Label.view'),
       icon: '/assets/icons/table/view.svg',
-      onClick: (row) => console.log('view pilgrim', row.id),
+      onClick: (row) => router.push(paths.dashboard.pilgrims.view(String(row.id))),
     },
     {
       label: t('Label.edit'),
       icon: '/assets/icons/table/edit.svg',
-      onClick: (row) => console.log('edit pilgrim', row.id),
+      onClick: (row) =>
+        router.push(`${paths.dashboard.pilgrims.view(String(row.id))}?isEdit=true`),
     },
     {
       label: t('Label.delete'),
@@ -1017,6 +1022,7 @@ export default function PilgrimsView() {
             order={true}
             enableSelection
             table={table}
+            onRowClick={handleRowClick}
           />
         </Card>
       </Box>

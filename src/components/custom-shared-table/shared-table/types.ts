@@ -45,6 +45,8 @@ export interface SharedTableProps<T extends { id: string | number }> {
   enableSelection?: boolean;
   /** Pass a table instance to share selection/pagination state */
   table?: TableProps;
+  /** Callback when a row is clicked */
+  onRowClick?: (row: T) => void;
 }
 export interface SharedTableRowProps<T extends { id: string | number }> {
   row: T;
@@ -56,6 +58,7 @@ export interface SharedTableRowProps<T extends { id: string | number }> {
   selectionEnabled?: boolean;
   selected?: boolean;
   onSelectRow?: (id: string) => void;
+  onRowClick?: (row: T) => void;
 }
 export type SxStyle = SxProps<Theme>;
 

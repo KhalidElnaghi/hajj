@@ -28,6 +28,7 @@ export default function SharedTable<T extends { id: string | number }>({
   order,
   enableSelection = false,
   table: tableProp,
+  onRowClick,
 }: SharedTableProps<T>) {
   const table = tableProp ?? useTable();
   const searchParams = useSearchParams();
@@ -122,6 +123,7 @@ export default function SharedTable<T extends { id: string | number }>({
                     selectionEnabled={enableSelection}
                     selected={selectedIds.includes(String(row.id))}
                     onSelectRow={table.onSelectRow}
+                    onRowClick={onRowClick}
                   />
                 ))
               ) : (

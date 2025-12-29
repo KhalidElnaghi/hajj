@@ -24,6 +24,7 @@ export default function SharedTableRow<T extends { id: string | number }>({
   selectionEnabled,
   selected,
   onSelectRow,
+  onRowClick,
 }: SharedTableRowProps<T>) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const menuOpen = Boolean(anchorEl);
@@ -46,14 +47,37 @@ export default function SharedTableRow<T extends { id: string | number }>({
 
   const visibleActions = actions?.filter((action) => (action.hide ? !action.hide(row) : true));
 
+  const handleRowClick = (event: React.MouseEvent<HTMLTableRowElement>) => {
+    // to prevent triggering row click if clicking on checkbox or action menu
+    const target = event.target as HTMLElement;
+    if (
+      target.closest('button') ||
+      target.closest('[role="checkbox"]') ||
+      target.closest('input[type="checkbox"]') ||
+      target.closest('.MuiCheckbox-root') ||
+      target.closest('[role="menuitem"]') ||
+      target.closest('.MuiMenu-root')
+    ) {
+      return;
+    }
+    onRowClick?.(row);
+  };
+
+  const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    event.stopPropagation();
+    onSelectRow?.(String(row.id));
+  };
+
   return (
     <TableRow
       hover
       selected={selected}
+      onClick={onRowClick ? handleRowClick : undefined}
       sx={{
         ...rowStyle,
         borderBottom: '1px solid',
         borderColor: 'divider',
+        cursor: onRowClick ? 'pointer' : 'default',
         '&:not(:last-of-type) .MuiTableCell-root': {
           borderBottom: '1px solid',
           borderColor: 'divider',
@@ -61,11 +85,16 @@ export default function SharedTableRow<T extends { id: string | number }>({
       }}
     >
       {selectionEnabled && (
-        <TableCell align="center" padding="checkbox" sx={{ width: 52 }}>
+        <TableCell
+          align="center"
+          padding="checkbox"
+          sx={{ width: 52 }}
+          onClick={(e) => e.stopPropagation()}
+        >
           <Checkbox
             color="primary"
             checked={!!selected}
-            onChange={() => onSelectRow?.(String(row.id))}
+            onChange={handleCheckboxChange}
             inputProps={{ 'aria-label': 'select row' }}
           />
         </TableCell>
