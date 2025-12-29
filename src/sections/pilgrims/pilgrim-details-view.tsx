@@ -267,9 +267,9 @@ export default function PilgrimDetailsView({
               }}
             >
               {/* Profile Info */}
-              <Stack 
-                direction="row" 
-                spacing={2} 
+              <Stack
+                direction="row"
+                spacing={2}
                 alignItems="center"
                 sx={{ width: { xs: '100%', md: 'auto' } }}
               >
@@ -281,9 +281,12 @@ export default function PilgrimDetailsView({
                   {pilgrimName.charAt(0)}
                 </Avatar>
                 <Box sx={{ flex: 1, minWidth: 0 }}>
-                  <Typography 
-                    variant={mdDown ? 'subtitle1' : 'h6'} 
-                    sx={{ fontWeight: 600 }}
+                  <Typography
+                    sx={{
+                      fontWeight: 500,
+                      color: 'text.secondary',
+                      fontSize: { xs: '14px', md: '17px' },
+                    }}
                   >
                     {mdDown ? (
                       <>
@@ -304,12 +307,11 @@ export default function PilgrimDetailsView({
                       </>
                     )}
                   </Typography>
-                  <Typography 
-                    variant="body2" 
-                    sx={{ 
-                      color: 'text.secondary', 
+                  <Typography
+                    sx={{
+                      color: 'text.secondary',
                       mt: 0.5,
-                      fontSize: { xs: '0.75rem', md: '0.875rem' }
+                      fontSize: { xs: '14px', md: '17px', fontWeight: 500 },
                     }}
                   >
                     {t('Label.booking_number')}: {bookingNumber}
@@ -321,10 +323,10 @@ export default function PilgrimDetailsView({
               <Stack
                 direction="row"
                 spacing={1.5}
-                sx={{ 
+                sx={{
                   flexDirection: isRTL ? 'row-reverse' : 'row',
                   width: { xs: '100%', md: 'auto' },
-                  justifyContent: { xs: 'flex-end', md: 'flex-start' }
+                  justifyContent: { xs: 'flex-end', md: 'flex-start' },
                 }}
               >
                 {!isEditMode && (
@@ -332,9 +334,9 @@ export default function PilgrimDetailsView({
                     variant="contained"
                     color="primary"
                     onClick={handleEditClick}
-                    sx={{ 
+                    sx={{
                       minWidth: { xs: 100, md: 120 },
-                      fontSize: { xs: '0.875rem', md: '1rem' }
+                      fontSize: { xs: '0.875rem', md: '14px' },
                     }}
                   >
                     {t('Label.edit')}
@@ -418,42 +420,39 @@ export default function PilgrimDetailsView({
             </Box>
 
             {/* Bottom Action Buttons */}
-            {isEditMode && (
-              <>
-                <Divider />
-                <Box
-                  sx={{
-                    p: 3,
-                    display: 'flex',
-                    justifyContent: 'flex-end',
-                    gap: 2,
-                  }}
+            <Box
+              sx={{
+                p: 3,
+                display: 'flex',
+                justifyContent: 'flex-end',
+                gap: 2,
+              }}
+            >
+              <Button
+                variant="outlined"
+                color="error"
+                onClick={handleDelete}
+                sx={{ minWidth: 120 }}
+              >
+                {t('Label.delete')}
+              </Button>
+              {isEditMode && (
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  disabled={updatePilgrimMutation.isPending || !isDirty}
+                  startIcon={
+                    updatePilgrimMutation.isPending ? (
+                      <CircularProgress size={16} color="inherit" />
+                    ) : null
+                  }
+                  sx={{ minWidth: 120, px: 3 }}
                 >
-                  <Button
-                    variant="outlined"
-                    color="error"
-                    onClick={handleDelete}
-                    sx={{ minWidth: 120 }}
-                  >
-                    {t('Label.delete')}
-                  </Button>
-                  <Button
-                    type="submit"
-                    variant="contained"
-                    color="primary"
-                    disabled={updatePilgrimMutation.isPending || !isDirty}
-                    startIcon={
-                      updatePilgrimMutation.isPending ? (
-                        <CircularProgress size={16} color="inherit" />
-                      ) : null
-                    }
-                    sx={{ minWidth: 120, px: 3 }}
-                  >
-                    {updatePilgrimMutation.isPending ? t('Label.saving') : t('Label.save')}
-                  </Button>
-                </Box>
-              </>
-            )}
+                  {updatePilgrimMutation.isPending ? t('Label.saving') : t('Label.save')}
+                </Button>
+              )}{' '}
+            </Box>
           </Card>
         </FormProvider>
 
