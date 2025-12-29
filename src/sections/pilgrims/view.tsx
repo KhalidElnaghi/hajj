@@ -68,6 +68,7 @@ export default function PilgrimsView() {
 
   // Get filter params from URL
   const urlFilters = {
+    query: searchParams.get('query') || undefined,
     package_id: searchParams.get('package_id') || undefined,
     city_id: searchParams.get('city_id') || undefined,
     nationality_id: searchParams.get('nationality_id') || undefined,
@@ -80,10 +81,11 @@ export default function PilgrimsView() {
     status: searchParams.get('status') || undefined,
   };
 
-  // Initialize appliedFilters from URL params on mount
+  // Initialize appliedFilters and searchTerm from URL params on mount
   useEffect(() => {
     const filtersFromUrl: any = {};
 
+    if (searchParams.get('query')) setSearchTerm(searchParams.get('query') || '');
     if (searchParams.get('package_id')) filtersFromUrl.package = searchParams.get('package_id');
     if (searchParams.get('city_id')) filtersFromUrl.city = searchParams.get('city_id');
     if (searchParams.get('nationality_id'))
@@ -103,6 +105,26 @@ export default function PilgrimsView() {
     setAppliedFilters(filtersFromUrl);
   }, [searchParams]);
 
+  // Update URL query parameter when search term changes (with debounce)
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      const params = new URLSearchParams(searchParams.toString());
+      
+      if (searchTerm) {
+        params.set('query', searchTerm);
+      } else {
+        params.delete('query');
+      }
+      
+      // Reset to page 1 when search changes
+      params.set('page', '1');
+      
+      router.push(`${pathname}?${params.toString()}`);
+    }, 500); // 500ms debounce
+
+    return () => clearTimeout(timeoutId);
+  }, [searchTerm]);
+
   // Fetch pilgrims data using React Query
   const {
     data: pilgrimsData,
@@ -112,8 +134,7 @@ export default function PilgrimsView() {
   } = useFetchPilgrims({
     page: currentPage,
     limit: currentLimit,
-    searchParam: searchTerm || undefined,
-    // Use filter params from URL
+    // Use filter params from URL (including query)
     ...urlFilters,
   });
 
@@ -198,9 +219,11 @@ export default function PilgrimsView() {
   // Clear all filters
   const handleClearAllFilters = () => {
     setAppliedFilters({});
+    setSearchTerm('');
 
     // Clear filter params from URL
     const params = new URLSearchParams(searchParams.toString());
+    params.delete('query');
     params.delete('package_id');
     params.delete('city_id');
     params.delete('nationality_id');
