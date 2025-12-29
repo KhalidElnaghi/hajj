@@ -17,10 +17,17 @@ export default function SupervisionTab({ isReadOnly, initData, isRtl }: Supervis
 
   const supervisorOptions = useMemo(() => {
     if (!initData?.employees) return [];
-    return initData.employees.map((employee) => ({
-      value: String(employee.id),
-      label: isRtl ? employee.name_ar || employee.name : employee.name_en || employee.name,
-    }));
+    return initData.employees.map((employee) => {
+      const name = employee.name;
+      const label = isRtl
+        ? employee.name_ar || (typeof name === 'string' ? name : name?.ar || '')
+        : employee.name_en || (typeof name === 'string' ? name : name?.en || '');
+
+      return {
+        value: String(employee.id),
+        label,
+      };
+    });
   }, [initData?.employees, isRtl]);
 
   return (
@@ -76,4 +83,3 @@ export default function SupervisionTab({ isReadOnly, initData, isRtl }: Supervis
     </>
   );
 }
-

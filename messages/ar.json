@@ -692,7 +692,10 @@
       "age_required": "العمر مطلوب",
       "mobile_required": "رقم الجوال مطلوب",
       "package_required": "الباقة مطلوبة",
-      "city_required": "المدينة مطلوبة"
+      "city_required": "المدينة مطلوبة",
+      "name_ar_arabic_only": "يجب أن يكون الاسم بالعربية فقط",
+      "name_en_two_words_required": "يجب أن يكون الاسم بالإنجليزية ويحتوي على على كلمتين على الأقل",
+      "name_ar_two_words_required": "يجب أن يكون الاسم بالعربية ويحتوي على على كلمتين على الأقل"
     },
     "Dialog": {
       "Delete": "حذف",

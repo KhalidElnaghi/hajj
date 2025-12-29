@@ -692,7 +692,10 @@
       "age_required": "Age is required",
       "mobile_required": "Mobile number is required",
       "package_required": "Package is required",
-      "city_required": "City is required"
+      "city_required": "City is required",
+      "name_ar_arabic_only": "Name must be in Arabic only",
+      "name_en_two_words_required": "Name must be in English and contain at least two words",
+      "name_ar_two_words_required": "Name must be in Arabic and contain at least two words"
     },
     "Dialog": {
       "Delete": "Delete",
