@@ -13,6 +13,15 @@ export interface GetPilgrimsParams {
   city?: string;
   healthStatus?: string;
   nationality?: string;
+  // Filter parameters
+  package_id?: string;
+  city_id?: string;
+  nationality_id?: string;
+  transport_id?: string;
+  pilgrim_type_id?: string;
+  source?: string;
+  departure_status?: string;
+  muhrim_status?: string;
 }
 
 // Pilgrim interface matching the actual API response
@@ -314,26 +323,86 @@ export const getPilgrimDetails = async (id: string | number): Promise<PilgrimDet
 // Init Data Interfaces
 export interface InitDataOption {
   id: number;
-  name: string;
+  name: {
+    ar: string;
+    en: string;
+  };
   name_ar?: string;
   name_en?: string;
+  status?: boolean;
+  created_at?: string;
+  updated_at?: string;
   [key: string]: any; // Allow additional properties
+}
+
+export interface InitDataSimpleOption {
+  value: number;
+  label: string;
 }
 
 export interface PilgrimInitDataResponse {
   data: {
     packages: InitDataOption[];
-    cities: InitDataOption[];
-    countries: InitDataOption[];
+    cities: Array<{
+      id: number;
+      city_id: number;
+      created_at: string;
+      updated_at: string;
+      city: {
+        id: number;
+        country_id: number;
+        name: {
+          ar: string;
+          en: string;
+        };
+        name_en: string;
+        name_ar: string;
+        latitude: string;
+        longitude: string;
+        created_at: string;
+        updated_at: string;
+      };
+    }>;
+    countries: Array<{
+      id: number;
+      country_id: number;
+      created_at: string;
+      updated_at: string;
+      country: {
+        id: number;
+        name: {
+          ar: string;
+          en: string;
+        };
+        name_ar: string;
+        name_en: string;
+        code: string;
+        phone_code: string;
+        flag: {
+          alt: string;
+          png: string;
+          svg: string;
+        };
+        currency: {
+          code: string;
+          name: string;
+          symbol: string;
+        };
+        official: {
+          ar: string;
+          en: string;
+        };
+      };
+    }>;
     transports: InitDataOption[];
     pilgrimTypes: InitDataOption[];
     employees: InitDataOption[];
     tags: InitDataOption[];
-    muhrimStatuses: InitDataOption[];
-    genders: InitDataOption[];
-    pilgrimStatuses: InitDataOption[];
-    sources: InitDataOption[];
-    departureStatuses: InitDataOption[];
+    muhrimStatuses: InitDataSimpleOption[];
+    genders: InitDataSimpleOption[];
+    pilgrimStatuses: InitDataSimpleOption[];
+    sources: InitDataSimpleOption[];
+    departureStatuses: InitDataSimpleOption[];
   };
 }
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { Fragment, ReactNode, useMemo, useState } from 'react';
+import { Fragment, ReactNode, useMemo, useState, useEffect } from 'react';
 
 import {
   Box,
@@ -37,7 +37,7 @@ import { BulkActionsDialog } from './components/bulk-actions';
 import { ImportDialog } from './components/import-dialog';
 import FilterDialog from './components/filter-dialog';
 import { paths } from 'src/routes/paths';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { useFetchPilgrims } from 'src/services/queries/pilgrims';
 import { Pilgrim } from 'src/services/api/pilgrims';
 
@@ -57,13 +57,51 @@ export default function PilgrimsView() {
   const [filterAnchorEl, setFilterAnchorEl] = useState<null | HTMLElement>(null);
   const filterMenuOpen = Boolean(filterAnchorEl);
   const router = useRouter();
+  const pathname = usePathname();
   const searchParams = useSearchParams();
   // Applied filters from dialog
   const [appliedFilters, setAppliedFilters] = useState<any>({});
 
-  // Get pagination from URL params
+  // Get pagination and filters from URL params
   const currentPage = Number(searchParams.get('page')) || 1;
   const currentLimit = Number(searchParams.get('per_page')) || 10;
+
+  // Get filter params from URL
+  const urlFilters = {
+    package_id: searchParams.get('package_id') || undefined,
+    city_id: searchParams.get('city_id') || undefined,
+    nationality_id: searchParams.get('nationality_id') || undefined,
+    transport_id: searchParams.get('transport_id') || undefined,
+    pilgrim_type_id: searchParams.get('pilgrim_type_id') || undefined,
+    source: searchParams.get('source') || undefined,
+    gender: searchParams.get('gender') || undefined,
+    departure_status: searchParams.get('departure_status') || undefined,
+    muhrim_status: searchParams.get('muhrim_status') || undefined,
+    status: searchParams.get('status') || undefined,
+  };
+
+  // Initialize appliedFilters from URL params on mount
+  useEffect(() => {
+    const filtersFromUrl: any = {};
+
+    if (searchParams.get('package_id')) filtersFromUrl.package = searchParams.get('package_id');
+    if (searchParams.get('city_id')) filtersFromUrl.city = searchParams.get('city_id');
+    if (searchParams.get('nationality_id'))
+      filtersFromUrl.nationality = searchParams.get('nationality_id');
+    if (searchParams.get('transport_id'))
+      filtersFromUrl.transport = searchParams.get('transport_id');
+    if (searchParams.get('pilgrim_type_id'))
+      filtersFromUrl.pilgrimType = searchParams.get('pilgrim_type_id');
+    if (searchParams.get('source')) filtersFromUrl.source = searchParams.get('source');
+    if (searchParams.get('gender')) filtersFromUrl.gender = searchParams.get('gender');
+    if (searchParams.get('departure_status'))
+      filtersFromUrl.marriedLate = searchParams.get('departure_status');
+    if (searchParams.get('muhrim_status'))
+      filtersFromUrl.muhrimStatus = searchParams.get('muhrim_status');
+    if (searchParams.get('status')) filtersFromUrl.pilgrimStatus = searchParams.get('status');
+
+    setAppliedFilters(filtersFromUrl);
+  }, [searchParams]);
 
   // Fetch pilgrims data using React Query
   const {
@@ -75,11 +113,9 @@ export default function PilgrimsView() {
     page: currentPage,
     limit: currentLimit,
     searchParam: searchTerm || undefined,
-    status: statusFilter !== 'all' ? statusFilter : undefined,
-    gender: genderFilter !== 'all' ? genderFilter : undefined,
+    // Use filter params from URL
+    ...urlFilters,
   });
-
-
 
   const filterOptions = [
     { key: 'gathering_point_type', label: t('Label.gathering_point_type') },
@@ -108,10 +144,84 @@ export default function PilgrimsView() {
 
   const handleApplyFilters = (filters: any) => {
     setAppliedFilters(filters);
+
+    // Update URL query parameters
+    const params = new URLSearchParams(searchParams.toString());
+
+    // Remove old filter params
+    params.delete('package_id');
+    params.delete('city_id');
+    params.delete('nationality_id');
+    params.delete('transport_id');
+    params.delete('pilgrim_type_id');
+    params.delete('source');
+    params.delete('gender');
+    params.delete('departure_status');
+    params.delete('muhrim_status');
+    params.delete('status');
+
+    // Add new filter params
+    if (filters.package) params.set('package_id', filters.package);
+    if (filters.city) params.set('city_id', filters.city);
+    if (filters.nationality) params.set('nationality_id', filters.nationality);
+    if (filters.transport) params.set('transport_id', filters.transport);
+    if (filters.pilgrimType) params.set('pilgrim_type_id', filters.pilgrimType);
+    if (filters.source) params.set('source', filters.source);
+    if (filters.gender) params.set('gender', filters.gender);
+    if (filters.marriedLate) params.set('departure_status', filters.marriedLate);
+    if (filters.muhrimStatus) params.set('muhrim_status', filters.muhrimStatus);
+    if (filters.pilgrimStatus) params.set('status', filters.pilgrimStatus);
+
+    // Reset to page 1 when filters change
+    params.set('page', '1');
+
+    // Update URL
+    router.push(`${pathname}?${params.toString()}`);
+  };
+
+  // Count active filters from URL params
+  const activeFiltersCount = useMemo(() => {
+    let count = 0;
+    if (urlFilters.package_id) count++;
+    if (urlFilters.city_id) count++;
+    if (urlFilters.nationality_id) count++;
+    if (urlFilters.transport_id) count++;
+    if (urlFilters.pilgrim_type_id) count++;
+    if (urlFilters.source) count++;
+    if (urlFilters.gender) count++;
+    if (urlFilters.departure_status) count++;
+    if (urlFilters.muhrim_status) count++;
+    if (urlFilters.status) count++;
+    return count;
+  }, [urlFilters]);
+
+  // Clear all filters
+  const handleClearAllFilters = () => {
+    setAppliedFilters({});
+
+    // Clear filter params from URL
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete('package_id');
+    params.delete('city_id');
+    params.delete('nationality_id');
+    params.delete('transport_id');
+    params.delete('pilgrim_type_id');
+    params.delete('source');
+    params.delete('gender');
+    params.delete('departure_status');
+    params.delete('muhrim_status');
+    params.delete('status');
+
+    // Reset to page 1
+    params.set('page', '1');
+
+    // Update URL
+    router.push(`${pathname}?${params.toString()}`);
   };
 
   const handleClearFilterSection = (section: string) => {
     const updatedFilters = { ...appliedFilters };
+    const params = new URLSearchParams(searchParams.toString());
 
     switch (section) {
       case 'personal':
@@ -122,6 +232,18 @@ export default function PilgrimsView() {
         updatedFilters.gender = '';
         updatedFilters.marriedLate = '';
         updatedFilters.bookingStatus = '';
+        updatedFilters.pilgrimType = '';
+        updatedFilters.muhrimStatus = '';
+        updatedFilters.pilgrimStatus = '';
+        // Clear URL params
+        params.delete('nationality_id');
+        params.delete('city_id');
+        params.delete('package_id');
+        params.delete('gender');
+        params.delete('departure_status');
+        params.delete('pilgrim_type_id');
+        params.delete('muhrim_status');
+        params.delete('status');
         break;
       case 'gathering':
         updatedFilters.gatheringPointType = '';
@@ -134,14 +256,21 @@ export default function PilgrimsView() {
         updatedFilters.campStatus = '';
         break;
       case 'transportation':
-        updatedFilters.busNumber = '';
+        updatedFilters.transport = '';
+        // Clear URL params
+        params.delete('transport_id');
         break;
       case 'health':
         updatedFilters.healthStatus = '';
         break;
       case 'supervision':
         updatedFilters.supervisors = [];
+        break;
+      case 'import':
         updatedFilters.importFile = '';
+        updatedFilters.source = '';
+        // Clear URL params
+        params.delete('source');
         break;
       case 'shipping':
         updatedFilters.shippingManagement = '';
@@ -150,6 +279,12 @@ export default function PilgrimsView() {
     }
 
     setAppliedFilters(updatedFilters);
+
+    // Reset to page 1
+    params.set('page', '1');
+
+    // Update URL
+    router.push(`${pathname}?${params.toString()}`);
   };
 
   const getActiveFilterSections = () => {
@@ -162,7 +297,10 @@ export default function PilgrimsView() {
       appliedFilters.badge ||
       appliedFilters.gender ||
       appliedFilters.marriedLate ||
-      appliedFilters.bookingStatus
+      appliedFilters.bookingStatus ||
+      appliedFilters.pilgrimType ||
+      appliedFilters.muhrimStatus ||
+      appliedFilters.pilgrimStatus
     ) {
       sections.push({ key: 'personal', label: t('Label.personal_information') });
     }
@@ -183,7 +321,7 @@ export default function PilgrimsView() {
       sections.push({ key: 'accommodation', label: t('Label.accommodation') });
     }
 
-    if (appliedFilters.busNumber) {
+    if (appliedFilters.transport) {
       sections.push({ key: 'transportation', label: t('Label.transportation_data') });
     }
 
@@ -191,8 +329,12 @@ export default function PilgrimsView() {
       sections.push({ key: 'health', label: t('Label.health_status_data') });
     }
 
-    if (appliedFilters.supervisors?.length > 0 || appliedFilters.importFile) {
+    if (appliedFilters.supervisors?.length > 0) {
       sections.push({ key: 'supervision', label: t('Label.supervision_organization') });
+    }
+
+    if (appliedFilters.importFile || appliedFilters.source) {
+      sections.push({ key: 'import', label: t('Label.import_file') });
     }
 
     if (appliedFilters.shippingManagement || appliedFilters.shipmentStatus) {
