@@ -287,7 +287,7 @@ export default function PilgrimsView() {
         updatedFilters.healthStatus = '';
         break;
       case 'supervision':
-        updatedFilters.supervisors = [];
+        updatedFilters.supervisor = null;
         break;
       case 'import':
         updatedFilters.importFile = '';
@@ -352,7 +352,7 @@ export default function PilgrimsView() {
       sections.push({ key: 'health', label: t('Label.health_status_data') });
     }
 
-    if (appliedFilters.supervisors?.length > 0) {
+    if (appliedFilters.supervisor) {
       sections.push({ key: 'supervision', label: t('Label.supervision_organization') });
     }
 

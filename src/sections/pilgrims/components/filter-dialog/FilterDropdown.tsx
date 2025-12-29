@@ -17,6 +17,7 @@ export interface DropdownOption {
   label: string;
   icon?: string;
   disabled?: boolean;
+  color?: string;
 }
 
 interface FilterDropdownProps {

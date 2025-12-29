@@ -40,6 +40,8 @@ import {
   transformPilgrimTypesToOptions,
   transformSimpleToDropdownOptions,
   transformSimpleToToggleOptions,
+  transformEmployeesToOptions,
+  transformTagsToOptions,
 } from './filter-dialog/utils';
 
 // ----------------------------------------------------------------------
@@ -115,6 +117,16 @@ export default function FilterDialog({
     [initData?.data?.departureStatuses]
   );
 
+  const tagOptions = useMemo(
+    () => transformTagsToOptions(initData?.data?.tags),
+    [initData?.data?.tags]
+  );
+
+  const employeeOptions = useMemo(
+    () => transformEmployeesToOptions(initData?.data?.employees),
+    [initData?.data?.employees]
+  );
+
   const searchValue = searchTerm.trim().toLowerCase();
   const matchesSearch = (texts: (string | undefined)[]) =>
     !searchValue || texts.some((text) => text?.toLowerCase().includes(searchValue));
@@ -173,6 +185,15 @@ export default function FilterDialog({
   // Get supervisors list from init data
   const supervisorsList = initData?.data?.employees || [];
 
+  // Employee interface for autocomplete
+  interface EmployeeOption {
+    id: number;
+    name: {
+      ar: string;
+      en: string;
+    };
+  }
+
   // Form state
   const [filters, setFilters] = useState({
     // Personal Information
@@ -205,7 +226,7 @@ export default function FilterDialog({
     healthStatus: '',
 
     // Supervision
-    supervisors: [] as any[],
+    supervisor: null as EmployeeOption | null,
 
     // Import File
     importFile: '',
@@ -239,7 +260,7 @@ export default function FilterDialog({
         campStatus: externalFilters.campStatus || '',
         transport: externalFilters.transport || '',
         healthStatus: externalFilters.healthStatus || '',
-        supervisors: externalFilters.supervisors || [],
+        supervisor: externalFilters.supervisor || null,
         importFile: externalFilters.importFile || '',
         source: externalFilters.source || '',
         shippingManagement: externalFilters.shippingManagement || '',
@@ -290,7 +311,7 @@ export default function FilterDialog({
         sectionsToExpand.push('health');
       }
 
-      if (updatedFilters.supervisors?.length > 0) {
+      if (updatedFilters.supervisor) {
         sectionsToExpand.push('supervision');
       }
 
@@ -334,7 +355,7 @@ export default function FilterDialog({
       campStatus: '',
       transport: '',
       healthStatus: '',
-      supervisors: [],
+      supervisor: null,
       importFile: '',
       source: '',
       shippingManagement: '',
@@ -545,34 +566,17 @@ export default function FilterDialog({
                         )
                       }
                     />
-                    <FormControl fullWidth>
-                      <Typography
-                        sx={{
-                          mb: 1,
-                          color: labelColor('Label.tags'),
-                          fontSize: 16,
-                          fontWeight: 400,
-                          lineHeight: '22px',
-                          textTransform: 'capitalize',
-                        }}
-                      >
-                        {t('Label.tags')}
-                      </Typography>
-                      <Select
-                        value={filters.badge}
-                        onChange={(e) => setFilters({ ...filters, badge: e.target.value })}
-                        displayEmpty
-                        sx={{ borderRadius: 1 }}
-                      >
-                        <MenuItem value="">{t('Label.select')}</MenuItem>
-                        <MenuItem value="near_bathroom">قريب من دورة مياة</MenuItem>
-                        <MenuItem value="central">قريب من مركز طبي</MenuItem>
-                        <MenuItem value="near_mosque">قريب من مسجد</MenuItem>
-                        <MenuItem value="near_transport">قريب من خدمة نقل</MenuItem>
-                        <MenuItem value="near_restaurant">قريب من خدمة غسيل</MenuItem>
-                        <MenuItem value="tent_entrance">قريب من مدخل المخيم</MenuItem>
-                      </Select>
-                    </FormControl>
+                    <FilterDropdown
+                      label={t('Label.tags')}
+                      value={filters.badge}
+                      onChange={(value: string) => setFilters({ ...filters, badge: value })}
+                      options={tagOptions}
+                      allLabel={t('Label.all')}
+                      disabled={initDataLoading}
+                      highlighted={
+                        !!(searchValue && t('Label.tags')?.toLowerCase().includes(searchValue))
+                      }
+                    />
                   </Stack>
                   <Stack direction="row" spacing={2}>
                     <FilterToggleGroup
@@ -1176,16 +1180,14 @@ export default function FilterDialog({
                       {t('Label.supervisors')}
                     </Typography>
                     <Autocomplete
-                      multiple
-                      value={filters.supervisors}
+                      value={filters.supervisor}
                       onChange={(event, newValue) => {
-                        setFilters({ ...filters, supervisors: newValue });
+                        setFilters({ ...filters, supervisor: newValue as EmployeeOption | null });
                       }}
-                      options={supervisorsList.filter(
-                        (supervisor) =>
-                          !filters.supervisors?.some((selected) => selected.id === supervisor.id)
-                      )}
-                      getOptionLabel={(option) => option.name}
+                      options={supervisorsList}
+                      getOptionLabel={(option) => option.name.ar}
+                      getOptionKey={(option) => option.id}
+                      isOptionEqualToValue={(option, value) => option.id === value.id}
                       renderInput={(params) => (
                         <TextField
                           {...params}
@@ -1197,21 +1199,14 @@ export default function FilterDialog({
                           }}
                         />
                       )}
-                      renderTags={(value, getTagProps) =>
-                        value.map((option, index) => (
-                          <Chip
-                            {...getTagProps({ index })}
-                            key={option.id}
-                            avatar={
-                              <Avatar sx={{ width: 24, height: 24 }}>
-                                {option.name.charAt(0)}
-                              </Avatar>
-                            }
-                            label={option.name}
-                            sx={{ borderRadius: 1 }}
-                          />
-                        ))
-                      }
+                      renderOption={(props, option) => {
+                        const { key, ...otherProps } = props as any;
+                        return (
+                          <li key={option.id} {...otherProps}>
+                            {option.name.ar}
+                          </li>
+                        );
+                      }}
                     />
                   </FormControl>
                 </Stack>

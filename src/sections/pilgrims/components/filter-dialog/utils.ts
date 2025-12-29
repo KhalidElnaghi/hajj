@@ -107,7 +107,6 @@ export const transformEmployeesToOptions = (
   return employees.map((item) => ({
     value: item.id,
     label: item.name.ar,
-    disabled: !item.status,
   }));
 };
 
@@ -122,5 +121,6 @@ export const transformTagsToOptions = (
     value: item.id,
     label: item.name.ar,
     disabled: !item.status,
+    color: item.color,
   }));
 };

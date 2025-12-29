@@ -335,6 +335,41 @@ export interface InitDataOption {
   [key: string]: any; // Allow additional properties
 }
 
+export interface Employee {
+  id: number;
+  emp_no: number;
+  name: {
+    ar: string;
+    en: string;
+  };
+  job_id: number;
+  role: number;
+  national_id: string;
+  mobile: string;
+  ID_expire_dt: string;
+  gender: boolean;
+  nationality_id: number;
+  job_number: string;
+  bank_account: string;
+  bank_name: string;
+  iban: string;
+  image: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Tag {
+  id: number;
+  name: {
+    ar: string;
+    en: string;
+  };
+  color: string;
+  status: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface InitDataSimpleOption {
   value: number;
   label: string;
@@ -396,8 +431,8 @@ export interface PilgrimInitDataResponse {
     }>;
     transports: InitDataOption[];
     pilgrimTypes: InitDataOption[];
-    employees: InitDataOption[];
-    tags: InitDataOption[];
+    employees: Employee[];
+    tags: Tag[];
     muhrimStatuses: InitDataSimpleOption[];
     genders: InitDataSimpleOption[];
     pilgrimStatuses: InitDataSimpleOption[];
