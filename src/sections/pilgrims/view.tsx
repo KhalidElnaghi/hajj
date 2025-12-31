@@ -79,6 +79,10 @@ export default function PilgrimsView() {
     nationality_id: searchParams.get('nationality_id') || undefined,
     transport_id: searchParams.get('transport_id') || undefined,
     pilgrim_type_id: searchParams.get('pilgrim_type_id') || undefined,
+    tag_id: searchParams.get('tag_id') || undefined,
+    camp_id: searchParams.get('camp_id') || undefined,
+    reservation_id: searchParams.get('reservation_id') || undefined,
+    supervisor_id: searchParams.get('supervisor_id') || undefined,
     source: searchParams.get('source') || undefined,
     gender: searchParams.get('gender') || undefined,
     departure_status: searchParams.get('departure_status') || undefined,
@@ -92,13 +96,31 @@ export default function PilgrimsView() {
 
     if (searchParams.get('query')) setSearchTerm(searchParams.get('query') || '');
     if (searchParams.get('package_id')) filtersFromUrl.package = searchParams.get('package_id');
-    if (searchParams.get('city_id')) filtersFromUrl.city = searchParams.get('city_id');
-    if (searchParams.get('nationality_id'))
-      filtersFromUrl.nationality = searchParams.get('nationality_id');
+    if (searchParams.get('city_id')) {
+      // Store as an object with id for the filter dialog
+      filtersFromUrl.city = { id: Number(searchParams.get('city_id')) };
+    }
+    if (searchParams.get('nationality_id')) {
+      // Store as an object with id for the filter dialog
+      filtersFromUrl.nationality = { id: Number(searchParams.get('nationality_id')) };
+    }
     if (searchParams.get('transport_id'))
       filtersFromUrl.transport = searchParams.get('transport_id');
     if (searchParams.get('pilgrim_type_id'))
       filtersFromUrl.pilgrimType = searchParams.get('pilgrim_type_id');
+    if (searchParams.get('tag_id')) filtersFromUrl.tag_id = searchParams.get('tag_id');
+    if (searchParams.get('camp_id')) {
+      // Store as an object with id for the filter dialog
+      filtersFromUrl.camp_id = { id: Number(searchParams.get('camp_id')) };
+    }
+    if (searchParams.get('reservation_id')) {
+      // Store as an object with id for the filter dialog
+      filtersFromUrl.reservation_id = { id: Number(searchParams.get('reservation_id')) };
+    }
+    if (searchParams.get('supervisor_id')) {
+      // Store as an object with id for the filter dialog
+      filtersFromUrl.supervisor = { id: Number(searchParams.get('supervisor_id')) };
+    }
     if (searchParams.get('source')) filtersFromUrl.source = searchParams.get('source');
     if (searchParams.get('gender')) filtersFromUrl.gender = searchParams.get('gender');
     if (searchParams.get('departure_status'))
@@ -183,6 +205,10 @@ export default function PilgrimsView() {
     params.delete('nationality_id');
     params.delete('transport_id');
     params.delete('pilgrim_type_id');
+    params.delete('tag_id');
+    params.delete('camp_id');
+    params.delete('reservation_id');
+    params.delete('supervisor_id');
     params.delete('source');
     params.delete('gender');
     params.delete('departure_status');
@@ -191,10 +217,15 @@ export default function PilgrimsView() {
 
     // Add new filter params
     if (filters.package) params.set('package_id', filters.package);
-    if (filters.city) params.set('city_id', filters.city);
-    if (filters.nationality) params.set('nationality_id', filters.nationality);
+    if (filters.city?.city_id) params.set('city_id', String(filters.city.city_id));
+    if (filters.nationality?.country?.id)
+      params.set('nationality_id', String(filters.nationality.country.id));
     if (filters.transport) params.set('transport_id', filters.transport);
     if (filters.pilgrimType) params.set('pilgrim_type_id', filters.pilgrimType);
+    if (filters.tag_id) params.set('tag_id', filters.tag_id);
+    if (filters.camp_id?.id) params.set('camp_id', String(filters.camp_id.id));
+    if (filters.reservation_id?.id) params.set('reservation_id', String(filters.reservation_id.id));
+    if (filters.supervisor?.id) params.set('supervisor_id', String(filters.supervisor.id));
     if (filters.source) params.set('source', filters.source);
     if (filters.gender) params.set('gender', filters.gender);
     if (filters.marriedLate) params.set('departure_status', filters.marriedLate);
@@ -216,6 +247,10 @@ export default function PilgrimsView() {
     if (urlFilters.nationality_id) count++;
     if (urlFilters.transport_id) count++;
     if (urlFilters.pilgrim_type_id) count++;
+    if (urlFilters.tag_id) count++;
+    if (urlFilters.camp_id) count++;
+    if (urlFilters.reservation_id) count++;
+    if (urlFilters.supervisor_id) count++;
     if (urlFilters.source) count++;
     if (urlFilters.gender) count++;
     if (urlFilters.departure_status) count++;
@@ -237,6 +272,10 @@ export default function PilgrimsView() {
     params.delete('nationality_id');
     params.delete('transport_id');
     params.delete('pilgrim_type_id');
+    params.delete('tag_id');
+    params.delete('camp_id');
+    params.delete('reservation_id');
+    params.delete('supervisor_id');
     params.delete('source');
     params.delete('gender');
     params.delete('departure_status');
@@ -256,13 +295,13 @@ export default function PilgrimsView() {
 
     switch (section) {
       case 'personal':
-        updatedFilters.nationality = '';
-        updatedFilters.city = '';
+        updatedFilters.nationality = null;
+        updatedFilters.city = null;
         updatedFilters.package = '';
-        updatedFilters.badge = '';
+        updatedFilters.tag_id = '';
         updatedFilters.gender = '';
         updatedFilters.marriedLate = '';
-        updatedFilters.bookingStatus = '';
+        updatedFilters.reservation_id = null;
         updatedFilters.pilgrimType = '';
         updatedFilters.muhrimStatus = '';
         updatedFilters.pilgrimStatus = '';
@@ -270,6 +309,8 @@ export default function PilgrimsView() {
         params.delete('nationality_id');
         params.delete('city_id');
         params.delete('package_id');
+        params.delete('tag_id');
+        params.delete('reservation_id');
         params.delete('gender');
         params.delete('departure_status');
         params.delete('pilgrim_type_id');
@@ -283,8 +324,10 @@ export default function PilgrimsView() {
         break;
       case 'accommodation':
         updatedFilters.roomNumber = '';
-        updatedFilters.accommodationDestination = '';
+        updatedFilters.camp_id = null;
         updatedFilters.campStatus = '';
+        // Clear URL params
+        params.delete('camp_id');
         break;
       case 'transportation':
         updatedFilters.transport = '';
@@ -296,6 +339,8 @@ export default function PilgrimsView() {
         break;
       case 'supervision':
         updatedFilters.supervisor = null;
+        // Clear URL params
+        params.delete('supervisor_id');
         break;
       case 'import':
         updatedFilters.importFile = '';
@@ -325,10 +370,10 @@ export default function PilgrimsView() {
       appliedFilters.nationality ||
       appliedFilters.city ||
       appliedFilters.package ||
-      appliedFilters.badge ||
+      appliedFilters.tag_id ||
       appliedFilters.gender ||
       appliedFilters.marriedLate ||
-      appliedFilters.bookingStatus ||
+      appliedFilters.reservation_id ||
       appliedFilters.pilgrimType ||
       appliedFilters.muhrimStatus ||
       appliedFilters.pilgrimStatus
@@ -346,7 +391,7 @@ export default function PilgrimsView() {
 
     if (
       appliedFilters.roomNumber ||
-      appliedFilters.accommodationDestination ||
+      appliedFilters.camp_id ||
       appliedFilters.campStatus
     ) {
       sections.push({ key: 'accommodation', label: t('Label.accommodation') });
@@ -508,11 +553,6 @@ export default function PilgrimsView() {
         </Box>
       );
     },
-    gender_name: (row) => (
-      <Typography variant="body2" sx={{ fontSize: 13 }}>
-        {t(`Label.${row.gender_name}`) || t('Label.not_available')}
-      </Typography>
-    ),
     nationality: (row) => {
       if (!row.nationality?.country) {
         return (
@@ -795,6 +835,10 @@ export default function PilgrimsView() {
                   flex: 1,
                   minWidth: { xs: '100%', md: 200 },
                   maxWidth: 200,
+                  transition: 'max-width 0.3s ease-in-out',
+                  '&:focus-within': {
+                    maxWidth: 350,
+                  },
                   '& .MuiOutlinedInput-root': {
                     height: 44,
                     borderRadius: 1,

@@ -433,11 +433,36 @@ export interface PilgrimInitDataResponse {
     pilgrimTypes: InitDataOption[];
     employees: Employee[];
     tags: Tag[];
+    camps: Array<{
+      id: number;
+      name: {
+        ar: string;
+        en: string;
+      };
+      name_ar: string;
+      name_en: string;
+      parent_id: number;
+      camp_no: string;
+      level_no: number;
+      level_status: boolean;
+      package_id: number;
+      ritual: number;
+      gender: number;
+      status: boolean;
+      capacity: number;
+      lat: string;
+      lng: string;
+      camp_color: string;
+      print_template_id: number | null;
+      created_at: string;
+      updated_at: string;
+    }>;
     muhrimStatuses: InitDataSimpleOption[];
     genders: InitDataSimpleOption[];
     pilgrimStatuses: InitDataSimpleOption[];
     sources: InitDataSimpleOption[];
     departureStatuses: InitDataSimpleOption[];
+    bookingStatuses: InitDataOption[];
   };
 }
 
