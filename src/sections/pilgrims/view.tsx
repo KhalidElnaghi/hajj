@@ -80,6 +80,7 @@ export default function PilgrimsView() {
     transport_id: searchParams.get('transport_id') || undefined,
     pilgrim_type_id: searchParams.get('pilgrim_type_id') || undefined,
     tag_id: searchParams.get('tag_id') || undefined,
+    camp_id: searchParams.get('camp_id') || undefined,
     supervisor_id: searchParams.get('supervisor_id') || undefined,
     source: searchParams.get('source') || undefined,
     gender: searchParams.get('gender') || undefined,
@@ -107,6 +108,10 @@ export default function PilgrimsView() {
     if (searchParams.get('pilgrim_type_id'))
       filtersFromUrl.pilgrimType = searchParams.get('pilgrim_type_id');
     if (searchParams.get('tag_id')) filtersFromUrl.tag_id = searchParams.get('tag_id');
+    if (searchParams.get('camp_id')) {
+      // Store as an object with id for the filter dialog
+      filtersFromUrl.camp_id = { id: Number(searchParams.get('camp_id')) };
+    }
     if (searchParams.get('supervisor_id')) {
       // Store as an object with id for the filter dialog
       filtersFromUrl.supervisor = { id: Number(searchParams.get('supervisor_id')) };
@@ -196,6 +201,7 @@ export default function PilgrimsView() {
     params.delete('transport_id');
     params.delete('pilgrim_type_id');
     params.delete('tag_id');
+    params.delete('camp_id');
     params.delete('supervisor_id');
     params.delete('source');
     params.delete('gender');
@@ -211,6 +217,7 @@ export default function PilgrimsView() {
     if (filters.transport) params.set('transport_id', filters.transport);
     if (filters.pilgrimType) params.set('pilgrim_type_id', filters.pilgrimType);
     if (filters.tag_id) params.set('tag_id', filters.tag_id);
+    if (filters.camp_id?.id) params.set('camp_id', String(filters.camp_id.id));
     if (filters.supervisor?.id) params.set('supervisor_id', String(filters.supervisor.id));
     if (filters.source) params.set('source', filters.source);
     if (filters.gender) params.set('gender', filters.gender);
@@ -234,6 +241,7 @@ export default function PilgrimsView() {
     if (urlFilters.transport_id) count++;
     if (urlFilters.pilgrim_type_id) count++;
     if (urlFilters.tag_id) count++;
+    if (urlFilters.camp_id) count++;
     if (urlFilters.supervisor_id) count++;
     if (urlFilters.source) count++;
     if (urlFilters.gender) count++;
@@ -257,6 +265,7 @@ export default function PilgrimsView() {
     params.delete('transport_id');
     params.delete('pilgrim_type_id');
     params.delete('tag_id');
+    params.delete('camp_id');
     params.delete('supervisor_id');
     params.delete('source');
     params.delete('gender');
@@ -305,8 +314,10 @@ export default function PilgrimsView() {
         break;
       case 'accommodation':
         updatedFilters.roomNumber = '';
-        updatedFilters.accommodationDestination = '';
+        updatedFilters.camp_id = null;
         updatedFilters.campStatus = '';
+        // Clear URL params
+        params.delete('camp_id');
         break;
       case 'transportation':
         updatedFilters.transport = '';
@@ -370,7 +381,7 @@ export default function PilgrimsView() {
 
     if (
       appliedFilters.roomNumber ||
-      appliedFilters.accommodationDestination ||
+      appliedFilters.camp_id ||
       appliedFilters.campStatus
     ) {
       sections.push({ key: 'accommodation', label: t('Label.accommodation') });

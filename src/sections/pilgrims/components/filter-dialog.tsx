@@ -188,6 +188,7 @@ export default function FilterDialog({
   // Get cities and countries lists from init data
   const citiesList = initData?.data?.cities || [];
   const countriesList = initData?.data?.countries || [];
+  const campsList = initData?.data?.camps || [];
 
   // Employee interface for autocomplete
   interface EmployeeOption {
@@ -224,6 +225,17 @@ export default function FilterDialog({
     };
   }
 
+  // Camp interface for autocomplete
+  interface CampOption {
+    id: number;
+    name: {
+      ar: string;
+      en: string;
+    };
+    camp_no: string;
+    status: boolean;
+  }
+
   // Form state
   const [filters, setFilters] = useState({
     // Personal Information
@@ -246,7 +258,7 @@ export default function FilterDialog({
 
     // Accommodation
     roomNumber: '',
-    accommodationDestination: '',
+    camp_id: null as CampOption | null,
     campStatus: '',
 
     // Transportation
@@ -311,6 +323,15 @@ export default function FilterDialog({
         }
       }
 
+      // Handle camp - if it only has an id, find the full object from campsList
+      let campValue = externalFilters.camp_id || null;
+      if (campValue && campValue.id && !campValue.name && campsList.length > 0) {
+        const foundCamp = campsList.find((camp: CampOption) => camp.id === campValue.id);
+        if (foundCamp) {
+          campValue = foundCamp;
+        }
+      }
+
       const updatedFilters = {
         nationality: nationalityValue,
         city: cityValue,
@@ -327,7 +348,7 @@ export default function FilterDialog({
         destination: externalFilters.destination || '',
         gatheringDate: externalFilters.gatheringDate || null,
         roomNumber: externalFilters.roomNumber || '',
-        accommodationDestination: externalFilters.accommodationDestination || '',
+        camp_id: campValue,
         campStatus: externalFilters.campStatus || '',
         transport: externalFilters.transport || '',
         healthStatus: externalFilters.healthStatus || '',
@@ -366,11 +387,7 @@ export default function FilterDialog({
         sectionsToExpand.push('gathering');
       }
 
-      if (
-        updatedFilters.roomNumber ||
-        updatedFilters.accommodationDestination ||
-        updatedFilters.campStatus
-      ) {
+      if (updatedFilters.roomNumber || updatedFilters.camp_id || updatedFilters.campStatus) {
         sectionsToExpand.push('accommodation');
       }
 
@@ -396,7 +413,7 @@ export default function FilterDialog({
 
       setExpandedSections(sectionsToExpand);
     }
-  }, [externalFilters, supervisorsList, citiesList, countriesList]);
+  }, [externalFilters, supervisorsList, citiesList, countriesList, campsList]);
 
   const handleAccordionChange =
     (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
@@ -422,7 +439,7 @@ export default function FilterDialog({
       destination: '',
       gatheringDate: null,
       roomNumber: '',
-      accommodationDestination: '',
+      camp_id: null,
       campStatus: '',
       transport: '',
       healthStatus: '',
@@ -610,7 +627,7 @@ export default function FilterDialog({
                         {t('Label.nationality')}
                       </Typography>
                       <Autocomplete
-                        value={filters.nationality}
+                        value={filters.nationality || null}
                         onChange={(event, newValue) => {
                           setFilters({ ...filters, nationality: newValue as CountryOption | null });
                         }}
@@ -670,7 +687,7 @@ export default function FilterDialog({
                         {t('Label.city')}
                       </Typography>
                       <Autocomplete
-                        value={filters.city}
+                        value={filters.city || null}
                         onChange={(event, newValue) => {
                           setFilters({ ...filters, city: newValue as CityOption | null });
                         }}
@@ -1065,25 +1082,50 @@ export default function FilterDialog({
                       <Typography
                         sx={{
                           mb: 1,
-                          color: labelColor('Label.room_group_number'),
+                          color: labelColor('Label.camp'),
                           fontSize: 16,
                           fontWeight: 400,
                           lineHeight: '22px',
                           textTransform: 'capitalize',
                         }}
                       >
-                        {t('Label.room_group_number')}
+                        {t('Label.camp')}
                       </Typography>
-                      <Select
-                        value={filters.accommodationDestination}
-                        onChange={(e) =>
-                          setFilters({ ...filters, accommodationDestination: e.target.value })
-                        }
-                        displayEmpty
-                        sx={{ borderRadius: 1 }}
-                      >
-                        <MenuItem value="">{t('Label.select')}</MenuItem>
-                      </Select>
+                      <Autocomplete
+                        value={filters.camp_id || null}
+                        onChange={(event, newValue) => {
+                          setFilters({ ...filters, camp_id: newValue as CampOption | null });
+                        }}
+                        options={campsList}
+                        getOptionLabel={(option) => option?.name?.ar || ''}
+                        getOptionKey={(option) => option?.id}
+                        isOptionEqualToValue={(option, value) => option?.id === value?.id}
+                        disabled={initDataLoading}
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            placeholder={t('Label.select')}
+                            sx={{
+                              '& .MuiOutlinedInput-root': {
+                                borderRadius: 1,
+                              },
+                            }}
+                          />
+                        )}
+                        renderOption={(props, option) => {
+                          const { key, ...otherProps } = props as any;
+                          return (
+                            <li key={option?.id} {...otherProps}>
+                              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                <Typography variant="body2">{option?.name?.ar || ''}</Typography>
+                                <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                                  ({option?.camp_no})
+                                </Typography>
+                              </Box>
+                            </li>
+                          );
+                        }}
+                      />
                     </FormControl>
                   </Stack>
                 </Stack>
@@ -1331,7 +1373,7 @@ export default function FilterDialog({
                       {t('Label.supervisors')}
                     </Typography>
                     <Autocomplete
-                      value={filters.supervisor}
+                      value={filters.supervisor || null}
                       onChange={(event, newValue) => {
                         setFilters({ ...filters, supervisor: newValue as EmployeeOption | null });
                       }}
