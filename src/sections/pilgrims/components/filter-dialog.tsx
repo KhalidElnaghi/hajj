@@ -531,8 +531,6 @@ export default function FilterDialog({
   };
 
   const handleApply = () => {
-    // Apply filters logic here
-    console.log('Applied filters:', filters);
     if (onApplyFilters) {
       onApplyFilters(filters);
     }

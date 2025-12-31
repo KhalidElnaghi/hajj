@@ -1210,12 +1210,10 @@ export interface DeletePilgrimResponse {
 }
 
 export const deletePilgrim = async (id: number): Promise<DeletePilgrimResponse> => {
-  console.log('deletePilgrim called with id:', id);
-  console.log('API endpoint:', `/pilgrims/pilgrims/${id}`);
+
 
   try {
     const response = await API.delete<DeletePilgrimResponse>(`/pilgrims/pilgrims/${id}`);
-    console.log('Delete API response:', response);
     return response;
   } catch (error: any) {
     console.error('Delete API error:', {

@@ -503,8 +503,6 @@ export default function PilgrimsView() {
   const handleDeleteConfirm = async () => {
     if (!pilgrimToDelete) return;
 
-    console.log('Deleting pilgrim:', pilgrimToDelete.id);
-
     try {
       const result = await deleteMutation.mutateAsync(pilgrimToDelete.id);
       console.log('Delete result:', result);

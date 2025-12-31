@@ -11,7 +11,7 @@ export default function ArrivalView({ onBack, onClose, selectedCount, onClearSel
   const [arrivalType, setArrivalType] = useState<'early' | 'late'>('early');
 
   const handleSave = () => {
-    console.log('Saving arrival type:', arrivalType);
+
     if (onClearSelection) {
       onClearSelection();
     }
