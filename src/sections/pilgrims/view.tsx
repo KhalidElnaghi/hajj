@@ -21,6 +21,8 @@ import {
   TableRow,
   TextField,
   Typography,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material';
 
 import { useLocale, useTranslations } from 'next-intl';
@@ -50,6 +52,8 @@ import { ConfirmDialog } from 'src/components/custom-dialog';
 export default function PilgrimsView() {
   const t = useTranslations('Pilgrims');
   const locale = useLocale();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const table = useTable();
   const bulkDialog = useDisclosure();
   const filterDialog = useDisclosure();
@@ -930,16 +934,18 @@ export default function PilgrimsView() {
               />
               {/* Absolute Filter Button with Dropdown - Only show if filters are applied */}
               {activeFilterCount > 0 && (
-                <Box>
+                <Box sx={{ width: { xs: '100%', md: 'auto' } }}>
                   <Button
                     variant="outlined"
                     onClick={handleFilterClick}
+                    fullWidth={isMobile}
                     sx={{
                       borderRadius: 1,
                       height: 44,
                       paddingInlineStart: 2,
                       paddingInlineEnd: 5,
-                      minWidth: 200,
+                      minWidth: { xs: '100%', md: 200 },
+                      width: { xs: '100%', md: 200 },
                       borderColor: '#e0e0e0',
                       color: '#333',
                       bgcolor: '#fff',
@@ -1043,6 +1049,7 @@ export default function PilgrimsView() {
                   variant={table.selected.length > 0 ? 'contained' : 'outlined'}
                   onClick={bulkDialog.onOpen}
                   disabled={table.selected.length === 0}
+                  fullWidth={isMobile}
                   sx={{
                     bgcolor:
                       table.selected.length === 0
@@ -1060,7 +1067,8 @@ export default function PilgrimsView() {
                     height: 44,
                     paddingInlineStart: 2,
                     paddingInlineEnd: 5,
-                    minWidth: 200,
+                    minWidth: isMobile ? '100%' : 200,
+                    width: isMobile ? '100%' : 200,
                     position: 'relative',
                     boxShadow: 'none',
                     border:
@@ -1130,17 +1138,24 @@ export default function PilgrimsView() {
               )}
             </Stack>
 
-            <Stack direction="row" spacing={1.25} alignItems="center">
+            <Stack
+              direction={'row'}
+              spacing={1.25}
+              alignItems={isMobile ? 'stretch' : 'center'}
+              sx={{ width: { xs: '100%', md: 'auto' } }}
+            >
               <Button
                 variant="outlined"
                 onClick={importDialog.onOpen}
                 startIcon={
-                  <Image
-                    src="/assets/images/pilgrims/import.svg"
-                    alt="import"
-                    width={15}
-                    height={15}
-                  />
+                  !isMobile ? (
+                    <Image
+                      src="/assets/images/pilgrims/import.svg"
+                      alt="import"
+                      width={15}
+                      height={15}
+                    />
+                  ) : undefined
                 }
                 sx={{
                   height: 44,
@@ -1160,12 +1175,14 @@ export default function PilgrimsView() {
               <Button
                 variant="outlined"
                 startIcon={
-                  <Image
-                    src="/assets/images/pilgrims/export.svg"
-                    alt="export"
-                    width={15}
-                    height={15}
-                  />
+                  !isMobile ? (
+                    <Image
+                      src="/assets/images/pilgrims/export.svg"
+                      alt="export"
+                      width={15}
+                      height={15}
+                    />
+                  ) : undefined
                 }
                 sx={{
                   height: 44,
@@ -1189,7 +1206,7 @@ export default function PilgrimsView() {
                   minWidth: 'auto',
                   width: 44,
                   height: 44,
-                  p: 0,
+                  p: isMobile ? '8px 12px' : 0,
                   borderRadius: 1,
                   borderColor: '#0d6efd',
                   color: '#0d6efd',

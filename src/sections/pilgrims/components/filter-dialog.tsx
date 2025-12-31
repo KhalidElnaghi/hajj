@@ -690,7 +690,7 @@ export default function FilterDialog({
               </AccordionSummary>
               <AccordionDetails sx={{ px: 3, pt: 3, pb: 3, bgcolor: 'transparent' }}>
                 <Stack spacing={2.5}>
-                  <Stack direction="row" spacing={2}>
+                  <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} sx={{ width: '100%' }}>
                     <FormControl fullWidth>
                       <Typography
                         sx={{
@@ -797,7 +797,7 @@ export default function FilterDialog({
                     </FormControl>
                   </Stack>
 
-                  <Stack direction="row" spacing={2}>
+                  <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} sx={{ width: '100%' }}>
                     <FilterDropdown
                       label={t('Label.package_name')}
                       value={filters.package}
@@ -824,7 +824,7 @@ export default function FilterDialog({
                       }
                     />
                   </Stack>
-                  <Stack direction="row" spacing={2}>
+                  <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} sx={{ width: '100%' }}>
                     <FormControl fullWidth>
                       <Typography
                         sx={{
@@ -887,7 +887,7 @@ export default function FilterDialog({
                       }
                     />
                   </Stack>
-                  <Stack direction="row" spacing={2}>
+                  <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} sx={{ width: '100%' }}>
                     <FilterDropdown
                       label={t('Label.pilgrim_type')}
                       value={filters.pilgrimType}
@@ -918,7 +918,7 @@ export default function FilterDialog({
                       }
                     />
                   </Stack>
-                  <Stack direction="row" spacing={2}>
+                  <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} sx={{ width: '100%' }}>
                     <FilterToggleGroup
                       label={t('Label.gender')}
                       value={filters.gender}
@@ -943,7 +943,7 @@ export default function FilterDialog({
                       }
                     />
                   </Stack>
-                  <Stack direction="row" spacing={2}>
+                  <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} sx={{ width: '100%' }}>
                     <FilterDropdown
                       label={t('Label.source')}
                       value={filters.source}
@@ -1022,7 +1022,7 @@ export default function FilterDialog({
               </AccordionSummary>
               <AccordionDetails sx={{ px: 3, pt: 3, pb: 3, bgcolor: 'transparent' }}>
                 <Stack spacing={2.5}>
-                  <Stack direction="row" spacing={2}>
+                  <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} sx={{ width: '100%' }}>
                     <FormControl fullWidth>
                       <Typography
                         sx={{
@@ -1097,7 +1097,7 @@ export default function FilterDialog({
                       </Select>
                     </FormControl>
                   </Stack>
-                  <Stack direction="row" spacing={2}>
+                  <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} sx={{ width: '100%' }}>
                     <FormControl fullWidth>
                       <Typography
                         sx={{
@@ -1245,7 +1245,7 @@ export default function FilterDialog({
               </AccordionSummary>
               <AccordionDetails sx={{ px: 3, pt: 3, pb: 3, bgcolor: 'transparent' }}>
                 <Stack spacing={2.5}>
-                  <Stack direction="row" spacing={2}>
+                  <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} sx={{ width: '100%' }}>
                     <FormControl fullWidth>
                       <Typography
                         sx={{
@@ -1638,7 +1638,7 @@ export default function FilterDialog({
               </AccordionSummary>
               <AccordionDetails sx={{ px: 3, pt: 3, pb: 3, bgcolor: 'transparent' }}>
                 <Stack spacing={2.5}>
-                  <Stack direction="row" spacing={2}>
+                  <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} sx={{ width: '100%' }}>
                     <FormControl fullWidth>
                       <Typography
                         sx={{
@@ -1718,120 +1718,6 @@ export default function FilterDialog({
               </AccordionDetails>
             </Accordion>
           )}
-
-          {/* Shipping Operations */}
-          {/* {showSection.shipping && (
-            <Accordion
-              expanded={
-                expandedSections.includes('shipping') || (!!searchValue && showSection.shipping)
-              }
-              onChange={handleAccordionChange('shipping')}
-              sx={{
-                boxShadow: 'none !important',
-                border: 'none',
-                '&:before': { display: 'none' },
-                mb: 0,
-              }}
-            >
-              <AccordionSummary
-                expandIcon={
-                  expandedSections.includes('shipping') ? (
-                    <Iconify icon="mdi:chevron-down" width={20} color="#64748B" />
-                  ) : (
-                    <Iconify icon="mdi:plus" width={20} color="#64748B" />
-                  )
-                }
-                sx={{
-                  px: 0,
-                  minHeight: 56,
-                  '& .MuiAccordionSummary-content': { my: 1.5, mx: 3 },
-                  '& .MuiAccordionSummary-content.Mui-expanded': { my: 1.5, mx: 3 },
-                  '& .MuiAccordionSummary-expandIconWrapper': { mr: 3 },
-                  bgcolor: 'transparent',
-                  position: 'relative',
-                  '&::after': {
-                    content: '""',
-                    position: 'absolute',
-                    bottom: 0,
-                    left: 24,
-                    right: 24,
-                    height: '1px',
-                    bgcolor: 'divider',
-                  },
-                  '&:hover': {
-                    bgcolor: 'transparent',
-                  },
-                  '&.Mui-expanded': {
-                    minHeight: 56,
-                    bgcolor: 'transparent',
-                  },
-                }}
-              >
-                <Typography
-                  sx={{
-                    color: '#64748B',
-                    fontSize: 18,
-                    fontWeight: 400,
-                    lineHeight: '23px',
-                  }}
-                >
-                  {t('Label.shipping_operations')}
-                </Typography>
-              </AccordionSummary>
-              <AccordionDetails sx={{ px: 3, pt: 3, pb: 3, bgcolor: 'transparent' }}>
-                <Stack spacing={2.5}>
-                  <Stack direction="row" spacing={2}>
-                    <FormControl fullWidth>
-                      <Typography
-                        sx={{
-                          mb: 1,
-                          color: labelColor('Label.shipping_tool'),
-                          fontSize: 16,
-                          fontWeight: 400,
-                          lineHeight: '22px',
-                          textTransform: 'capitalize',
-                        }}
-                      >
-                        {t('Label.shipping_tool')}
-                      </Typography>
-                      <Select
-                        value={filters.shippingManagement}
-                        onChange={(e) =>
-                          setFilters({ ...filters, shippingManagement: e.target.value })
-                        }
-                        displayEmpty
-                        sx={{ borderRadius: 1 }}
-                      >
-                        <MenuItem value="">{t('Label.select')}</MenuItem>
-                      </Select>
-                    </FormControl>
-                    <FormControl fullWidth>
-                      <Typography
-                        sx={{
-                          mb: 1,
-                          color: labelColor('Label.shipment_status'),
-                          fontSize: 16,
-                          fontWeight: 400,
-                          lineHeight: '22px',
-                          textTransform: 'capitalize',
-                        }}
-                      >
-                        {t('Label.shipment_status')}
-                      </Typography>
-                      <Select
-                        value={filters.shipmentStatus}
-                        onChange={(e) => setFilters({ ...filters, shipmentStatus: e.target.value })}
-                        displayEmpty
-                        sx={{ borderRadius: 1 }}
-                      >
-                        <MenuItem value="">{t('Label.select')}</MenuItem>
-                      </Select>
-                    </FormControl>
-                  </Stack>
-                </Stack>
-              </AccordionDetails>
-            </Accordion>
-          )} */}
         </Box>
       </DialogContent>
 
