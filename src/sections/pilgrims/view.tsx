@@ -88,6 +88,10 @@ export default function PilgrimsView() {
     departure_status: searchParams.get('departure_status') || undefined,
     muhrim_status: searchParams.get('muhrim_status') || undefined,
     status: searchParams.get('status') || undefined,
+    gathering_point_type_id: searchParams.get('gathering_point_type_id') || undefined,
+    gathering_point_id: searchParams.get('gathering_point_id') || undefined,
+    destination_id: searchParams.get('destination_id') || undefined,
+    gathering_point_time_id: searchParams.get('gathering_point_time_id') || undefined,
   };
 
   // Initialize appliedFilters and searchTerm from URL params on mount
@@ -128,6 +132,14 @@ export default function PilgrimsView() {
     if (searchParams.get('muhrim_status'))
       filtersFromUrl.muhrimStatus = searchParams.get('muhrim_status');
     if (searchParams.get('status')) filtersFromUrl.pilgrimStatus = searchParams.get('status');
+    if (searchParams.get('gathering_point_type_id'))
+      filtersFromUrl.gathering_point_type_id = searchParams.get('gathering_point_type_id');
+    if (searchParams.get('gathering_point_id'))
+      filtersFromUrl.gathering_point_id = searchParams.get('gathering_point_id');
+    if (searchParams.get('destination_id'))
+      filtersFromUrl.destination_id = searchParams.get('destination_id');
+    if (searchParams.get('gathering_point_time_id'))
+      filtersFromUrl.gathering_point_time_id = searchParams.get('gathering_point_time_id');
 
     setAppliedFilters(filtersFromUrl);
   }, [searchParams]);
@@ -214,6 +226,10 @@ export default function PilgrimsView() {
     params.delete('departure_status');
     params.delete('muhrim_status');
     params.delete('status');
+    params.delete('gathering_point_type_id');
+    params.delete('gathering_point_id');
+    params.delete('destination_id');
+    params.delete('gathering_point_time_id');
 
     // Add new filter params
     if (filters.package) params.set('package_id', filters.package);
@@ -231,6 +247,10 @@ export default function PilgrimsView() {
     if (filters.marriedLate) params.set('departure_status', filters.marriedLate);
     if (filters.muhrimStatus) params.set('muhrim_status', filters.muhrimStatus);
     if (filters.pilgrimStatus) params.set('status', filters.pilgrimStatus);
+    if (filters.gathering_point_type_id) params.set('gathering_point_type_id', filters.gathering_point_type_id);
+    if (filters.gathering_point_id) params.set('gathering_point_id', filters.gathering_point_id);
+    if (filters.destination_id) params.set('destination_id', filters.destination_id);
+    if (filters.gathering_point_time_id) params.set('gathering_point_time_id', filters.gathering_point_time_id);
 
     // Reset to page 1 when filters change
     params.set('page', '1');
@@ -256,6 +276,10 @@ export default function PilgrimsView() {
     if (urlFilters.departure_status) count++;
     if (urlFilters.muhrim_status) count++;
     if (urlFilters.status) count++;
+    if (urlFilters.gathering_point_type_id) count++;
+    if (urlFilters.gathering_point_id) count++;
+    if (urlFilters.destination_id) count++;
+    if (urlFilters.gathering_point_time_id) count++;
     return count;
   }, [urlFilters]);
 
@@ -281,6 +305,10 @@ export default function PilgrimsView() {
     params.delete('departure_status');
     params.delete('muhrim_status');
     params.delete('status');
+    params.delete('gathering_point_type_id');
+    params.delete('gathering_point_id');
+    params.delete('destination_id');
+    params.delete('gathering_point_time_id');
 
     // Reset to page 1
     params.set('page', '1');
@@ -318,9 +346,15 @@ export default function PilgrimsView() {
         params.delete('status');
         break;
       case 'gathering':
-        updatedFilters.gatheringPointType = '';
-        updatedFilters.gatheringPoint = '';
-        updatedFilters.destination = '';
+        updatedFilters.gathering_point_type_id = '';
+        updatedFilters.gathering_point_id = '';
+        updatedFilters.destination_id = '';
+        updatedFilters.gathering_point_time_id = '';
+        // Clear URL params
+        params.delete('gathering_point_type_id');
+        params.delete('gathering_point_id');
+        params.delete('destination_id');
+        params.delete('gathering_point_time_id');
         break;
       case 'accommodation':
         updatedFilters.roomNumber = '';
@@ -382,9 +416,10 @@ export default function PilgrimsView() {
     }
 
     if (
-      appliedFilters.gatheringPointType ||
-      appliedFilters.gatheringPoint ||
-      appliedFilters.destination
+      appliedFilters.gathering_point_type_id ||
+      appliedFilters.gathering_point_id ||
+      appliedFilters.destination_id ||
+      appliedFilters.gathering_point_time_id
     ) {
       sections.push({ key: 'gathering', label: t('Label.gathering_point') });
     }
@@ -694,25 +729,25 @@ export default function PilgrimsView() {
     {
       key: 'pilgrims',
       label: t('Label.total_pilgrims'),
-      value: pilgrimsData?.meta?.total?.toLocaleString() || '0',
+      value:  '751',
       icon: '/assets/images/pilgrims/total.svg',
     },
     {
       key: 'permits',
       label: t('Label.support_messages'),
-      value: '232',
+      value: '423',
       icon: '/assets/images/pilgrims/messages.svg',
     },
     {
       key: 'accommodation',
       label: t('Label.accommodation_capacity'),
-      value: '456',
+      value: '0',
       icon: '/assets/images/pilgrims/home.svg',
     },
     {
       key: 'gatherings',
       label: t('Label.tracked_locations'),
-      value: '16',
+      value: '0',
       icon: '/assets/images/pilgrims/location.svg',
     },
   ];

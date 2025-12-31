@@ -502,6 +502,7 @@
       "gathering_point_type": "Gathering Point Type",
       "gathering_points": "Gathering Points",
       "gathering_date": "Gathering Date",
+      "gathering_time": "Gathering Time",
       "gender": "Gender",
       "gender_female": "Female",
       "gender_male": "Male",

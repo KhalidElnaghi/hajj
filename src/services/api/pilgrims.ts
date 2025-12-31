@@ -463,6 +463,22 @@ export interface PilgrimInitDataResponse {
     sources: InitDataSimpleOption[];
     departureStatuses: InitDataSimpleOption[];
     bookingStatuses: InitDataOption[];
+    gatheringPointTypes?: Array<{
+      id: number;
+      name: {
+        ar: string;
+        en: string;
+      };
+      gathering_points?: Array<{
+        id: number;
+        name: {
+          ar: string;
+          en: string;
+        };
+        [key: string]: any;
+      }>;
+      [key: string]: any;
+    }>;
   };
 }
 
