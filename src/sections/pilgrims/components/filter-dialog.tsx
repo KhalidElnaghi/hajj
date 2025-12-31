@@ -86,68 +86,71 @@ export default function FilterDialog({
   const [searchTerm, setSearchTerm] = useState('');
   const [expandedSections, setExpandedSections] = useState<string[]>([]);
 
+  const getLocalizedName = (name?: { ar?: string; en?: string } | null) =>
+    name?.[locale as 'ar' | 'en'] || name?.en || name?.ar || '';
+
   // Fetch init data for dropdowns
   const { data: initData, isLoading: initDataLoading } = useFetchPilgrimInitData();
 
   // Transform API data to dropdown options
   const packageOptions = useMemo(
-    () => transformPackagesToOptions(initData?.data?.packages),
-    [initData?.data?.packages]
+    () => transformPackagesToOptions(initData?.data?.packages, locale),
+    [initData?.data?.packages, locale]
   );
 
   const cityOptions = useMemo(
-    () => transformCitiesToOptions(initData?.data?.cities),
-    [initData?.data?.cities]
+    () => transformCitiesToOptions(initData?.data?.cities, locale),
+    [initData?.data?.cities, locale]
   );
 
   const nationalityOptions = useMemo(
-    () => transformCountriesToOptions(initData?.data?.countries),
-    [initData?.data?.countries]
+    () => transformCountriesToOptions(initData?.data?.countries, locale),
+    [initData?.data?.countries, locale]
   );
 
   const transportOptions = useMemo(
-    () => transformTransportsToOptions(initData?.data?.transports),
-    [initData?.data?.transports]
+    () => transformTransportsToOptions(initData?.data?.transports, locale),
+    [initData?.data?.transports, locale]
   );
 
   const pilgrimTypeOptions = useMemo(
-    () => transformPilgrimTypesToOptions(initData?.data?.pilgrimTypes),
-    [initData?.data?.pilgrimTypes]
+    () => transformPilgrimTypesToOptions(initData?.data?.pilgrimTypes, locale),
+    [initData?.data?.pilgrimTypes, locale]
   );
 
   const muhrimStatusOptions = useMemo(
-    () => transformSimpleToDropdownOptions(initData?.data?.muhrimStatuses),
-    [initData?.data?.muhrimStatuses]
+    () => transformSimpleToDropdownOptions(initData?.data?.muhrimStatuses, locale),
+    [initData?.data?.muhrimStatuses, locale]
   );
 
   const pilgrimStatusOptions = useMemo(
-    () => transformSimpleToDropdownOptions(initData?.data?.pilgrimStatuses),
-    [initData?.data?.pilgrimStatuses]
+    () => transformSimpleToDropdownOptions(initData?.data?.pilgrimStatuses, locale),
+    [initData?.data?.pilgrimStatuses, locale]
   );
 
   const sourceOptions = useMemo(
-    () => transformSimpleToDropdownOptions(initData?.data?.sources),
-    [initData?.data?.sources]
+    () => transformSimpleToDropdownOptions(initData?.data?.sources, locale),
+    [initData?.data?.sources, locale]
   );
 
   const genderToggleOptions = useMemo(
-    () => transformSimpleToToggleOptions(initData?.data?.genders),
-    [initData?.data?.genders]
+    () => transformSimpleToToggleOptions(initData?.data?.genders, locale),
+    [initData?.data?.genders, locale]
   );
 
   const departureToggleOptions = useMemo(
-    () => transformSimpleToToggleOptions(initData?.data?.departureStatuses),
-    [initData?.data?.departureStatuses]
+    () => transformSimpleToToggleOptions(initData?.data?.departureStatuses, locale),
+    [initData?.data?.departureStatuses, locale]
   );
 
   const tagOptions = useMemo(
-    () => transformTagsToOptions(initData?.data?.tags),
-    [initData?.data?.tags]
+    () => transformTagsToOptions(initData?.data?.tags, locale),
+    [initData?.data?.tags, locale]
   );
 
   const employeeOptions = useMemo(
-    () => transformEmployeesToOptions(initData?.data?.employees),
-    [initData?.data?.employees]
+    () => transformEmployeesToOptions(initData?.data?.employees, locale),
+    [initData?.data?.employees, locale]
   );
 
   const searchValue = searchTerm.trim().toLowerCase();
@@ -707,7 +710,7 @@ export default function FilterDialog({
                           setFilters({ ...filters, nationality: newValue as CountryOption | null });
                         }}
                         options={countriesList}
-                        getOptionLabel={(option) => option?.country?.name?.ar || ''}
+                        getOptionLabel={(option) => getLocalizedName(option?.country?.name)}
                         getOptionKey={(option) => option?.country?.id}
                         isOptionEqualToValue={(option, value) =>
                           option?.country?.id === value?.country?.id
@@ -732,14 +735,14 @@ export default function FilterDialog({
                                 {option?.country?.flag?.svg && (
                                   <Image
                                     src={option.country.flag.svg}
-                                    alt={option?.country?.name?.ar || 'Flag'}
+                                    alt={getLocalizedName(option?.country?.name) || 'Flag'}
                                     width={20}
                                     height={15}
                                     style={{ borderRadius: 2 }}
                                   />
                                 )}
                                 <Typography variant="body2">
-                                  {option?.country?.name?.ar || ''}
+                                  {getLocalizedName(option?.country?.name) || ''}
                                 </Typography>
                               </Box>
                             </li>
@@ -767,7 +770,7 @@ export default function FilterDialog({
                           setFilters({ ...filters, city: newValue as CityOption | null });
                         }}
                         options={citiesList}
-                        getOptionLabel={(option) => option?.city?.name?.ar || ''}
+                        getOptionLabel={(option) => getLocalizedName(option?.city?.name)}
                         getOptionKey={(option) => option?.city_id}
                         isOptionEqualToValue={(option, value) => option?.city_id === value?.city_id}
                         disabled={initDataLoading}
@@ -786,7 +789,7 @@ export default function FilterDialog({
                           const { key, ...otherProps } = props as any;
                           return (
                             <li key={option?.city_id} {...otherProps}>
-                              {option?.city?.name?.ar || ''}
+                              {getLocalizedName(option?.city?.name) || ''}
                             </li>
                           );
                         }}
@@ -844,7 +847,7 @@ export default function FilterDialog({
                           });
                         }}
                         options={bookingStatusesList}
-                        getOptionLabel={(option) => option?.name?.ar || ''}
+                        getOptionLabel={(option) => getLocalizedName(option?.name)}
                         getOptionKey={(option) => option?.id}
                         isOptionEqualToValue={(option, value) => option?.id === value?.id}
                         disabled={initDataLoading}
@@ -863,7 +866,7 @@ export default function FilterDialog({
                           const { key, ...otherProps } = props as any;
                           return (
                             <li key={option?.id} {...otherProps}>
-                              {option?.name?.ar || ''}
+                              {getLocalizedName(option?.name) || ''}
                             </li>
                           );
                         }}
@@ -958,7 +961,7 @@ export default function FilterDialog({
             </Accordion>
           )}
 
-          {/* Assembly Points */}
+          {/* Gathering Points */}
           {showSection.gathering && (
             <Accordion
               expanded={
@@ -1051,7 +1054,7 @@ export default function FilterDialog({
                         <MenuItem value="">{t('Label.all')}</MenuItem>
                         {initData?.data?.gatheringPointTypes?.map((type: any) => (
                           <MenuItem key={type.id} value={type.id}>
-                            {type.name?.ar || type.name?.en}
+                            {getLocalizedName(type.name)}
                           </MenuItem>
                         ))}
                       </Select>
@@ -1088,7 +1091,7 @@ export default function FilterDialog({
                           ?.find((type: any) => type.id === filters.gathering_point_type_id)
                           ?.gathering_points?.map((point: any) => (
                             <MenuItem key={point.id} value={point.id}>
-                              {point.name?.ar || point.name?.en}
+                              {getLocalizedName(point.name)}
                             </MenuItem>
                           ))}
                       </Select>
@@ -1123,7 +1126,7 @@ export default function FilterDialog({
                           )
                           ?.destinations?.map((dest: any) => (
                             <MenuItem key={dest.id} value={dest.destination_id}>
-                              {dest.destination?.name?.ar || dest.destination?.name?.en}
+                              {getLocalizedName(dest.destination?.name)}
                             </MenuItem>
                           ))}
                       </Select>
@@ -1164,7 +1167,7 @@ export default function FilterDialog({
                                   {formatTime(time.from, locale)}
                                 </Typography>
                                 <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                                  ←
+                                  {locale === 'en' ? '→' : '←'}
                                 </Typography>
                                 <Typography variant="body2" sx={{ fontWeight: 500 }}>
                                   {formatTime(time.to, locale)}
@@ -1262,7 +1265,7 @@ export default function FilterDialog({
                           setFilters({ ...filters, camp_id: newValue as CampOption | null });
                         }}
                         options={campsList}
-                        getOptionLabel={(option) => option?.name?.ar || ''}
+                        getOptionLabel={(option) => getLocalizedName(option?.name)}
                         getOptionKey={(option) => option?.id}
                         isOptionEqualToValue={(option, value) => option?.id === value?.id}
                         disabled={initDataLoading}
@@ -1282,7 +1285,9 @@ export default function FilterDialog({
                           return (
                             <li key={option?.id} {...otherProps}>
                               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                <Typography variant="body2">{option?.name?.ar || ''}</Typography>
+                                <Typography variant="body2">
+                                  {getLocalizedName(option?.name) || ''}
+                                </Typography>
                                 <Typography variant="caption" sx={{ color: 'text.secondary' }}>
                                   ({option?.camp_no})
                                 </Typography>
@@ -1543,7 +1548,7 @@ export default function FilterDialog({
                         setFilters({ ...filters, supervisor: newValue as EmployeeOption | null });
                       }}
                       options={supervisorsList}
-                      getOptionLabel={(option) => option?.name?.ar || ''}
+                      getOptionLabel={(option) => getLocalizedName(option?.name)}
                       getOptionKey={(option) => option?.id}
                       isOptionEqualToValue={(option, value) => option?.id === value?.id}
                       renderInput={(params) => (
@@ -1561,7 +1566,7 @@ export default function FilterDialog({
                         const { key, ...otherProps } = props as any;
                         return (
                           <li key={option?.id} {...otherProps}>
-                            {option?.name?.ar || ''}
+                            {getLocalizedName(option?.name) || ''}
                           </li>
                         );
                       }}
