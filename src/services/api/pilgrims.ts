@@ -463,6 +463,47 @@ export interface PilgrimInitDataResponse {
     sources: InitDataSimpleOption[];
     departureStatuses: InitDataSimpleOption[];
     bookingStatuses: InitDataOption[];
+    gatheringPointTypes?: Array<{
+      id: number;
+      name: {
+        ar: string;
+        en: string;
+      };
+      gathering_points?: Array<{
+        id: number;
+        name: {
+          ar: string;
+          en: string;
+        };
+        [key: string]: any;
+      }>;
+      [key: string]: any;
+    }>;
+    importHistory?: Array<{
+      id: number;
+      source: string;
+      user_id: number;
+      user: {
+        id: number;
+        name: string;
+        email: string;
+      };
+      total_count: number;
+      added_count: number;
+      updated_count: number;
+      deleted_from_bus_count: number;
+      deleted_from_housing_count: number;
+      deleted_from_gathering_points: number;
+      changed_res_count: number;
+      repeated: number;
+      cancelled_count: number;
+      created_at: string;
+      updated_at: string;
+    }>;
+    excelActions?: Array<{
+      value: number;
+      label: string;
+    }>;
   };
 }
 
@@ -1169,12 +1210,10 @@ export interface DeletePilgrimResponse {
 }
 
 export const deletePilgrim = async (id: number): Promise<DeletePilgrimResponse> => {
-  console.log('deletePilgrim called with id:', id);
-  console.log('API endpoint:', `/pilgrims/pilgrims/${id}`);
+
 
   try {
     const response = await API.delete<DeletePilgrimResponse>(`/pilgrims/pilgrims/${id}`);
-    console.log('Delete API response:', response);
     return response;
   } catch (error: any) {
     console.error('Delete API error:', {

@@ -24,7 +24,7 @@ export default function AccommodationView({
   const [housingLocation, setHousingLocation] = useState('');
 
   const handleSave = () => {
-    console.log('Saving accommodation:', housingLocation);
+
     if (onClearSelection) {
       onClearSelection();
     }
