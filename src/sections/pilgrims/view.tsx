@@ -68,6 +68,7 @@ export default function PilgrimsView() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const { enqueueSnackbar } = useSnackbar();
+  const filterMenuWidth = isMobile ? '100%' : filterAnchorEl?.clientWidth || 250;
   // Applied filters from dialog
   const [appliedFilters, setAppliedFilters] = useState<any>({});
   const [pilgrimToDelete, setPilgrimToDelete] = useState<Pilgrim | null>(null);
@@ -1005,7 +1006,9 @@ export default function PilgrimsView() {
                       sx: {
                         mt: 1,
                         borderRadius: 1,
-                        minWidth: 250,
+                        width: filterMenuWidth,
+                        minWidth: filterMenuWidth,
+                        maxWidth: isMobile ? '100%' : undefined,
                         boxShadow: '0px 8px 24px rgba(0, 0, 0, 0.12)',
                       },
                     }}
