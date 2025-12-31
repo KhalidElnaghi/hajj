@@ -479,6 +479,27 @@ export interface PilgrimInitDataResponse {
       }>;
       [key: string]: any;
     }>;
+    importHistory?: Array<{
+      id: number;
+      source: string;
+      user_id: number;
+      user: {
+        id: number;
+        name: string;
+        email: string;
+      };
+      total_count: number;
+      added_count: number;
+      updated_count: number;
+      deleted_from_bus_count: number;
+      deleted_from_housing_count: number;
+      deleted_from_gathering_points: number;
+      changed_res_count: number;
+      repeated: number;
+      cancelled_count: number;
+      created_at: string;
+      updated_at: string;
+    }>;
   };
 }
 

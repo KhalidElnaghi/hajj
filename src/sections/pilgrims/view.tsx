@@ -92,6 +92,7 @@ export default function PilgrimsView() {
     gathering_point_id: searchParams.get('gathering_point_id') || undefined,
     destination_id: searchParams.get('destination_id') || undefined,
     gathering_point_time_id: searchParams.get('gathering_point_time_id') || undefined,
+    import_history_id: searchParams.get('import_history_id') || undefined,
   };
 
   // Initialize appliedFilters and searchTerm from URL params on mount
@@ -140,6 +141,8 @@ export default function PilgrimsView() {
       filtersFromUrl.destination_id = searchParams.get('destination_id');
     if (searchParams.get('gathering_point_time_id'))
       filtersFromUrl.gathering_point_time_id = searchParams.get('gathering_point_time_id');
+    if (searchParams.get('import_history_id'))
+      filtersFromUrl.import_history_id = searchParams.get('import_history_id');
 
     setAppliedFilters(filtersFromUrl);
   }, [searchParams]);
@@ -230,6 +233,7 @@ export default function PilgrimsView() {
     params.delete('gathering_point_id');
     params.delete('destination_id');
     params.delete('gathering_point_time_id');
+    params.delete('import_history_id');
 
     // Add new filter params
     if (filters.package) params.set('package_id', filters.package);
@@ -247,10 +251,13 @@ export default function PilgrimsView() {
     if (filters.marriedLate) params.set('departure_status', filters.marriedLate);
     if (filters.muhrimStatus) params.set('muhrim_status', filters.muhrimStatus);
     if (filters.pilgrimStatus) params.set('status', filters.pilgrimStatus);
-    if (filters.gathering_point_type_id) params.set('gathering_point_type_id', filters.gathering_point_type_id);
+    if (filters.gathering_point_type_id)
+      params.set('gathering_point_type_id', filters.gathering_point_type_id);
     if (filters.gathering_point_id) params.set('gathering_point_id', filters.gathering_point_id);
     if (filters.destination_id) params.set('destination_id', filters.destination_id);
-    if (filters.gathering_point_time_id) params.set('gathering_point_time_id', filters.gathering_point_time_id);
+    if (filters.gathering_point_time_id)
+      params.set('gathering_point_time_id', filters.gathering_point_time_id);
+    if (filters.import_history_id) params.set('import_history_id', filters.import_history_id);
 
     // Reset to page 1 when filters change
     params.set('page', '1');
@@ -280,6 +287,7 @@ export default function PilgrimsView() {
     if (urlFilters.gathering_point_id) count++;
     if (urlFilters.destination_id) count++;
     if (urlFilters.gathering_point_time_id) count++;
+    if (urlFilters.import_history_id) count++;
     return count;
   }, [urlFilters]);
 
@@ -309,6 +317,7 @@ export default function PilgrimsView() {
     params.delete('gathering_point_id');
     params.delete('destination_id');
     params.delete('gathering_point_time_id');
+    params.delete('import_history_id');
 
     // Reset to page 1
     params.set('page', '1');
@@ -379,8 +388,10 @@ export default function PilgrimsView() {
       case 'import':
         updatedFilters.importFile = '';
         updatedFilters.source = '';
+        updatedFilters.import_history_id = '';
         // Clear URL params
         params.delete('source');
+        params.delete('import_history_id');
         break;
       case 'shipping':
         updatedFilters.shippingManagement = '';
@@ -424,11 +435,7 @@ export default function PilgrimsView() {
       sections.push({ key: 'gathering', label: t('Label.gathering_point') });
     }
 
-    if (
-      appliedFilters.roomNumber ||
-      appliedFilters.camp_id ||
-      appliedFilters.campStatus
-    ) {
+    if (appliedFilters.roomNumber || appliedFilters.camp_id || appliedFilters.campStatus) {
       sections.push({ key: 'accommodation', label: t('Label.accommodation') });
     }
 
@@ -444,7 +451,7 @@ export default function PilgrimsView() {
       sections.push({ key: 'supervision', label: t('Label.supervision_organization') });
     }
 
-    if (appliedFilters.importFile || appliedFilters.source) {
+    if (appliedFilters.importFile || appliedFilters.source || appliedFilters.import_history_id) {
       sections.push({ key: 'import', label: t('Label.import_file') });
     }
 
@@ -729,7 +736,7 @@ export default function PilgrimsView() {
     {
       key: 'pilgrims',
       label: t('Label.total_pilgrims'),
-      value:  '751',
+      value: '751',
       icon: '/assets/images/pilgrims/total.svg',
     },
     {

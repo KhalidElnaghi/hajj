@@ -213,6 +213,7 @@ export default function FilterDialog({
   const countriesList = initData?.data?.countries || [];
   const campsList = initData?.data?.camps || [];
   const bookingStatusesList = initData?.data?.bookingStatuses || [];
+  const importHistoryList = initData?.data?.importHistory || [];
 
   // Employee interface for autocomplete
   interface EmployeeOption {
@@ -307,6 +308,7 @@ export default function FilterDialog({
     // Import File
     importFile: '',
     source: '',
+    import_history_id: '',
 
     // Shipping Operations
     shippingManagement: '',
@@ -422,6 +424,7 @@ export default function FilterDialog({
         supervisor: supervisorValue,
         importFile: externalFilters.importFile || '',
         source: externalFilters.source || '',
+        import_history_id: externalFilters.import_history_id || '',
         shippingManagement: externalFilters.shippingManagement || '',
         shipmentStatus: externalFilters.shipmentStatus || '',
       };
@@ -471,7 +474,7 @@ export default function FilterDialog({
         sectionsToExpand.push('supervision');
       }
 
-      if (updatedFilters.importFile || updatedFilters.source) {
+      if (updatedFilters.importFile || updatedFilters.source || updatedFilters.import_history_id) {
         sectionsToExpand.push('import');
       }
 
@@ -514,6 +517,7 @@ export default function FilterDialog({
       supervisor: null,
       importFile: '',
       source: '',
+      import_history_id: '',
       shippingManagement: '',
       shipmentStatus: '',
     });
@@ -930,6 +934,19 @@ export default function FilterDialog({
                         !!(
                           searchValue && t('Label.early_late')?.toLowerCase().includes(searchValue)
                         )
+                      }
+                    />
+                  </Stack>
+                  <Stack direction="row" spacing={2}>
+                    <FilterDropdown
+                      label={t('Label.source')}
+                      value={filters.source}
+                      onChange={(value: string) => setFilters({ ...filters, source: value })}
+                      options={sourceOptions}
+                      allLabel={t('Label.all')}
+                      disabled={initDataLoading}
+                      highlighted={
+                        !!(searchValue && t('Label.source')?.toLowerCase().includes(searchValue))
                       }
                     />
                   </Stack>
@@ -1637,17 +1654,49 @@ export default function FilterDialog({
                       </Select>
                     </FormControl>
 
-                    <FilterDropdown
-                      label={t('Label.source')}
-                      value={filters.source}
-                      onChange={(value: string) => setFilters({ ...filters, source: value })}
-                      options={sourceOptions}
-                      allLabel={t('Label.all')}
-                      disabled={initDataLoading}
-                      highlighted={
-                        !!(searchValue && t('Label.source')?.toLowerCase().includes(searchValue))
-                      }
-                    />
+                    <FormControl fullWidth>
+                      <Typography
+                        sx={{
+                          mb: 1,
+                          color: labelColor('Label.import_history'),
+                          fontSize: 16,
+                          fontWeight: 400,
+                          lineHeight: '22px',
+                          textTransform: 'capitalize',
+                        }}
+                      >
+                        {t('Label.import_history')}
+                      </Typography>
+                      <Select
+                        value={filters.import_history_id}
+                        onChange={(e) =>
+                          setFilters({ ...filters, import_history_id: e.target.value })
+                        }
+                        displayEmpty
+                        disabled={initDataLoading}
+                        sx={{ borderRadius: 1 }}
+                      >
+                        <MenuItem value="">{t('Label.all')}</MenuItem>
+                        {importHistoryList?.map((history: any) => (
+                          <MenuItem key={history.id} value={history.id}>
+                            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+                              <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                                {history.user?.name} - {history.source}
+                              </Typography>
+                              <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                                {new Date(history.created_at).toLocaleDateString(locale, {
+                                  year: 'numeric',
+                                  month: 'short',
+                                  day: 'numeric',
+                                  hour: '2-digit',
+                                  minute: '2-digit',
+                                })}
+                              </Typography>
+                            </Box>
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
                   </Stack>
                 </Stack>
               </AccordionDetails>
