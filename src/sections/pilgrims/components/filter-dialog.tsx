@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -290,9 +290,18 @@ export default function FilterDialog({
     shipmentStatus: '',
   });
 
+  // Ref to track if we've synced with external filters
+  const prevExternalFiltersRef = useRef<string>('');
+
   // Sync with external filters when they change
   useEffect(() => {
     if (externalFilters) {
+      // Check if external filters actually changed
+      const externalFiltersStr = JSON.stringify(externalFilters);
+      if (prevExternalFiltersRef.current === externalFiltersStr) {
+        return; // No change, skip update
+      }
+      prevExternalFiltersRef.current = externalFiltersStr;
       // Handle supervisor - if it only has an id, find the full object from supervisorsList
       let supervisorValue = externalFilters.supervisor || null;
       if (
