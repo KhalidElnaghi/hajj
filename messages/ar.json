@@ -501,7 +501,8 @@
       "gathering_point": "نقطة التجمع",
       "gathering_point_type": "نوع نقطة التجمع",
       "gathering_points": "نقاط التجمع",
-      "gathering_date": "تاريخ التجمع",
+      "gathering_date": "وقت التجمع",
+      "gathering_time": "وقت التجمع",
       "gender": "الجنس",
       "gender_female": "أنثى",
       "gender_male": "ذكر",
@@ -512,6 +513,7 @@
       "housing_location_in_rituals": "موقع السكن في المشاعر",
       "import": "استيراد",
       "import_file": "ملف الإستيراد",
+      "import_history": "تاريخ الاستيراد",
       "import_statistics_subtitle": "تفاصيل البيانات التي سيتم استيرادها",
       "import_statistics_title": "إحصائيات الاستيراد",
       "late": "متأخر",
@@ -544,6 +546,7 @@
       "room_group_number": "رقم الحجرة / الفرقة",
       "room_number": "رقم الغرفة",
       "select": "اختر",
+      "not_selected": "غير محدد",
       "send_emergency_message": "رسائل نصية للحجاج",
       "send_receipt_notification": "إرسال تنبية استلام",
       "shipment_status": "حالة الشحنات",
@@ -634,7 +637,8 @@
       "save": "حفظ",
       "saving": "جاري الحفظ",
       "Female": "أنثى",
-      "Male": "ذكر"
+      "Male": "ذكر",
+      "excel_action_status": "إجراءات ملف الاستيراد"
     },
     "Button": {
       "add": "إضافة",

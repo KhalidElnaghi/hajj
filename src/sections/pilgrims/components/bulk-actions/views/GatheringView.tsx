@@ -14,7 +14,7 @@ export default function GatheringView({ onBack, onClose, selectedCount, onClearS
   const [nationality, setNationality] = useState('');
 
   const handleSave = () => {
-    console.log('Saving gathering:', { tripType, gatheringPoint, destination, nationality });
+
     if (onClearSelection) {
       onClearSelection();
     }

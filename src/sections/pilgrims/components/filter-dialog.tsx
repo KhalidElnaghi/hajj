@@ -25,10 +25,9 @@ import {
   Avatar,
   Autocomplete,
 } from '@mui/material';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import Iconify from 'src/components/iconify';
 import Image from 'next/image';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { useFetchPilgrimInitData } from 'src/services/queries/pilgrims';
 import FilterDropdown from './filter-dialog/FilterDropdown';
 import FilterToggleGroup from './filter-dialog/FilterToggleGroup';
@@ -46,6 +45,29 @@ import {
 
 // ----------------------------------------------------------------------
 
+// Helper function to format time in 12-hour format with AM/PM
+const formatTime = (time: string, locale: string = 'ar') => {
+  if (!time) return '';
+
+  const [hours, minutes] = time.split(':');
+  const hour = parseInt(hours, 10);
+  const minute = minutes || '00';
+
+  const isArabic = locale === 'ar';
+  const am = isArabic ? 'ص' : 'AM';
+  const pm = isArabic ? 'م' : 'PM';
+
+  if (hour === 0) {
+    return `12:${minute} ${am}`; // Midnight
+  } else if (hour < 12) {
+    return `${hour}:${minute} ${am}`; // AM
+  } else if (hour === 12) {
+    return `12:${minute} ${pm}`; // Noon
+  } else {
+    return `${hour - 12}:${minute} ${pm}`; // PM
+  }
+};
+
 type FilterDialogProps = {
   open: boolean;
   onClose: () => void;
@@ -60,6 +82,7 @@ export default function FilterDialog({
   externalFilters,
 }: FilterDialogProps) {
   const t = useTranslations('Pilgrims');
+  const locale = useLocale();
   const [searchTerm, setSearchTerm] = useState('');
   const [expandedSections, setExpandedSections] = useState<string[]>([]);
 
@@ -190,6 +213,8 @@ export default function FilterDialog({
   const countriesList = initData?.data?.countries || [];
   const campsList = initData?.data?.camps || [];
   const bookingStatusesList = initData?.data?.bookingStatuses || [];
+  const importHistoryList = initData?.data?.importHistory || [];
+  const excelActionsList = initData?.data?.excelActions || [];
 
   // Employee interface for autocomplete
   interface EmployeeOption {
@@ -262,10 +287,10 @@ export default function FilterDialog({
     pilgrimStatus: '',
 
     // Assembly Points
-    gatheringPointType: '',
-    gatheringPoint: '',
-    destination: '',
-    gatheringDate: null as any,
+    gathering_point_type_id: '' as string | number,
+    gathering_point_id: '' as string | number,
+    destination_id: '' as string | number,
+    gathering_point_time_id: '' as string | number,
 
     // Accommodation
     roomNumber: '',
@@ -282,8 +307,9 @@ export default function FilterDialog({
     supervisor: null as EmployeeOption | null,
 
     // Import File
-    importFile: '',
+    excel_action_status: '',
     source: '',
+    import_history_id: '',
 
     // Shipping Operations
     shippingManagement: '',
@@ -379,18 +405,27 @@ export default function FilterDialog({
         pilgrimType: externalFilters.pilgrimType || '',
         muhrimStatus: externalFilters.muhrimStatus || '',
         pilgrimStatus: externalFilters.pilgrimStatus || '',
-        gatheringPointType: externalFilters.gatheringPointType || '',
-        gatheringPoint: externalFilters.gatheringPoint || '',
-        destination: externalFilters.destination || '',
-        gatheringDate: externalFilters.gatheringDate || null,
+        gathering_point_type_id: externalFilters.gathering_point_type_id
+          ? Number(externalFilters.gathering_point_type_id)
+          : '',
+        gathering_point_id: externalFilters.gathering_point_id
+          ? Number(externalFilters.gathering_point_id)
+          : '',
+        destination_id: externalFilters.destination_id
+          ? Number(externalFilters.destination_id)
+          : '',
+        gathering_point_time_id: externalFilters.gathering_point_time_id
+          ? Number(externalFilters.gathering_point_time_id)
+          : '',
         roomNumber: externalFilters.roomNumber || '',
         camp_id: campValue,
         campStatus: externalFilters.campStatus || '',
         transport: externalFilters.transport || '',
         healthStatus: externalFilters.healthStatus || '',
         supervisor: supervisorValue,
-        importFile: externalFilters.importFile || '',
+        excel_action_status: externalFilters.excel_action_status || '',
         source: externalFilters.source || '',
+        import_history_id: externalFilters.import_history_id || '',
         shippingManagement: externalFilters.shippingManagement || '',
         shipmentStatus: externalFilters.shipmentStatus || '',
       };
@@ -416,9 +451,10 @@ export default function FilterDialog({
       }
 
       if (
-        updatedFilters.gatheringPointType ||
-        updatedFilters.gatheringPoint ||
-        updatedFilters.destination
+        updatedFilters.gathering_point_type_id ||
+        updatedFilters.gathering_point_id ||
+        updatedFilters.destination_id ||
+        updatedFilters.gathering_point_time_id
       ) {
         sectionsToExpand.push('gathering');
       }
@@ -439,7 +475,11 @@ export default function FilterDialog({
         sectionsToExpand.push('supervision');
       }
 
-      if (updatedFilters.importFile || updatedFilters.source) {
+      if (
+        updatedFilters.excel_action_status ||
+        updatedFilters.source ||
+        updatedFilters.import_history_id
+      ) {
         sectionsToExpand.push('import');
       }
 
@@ -470,18 +510,19 @@ export default function FilterDialog({
       pilgrimType: '',
       muhrimStatus: '',
       pilgrimStatus: '',
-      gatheringPointType: '',
-      gatheringPoint: '',
-      destination: '',
-      gatheringDate: null,
+      gathering_point_type_id: '',
+      gathering_point_id: '',
+      destination_id: '',
+      gathering_point_time_id: '',
       roomNumber: '',
       camp_id: null,
       campStatus: '',
       transport: '',
       healthStatus: '',
       supervisor: null,
-      importFile: '',
+      excel_action_status: '',
       source: '',
+      import_history_id: '',
       shippingManagement: '',
       shipmentStatus: '',
     });
@@ -490,8 +531,6 @@ export default function FilterDialog({
   };
 
   const handleApply = () => {
-    // Apply filters logic here
-    console.log('Applied filters:', filters);
     if (onApplyFilters) {
       onApplyFilters(filters);
     }
@@ -901,6 +940,19 @@ export default function FilterDialog({
                       }
                     />
                   </Stack>
+                  <Stack direction="row" spacing={2}>
+                    <FilterDropdown
+                      label={t('Label.source')}
+                      value={filters.source}
+                      onChange={(value: string) => setFilters({ ...filters, source: value })}
+                      options={sourceOptions}
+                      allLabel={t('Label.all')}
+                      disabled={initDataLoading}
+                      highlighted={
+                        !!(searchValue && t('Label.source')?.toLowerCase().includes(searchValue))
+                      }
+                    />
+                  </Stack>
                 </Stack>
               </AccordionDetails>
             </Accordion>
@@ -982,17 +1034,26 @@ export default function FilterDialog({
                         {t('Label.gathering_point_type')}
                       </Typography>
                       <Select
-                        value={filters.gatheringPointType}
-                        onChange={(e) =>
-                          setFilters({ ...filters, gatheringPointType: e.target.value })
-                        }
+                        value={filters.gathering_point_type_id}
+                        onChange={(e) => {
+                          setFilters({
+                            ...filters,
+                            gathering_point_type_id: e.target.value,
+                            gathering_point_id: '',
+                            destination_id: '',
+                            gathering_point_time_id: '',
+                          });
+                        }}
                         displayEmpty
+                        disabled={initDataLoading}
                         sx={{ borderRadius: 1 }}
                       >
-                        <MenuItem value="">{t('Label.select')}</MenuItem>
-                        <MenuItem value="jeddah">جدة</MenuItem>
-                        <MenuItem value="riyadh">الرياض</MenuItem>
-                        <MenuItem value="dammam">الدمام</MenuItem>
+                        <MenuItem value="">{t('Label.all')}</MenuItem>
+                        {initData?.data?.gatheringPointTypes?.map((type: any) => (
+                          <MenuItem key={type.id} value={type.id}>
+                            {type.name?.ar || type.name?.en}
+                          </MenuItem>
+                        ))}
                       </Select>
                     </FormControl>
                     <FormControl fullWidth>
@@ -1009,12 +1070,27 @@ export default function FilterDialog({
                         {t('Label.gathering_point')}
                       </Typography>
                       <Select
-                        value={filters.gatheringPoint}
-                        onChange={(e) => setFilters({ ...filters, gatheringPoint: e.target.value })}
+                        value={filters.gathering_point_id}
+                        onChange={(e) => {
+                          setFilters({
+                            ...filters,
+                            gathering_point_id: e.target.value,
+                            destination_id: '',
+                            gathering_point_time_id: '',
+                          });
+                        }}
                         displayEmpty
+                        disabled={!filters.gathering_point_type_id || initDataLoading}
                         sx={{ borderRadius: 1 }}
                       >
-                        <MenuItem value="">{t('Label.select')}</MenuItem>
+                        <MenuItem value="">{t('Label.all')}</MenuItem>
+                        {initData?.data?.gatheringPointTypes
+                          ?.find((type: any) => type.id === filters.gathering_point_type_id)
+                          ?.gathering_points?.map((point: any) => (
+                            <MenuItem key={point.id} value={point.id}>
+                              {point.name?.ar || point.name?.en}
+                            </MenuItem>
+                          ))}
                       </Select>
                     </FormControl>
                   </Stack>
@@ -1033,12 +1109,23 @@ export default function FilterDialog({
                         {t('Label.destination')}
                       </Typography>
                       <Select
-                        value={filters.destination}
-                        onChange={(e) => setFilters({ ...filters, destination: e.target.value })}
+                        value={filters.destination_id}
+                        onChange={(e) => setFilters({ ...filters, destination_id: e.target.value })}
                         displayEmpty
+                        disabled={!filters.gathering_point_id || initDataLoading}
                         sx={{ borderRadius: 1 }}
                       >
-                        <MenuItem value="">{t('Label.select')}</MenuItem>
+                        <MenuItem value="">{t('Label.all')}</MenuItem>
+                        {initData?.data?.gatheringPointTypes
+                          ?.find((type: any) => type.id === filters.gathering_point_type_id)
+                          ?.gathering_points?.find(
+                            (point: any) => point.id === filters.gathering_point_id
+                          )
+                          ?.destinations?.map((dest: any) => (
+                            <MenuItem key={dest.id} value={dest.destination_id}>
+                              {dest.destination?.name?.ar || dest.destination?.name?.en}
+                            </MenuItem>
+                          ))}
                       </Select>
                     </FormControl>
 
@@ -1046,25 +1133,46 @@ export default function FilterDialog({
                       <Typography
                         sx={{
                           mb: 1,
-                          color: labelColor('Label.gathering_date'),
+                          color: labelColor('Label.gathering_time'),
                           fontSize: 16,
                           fontWeight: 400,
                           lineHeight: '22px',
                           textTransform: 'capitalize',
                         }}
                       >
-                        {t('Label.gathering_date')}
+                        {t('Label.gathering_time')}
                       </Typography>
-                      <DatePicker
-                        value={filters.gatheringDate}
-                        onChange={(newValue) => setFilters({ ...filters, gatheringDate: newValue })}
-                        slotProps={{
-                          textField: {
-                            fullWidth: true,
-                            placeholder: t('Label.select'),
-                          },
-                        }}
-                      />
+                      <Select
+                        value={filters.gathering_point_time_id}
+                        onChange={(e) =>
+                          setFilters({ ...filters, gathering_point_time_id: e.target.value })
+                        }
+                        displayEmpty
+                        disabled={!filters.gathering_point_id || initDataLoading}
+                        sx={{ borderRadius: 1 }}
+                      >
+                        <MenuItem value="">{t('Label.all')}</MenuItem>
+                        {initData?.data?.gatheringPointTypes
+                          ?.find((type: any) => type.id === filters.gathering_point_type_id)
+                          ?.gathering_points?.find(
+                            (point: any) => point.id === filters.gathering_point_id
+                          )
+                          ?.times?.map((time: any) => (
+                            <MenuItem key={time.id} value={time.id}>
+                              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                                  {formatTime(time.from, locale)}
+                                </Typography>
+                                <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                                  ←
+                                </Typography>
+                                <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                                  {formatTime(time.to, locale)}
+                                </Typography>
+                              </Box>
+                            </MenuItem>
+                          ))}
+                      </Select>
                     </FormControl>
                   </Stack>
                 </Stack>
@@ -1530,36 +1638,76 @@ export default function FilterDialog({
                       <Typography
                         sx={{
                           mb: 1,
-                          color: labelColor('Label.import_file'),
+                          color: labelColor('Label.excel_action_status'),
                           fontSize: 16,
                           fontWeight: 400,
                           lineHeight: '22px',
                           textTransform: 'capitalize',
                         }}
                       >
-                        {t('Label.import_file')}
+                        {t('Label.excel_action_status')}
                       </Typography>
                       <Select
-                        value={filters.importFile}
-                        onChange={(e) => setFilters({ ...filters, importFile: e.target.value })}
+                        value={filters.excel_action_status}
+                        onChange={(e) =>
+                          setFilters({ ...filters, excel_action_status: e.target.value })
+                        }
                         displayEmpty
+                        disabled={initDataLoading}
                         sx={{ borderRadius: 1 }}
                       >
-                        <MenuItem value="">{t('Label.select')}</MenuItem>
+                        <MenuItem value="">{t('Label.all')}</MenuItem>
+                        {excelActionsList?.map((action: any) => (
+                          <MenuItem key={action.value} value={action.value}>
+                            {action.label}
+                          </MenuItem>
+                        ))}
                       </Select>
                     </FormControl>
 
-                    <FilterDropdown
-                      label={t('Label.source')}
-                      value={filters.source}
-                      onChange={(value: string) => setFilters({ ...filters, source: value })}
-                      options={sourceOptions}
-                      allLabel={t('Label.all')}
-                      disabled={initDataLoading}
-                      highlighted={
-                        !!(searchValue && t('Label.source')?.toLowerCase().includes(searchValue))
-                      }
-                    />
+                    <FormControl fullWidth>
+                      <Typography
+                        sx={{
+                          mb: 1,
+                          color: labelColor('Label.import_history'),
+                          fontSize: 16,
+                          fontWeight: 400,
+                          lineHeight: '22px',
+                          textTransform: 'capitalize',
+                        }}
+                      >
+                        {t('Label.import_history')}
+                      </Typography>
+                      <Select
+                        value={filters.import_history_id}
+                        onChange={(e) =>
+                          setFilters({ ...filters, import_history_id: e.target.value })
+                        }
+                        displayEmpty
+                        disabled={initDataLoading}
+                        sx={{ borderRadius: 1 }}
+                      >
+                        <MenuItem value="">{t('Label.all')}</MenuItem>
+                        {importHistoryList?.map((history: any) => (
+                          <MenuItem key={history.id} value={history.id}>
+                            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+                              <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                                {history.user?.name} - {history.source}
+                              </Typography>
+                              <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                                {new Date(history.created_at).toLocaleDateString(locale, {
+                                  year: 'numeric',
+                                  month: 'short',
+                                  day: 'numeric',
+                                  hour: '2-digit',
+                                  minute: '2-digit',
+                                })}
+                              </Typography>
+                            </Box>
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
                   </Stack>
                 </Stack>
               </AccordionDetails>
