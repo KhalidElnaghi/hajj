@@ -189,6 +189,7 @@ export default function FilterDialog({
   const citiesList = initData?.data?.cities || [];
   const countriesList = initData?.data?.countries || [];
   const campsList = initData?.data?.camps || [];
+  const bookingStatusesList = initData?.data?.bookingStatuses || [];
 
   // Employee interface for autocomplete
   interface EmployeeOption {
@@ -236,6 +237,16 @@ export default function FilterDialog({
     status: boolean;
   }
 
+  // Booking Status interface for autocomplete
+  interface BookingStatusOption {
+    id: number;
+    name: {
+      ar: string;
+      en: string;
+    };
+    status?: boolean;
+  }
+
   // Form state
   const [filters, setFilters] = useState({
     // Personal Information
@@ -244,7 +255,7 @@ export default function FilterDialog({
     tag_id: '',
     gender: '',
     marriedLate: '',
-    bookingStatus: '',
+    reservation_id: null as BookingStatusOption | null,
     package: '',
     pilgrimType: '',
     muhrimStatus: '',
@@ -332,13 +343,29 @@ export default function FilterDialog({
         }
       }
 
+      // Handle booking status - if it only has an id, find the full object from bookingStatusesList
+      let bookingStatusValue = externalFilters.reservation_id || null;
+      if (
+        bookingStatusValue &&
+        bookingStatusValue.id &&
+        !bookingStatusValue.name &&
+        bookingStatusesList.length > 0
+      ) {
+        const foundBookingStatus = bookingStatusesList.find(
+          (status: BookingStatusOption) => status.id === bookingStatusValue.id
+        );
+        if (foundBookingStatus) {
+          bookingStatusValue = foundBookingStatus;
+        }
+      }
+
       const updatedFilters = {
         nationality: nationalityValue,
         city: cityValue,
         tag_id: externalFilters.tag_id || '',
         gender: externalFilters.gender || '',
         marriedLate: externalFilters.marriedLate || '',
-        bookingStatus: externalFilters.bookingStatus || '',
+        reservation_id: bookingStatusValue,
         package: externalFilters.package || '',
         pilgrimType: externalFilters.pilgrimType || '',
         muhrimStatus: externalFilters.muhrimStatus || '',
@@ -371,7 +398,7 @@ export default function FilterDialog({
         updatedFilters.tag_id ||
         updatedFilters.gender ||
         updatedFilters.marriedLate ||
-        updatedFilters.bookingStatus ||
+        updatedFilters.reservation_id ||
         updatedFilters.pilgrimType ||
         updatedFilters.muhrimStatus ||
         updatedFilters.pilgrimStatus
@@ -413,7 +440,7 @@ export default function FilterDialog({
 
       setExpandedSections(sectionsToExpand);
     }
-  }, [externalFilters, supervisorsList, citiesList, countriesList, campsList]);
+  }, [externalFilters, supervisorsList, citiesList, countriesList, campsList, bookingStatusesList]);
 
   const handleAccordionChange =
     (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
@@ -430,7 +457,7 @@ export default function FilterDialog({
       tag_id: '',
       gender: '',
       marriedLate: '',
-      bookingStatus: '',
+      reservation_id: null,
       pilgrimType: '',
       muhrimStatus: '',
       pilgrimStatus: '',
@@ -760,18 +787,39 @@ export default function FilterDialog({
                       >
                         {t('Label.booking_status')}
                       </Typography>
-                      <Select
-                        value={filters.bookingStatus}
-                        onChange={(e) => setFilters({ ...filters, bookingStatus: e.target.value })}
-                        displayEmpty
-                        sx={{ borderRadius: 1 }}
-                      >
-                        <MenuItem value="">{t('Label.select')}</MenuItem>
-                        <MenuItem value="completed">مكتمل</MenuItem>
-                        <MenuItem value="pending">مؤكد</MenuItem>
-                        <MenuItem value="confirmed">قيد التأكيد</MenuItem>
-                        <MenuItem value="cancelled">ملغي</MenuItem>
-                      </Select>
+                      <Autocomplete
+                        value={filters.reservation_id || null}
+                        onChange={(event, newValue) => {
+                          setFilters({
+                            ...filters,
+                            reservation_id: newValue as BookingStatusOption | null,
+                          });
+                        }}
+                        options={bookingStatusesList}
+                        getOptionLabel={(option) => option?.name?.ar || ''}
+                        getOptionKey={(option) => option?.id}
+                        isOptionEqualToValue={(option, value) => option?.id === value?.id}
+                        disabled={initDataLoading}
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            placeholder={t('Label.select')}
+                            sx={{
+                              '& .MuiOutlinedInput-root': {
+                                borderRadius: 1,
+                              },
+                            }}
+                          />
+                        )}
+                        renderOption={(props, option) => {
+                          const { key, ...otherProps } = props as any;
+                          return (
+                            <li key={option?.id} {...otherProps}>
+                              {option?.name?.ar || ''}
+                            </li>
+                          );
+                        }}
+                      />
                     </FormControl>
                     <FilterDropdown
                       label={t('Label.pilgrim_status')}

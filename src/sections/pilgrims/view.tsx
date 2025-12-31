@@ -81,6 +81,7 @@ export default function PilgrimsView() {
     pilgrim_type_id: searchParams.get('pilgrim_type_id') || undefined,
     tag_id: searchParams.get('tag_id') || undefined,
     camp_id: searchParams.get('camp_id') || undefined,
+    reservation_id: searchParams.get('reservation_id') || undefined,
     supervisor_id: searchParams.get('supervisor_id') || undefined,
     source: searchParams.get('source') || undefined,
     gender: searchParams.get('gender') || undefined,
@@ -111,6 +112,10 @@ export default function PilgrimsView() {
     if (searchParams.get('camp_id')) {
       // Store as an object with id for the filter dialog
       filtersFromUrl.camp_id = { id: Number(searchParams.get('camp_id')) };
+    }
+    if (searchParams.get('reservation_id')) {
+      // Store as an object with id for the filter dialog
+      filtersFromUrl.reservation_id = { id: Number(searchParams.get('reservation_id')) };
     }
     if (searchParams.get('supervisor_id')) {
       // Store as an object with id for the filter dialog
@@ -202,6 +207,7 @@ export default function PilgrimsView() {
     params.delete('pilgrim_type_id');
     params.delete('tag_id');
     params.delete('camp_id');
+    params.delete('reservation_id');
     params.delete('supervisor_id');
     params.delete('source');
     params.delete('gender');
@@ -218,6 +224,7 @@ export default function PilgrimsView() {
     if (filters.pilgrimType) params.set('pilgrim_type_id', filters.pilgrimType);
     if (filters.tag_id) params.set('tag_id', filters.tag_id);
     if (filters.camp_id?.id) params.set('camp_id', String(filters.camp_id.id));
+    if (filters.reservation_id?.id) params.set('reservation_id', String(filters.reservation_id.id));
     if (filters.supervisor?.id) params.set('supervisor_id', String(filters.supervisor.id));
     if (filters.source) params.set('source', filters.source);
     if (filters.gender) params.set('gender', filters.gender);
@@ -242,6 +249,7 @@ export default function PilgrimsView() {
     if (urlFilters.pilgrim_type_id) count++;
     if (urlFilters.tag_id) count++;
     if (urlFilters.camp_id) count++;
+    if (urlFilters.reservation_id) count++;
     if (urlFilters.supervisor_id) count++;
     if (urlFilters.source) count++;
     if (urlFilters.gender) count++;
@@ -266,6 +274,7 @@ export default function PilgrimsView() {
     params.delete('pilgrim_type_id');
     params.delete('tag_id');
     params.delete('camp_id');
+    params.delete('reservation_id');
     params.delete('supervisor_id');
     params.delete('source');
     params.delete('gender');
@@ -292,7 +301,7 @@ export default function PilgrimsView() {
         updatedFilters.tag_id = '';
         updatedFilters.gender = '';
         updatedFilters.marriedLate = '';
-        updatedFilters.bookingStatus = '';
+        updatedFilters.reservation_id = null;
         updatedFilters.pilgrimType = '';
         updatedFilters.muhrimStatus = '';
         updatedFilters.pilgrimStatus = '';
@@ -301,6 +310,7 @@ export default function PilgrimsView() {
         params.delete('city_id');
         params.delete('package_id');
         params.delete('tag_id');
+        params.delete('reservation_id');
         params.delete('gender');
         params.delete('departure_status');
         params.delete('pilgrim_type_id');
@@ -363,7 +373,7 @@ export default function PilgrimsView() {
       appliedFilters.tag_id ||
       appliedFilters.gender ||
       appliedFilters.marriedLate ||
-      appliedFilters.bookingStatus ||
+      appliedFilters.reservation_id ||
       appliedFilters.pilgrimType ||
       appliedFilters.muhrimStatus ||
       appliedFilters.pilgrimStatus

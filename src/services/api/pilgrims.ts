@@ -462,6 +462,7 @@ export interface PilgrimInitDataResponse {
     pilgrimStatuses: InitDataSimpleOption[];
     sources: InitDataSimpleOption[];
     departureStatuses: InitDataSimpleOption[];
+    bookingStatuses: InitDataOption[];
   };
 }
 
