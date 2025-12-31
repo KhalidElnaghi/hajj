@@ -214,6 +214,7 @@ export default function FilterDialog({
   const campsList = initData?.data?.camps || [];
   const bookingStatusesList = initData?.data?.bookingStatuses || [];
   const importHistoryList = initData?.data?.importHistory || [];
+  const excelActionsList = initData?.data?.excelActions || [];
 
   // Employee interface for autocomplete
   interface EmployeeOption {
@@ -306,7 +307,7 @@ export default function FilterDialog({
     supervisor: null as EmployeeOption | null,
 
     // Import File
-    importFile: '',
+    excel_action_status: '',
     source: '',
     import_history_id: '',
 
@@ -422,7 +423,7 @@ export default function FilterDialog({
         transport: externalFilters.transport || '',
         healthStatus: externalFilters.healthStatus || '',
         supervisor: supervisorValue,
-        importFile: externalFilters.importFile || '',
+        excel_action_status: externalFilters.excel_action_status || '',
         source: externalFilters.source || '',
         import_history_id: externalFilters.import_history_id || '',
         shippingManagement: externalFilters.shippingManagement || '',
@@ -474,7 +475,11 @@ export default function FilterDialog({
         sectionsToExpand.push('supervision');
       }
 
-      if (updatedFilters.importFile || updatedFilters.source || updatedFilters.import_history_id) {
+      if (
+        updatedFilters.excel_action_status ||
+        updatedFilters.source ||
+        updatedFilters.import_history_id
+      ) {
         sectionsToExpand.push('import');
       }
 
@@ -515,7 +520,7 @@ export default function FilterDialog({
       transport: '',
       healthStatus: '',
       supervisor: null,
-      importFile: '',
+      excel_action_status: '',
       source: '',
       import_history_id: '',
       shippingManagement: '',
@@ -1635,22 +1640,30 @@ export default function FilterDialog({
                       <Typography
                         sx={{
                           mb: 1,
-                          color: labelColor('Label.import_file'),
+                          color: labelColor('Label.excel_action_status'),
                           fontSize: 16,
                           fontWeight: 400,
                           lineHeight: '22px',
                           textTransform: 'capitalize',
                         }}
                       >
-                        {t('Label.import_file')}
+                        {t('Label.excel_action_status')}
                       </Typography>
                       <Select
-                        value={filters.importFile}
-                        onChange={(e) => setFilters({ ...filters, importFile: e.target.value })}
+                        value={filters.excel_action_status}
+                        onChange={(e) =>
+                          setFilters({ ...filters, excel_action_status: e.target.value })
+                        }
                         displayEmpty
+                        disabled={initDataLoading}
                         sx={{ borderRadius: 1 }}
                       >
-                        <MenuItem value="">{t('Label.select')}</MenuItem>
+                        <MenuItem value="">{t('Label.all')}</MenuItem>
+                        {excelActionsList?.map((action: any) => (
+                          <MenuItem key={action.value} value={action.value}>
+                            {action.label}
+                          </MenuItem>
+                        ))}
                       </Select>
                     </FormControl>
 

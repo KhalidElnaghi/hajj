@@ -636,7 +636,8 @@
       "save": "Save",
       "saving": "Saving...",
       "Female": "Female",
-      "Male": "Male"
+      "Male": "Male",
+      "excel_action_status": "Excel Actions"
     },
     "Button": {
       "add": "Add",

@@ -93,6 +93,7 @@ export default function PilgrimsView() {
     destination_id: searchParams.get('destination_id') || undefined,
     gathering_point_time_id: searchParams.get('gathering_point_time_id') || undefined,
     import_history_id: searchParams.get('import_history_id') || undefined,
+    excel_action_status: searchParams.get('excel_action_status') || undefined,
   };
 
   // Initialize appliedFilters and searchTerm from URL params on mount
@@ -143,6 +144,8 @@ export default function PilgrimsView() {
       filtersFromUrl.gathering_point_time_id = searchParams.get('gathering_point_time_id');
     if (searchParams.get('import_history_id'))
       filtersFromUrl.import_history_id = searchParams.get('import_history_id');
+    if (searchParams.get('excel_action_status'))
+      filtersFromUrl.excel_action_status = searchParams.get('excel_action_status');
 
     setAppliedFilters(filtersFromUrl);
   }, [searchParams]);
@@ -234,6 +237,7 @@ export default function PilgrimsView() {
     params.delete('destination_id');
     params.delete('gathering_point_time_id');
     params.delete('import_history_id');
+    params.delete('excel_action_status');
 
     // Add new filter params
     if (filters.package) params.set('package_id', filters.package);
@@ -258,6 +262,7 @@ export default function PilgrimsView() {
     if (filters.gathering_point_time_id)
       params.set('gathering_point_time_id', filters.gathering_point_time_id);
     if (filters.import_history_id) params.set('import_history_id', filters.import_history_id);
+    if (filters.excel_action_status) params.set('excel_action_status', filters.excel_action_status);
 
     // Reset to page 1 when filters change
     params.set('page', '1');
@@ -288,6 +293,7 @@ export default function PilgrimsView() {
     if (urlFilters.destination_id) count++;
     if (urlFilters.gathering_point_time_id) count++;
     if (urlFilters.import_history_id) count++;
+    if (urlFilters.excel_action_status) count++;
     return count;
   }, [urlFilters]);
 
@@ -318,6 +324,7 @@ export default function PilgrimsView() {
     params.delete('destination_id');
     params.delete('gathering_point_time_id');
     params.delete('import_history_id');
+    params.delete('excel_action_status');
 
     // Reset to page 1
     params.set('page', '1');
@@ -386,12 +393,13 @@ export default function PilgrimsView() {
         params.delete('supervisor_id');
         break;
       case 'import':
-        updatedFilters.importFile = '';
+        updatedFilters.excel_action_status = '';
         updatedFilters.source = '';
         updatedFilters.import_history_id = '';
         // Clear URL params
         params.delete('source');
         params.delete('import_history_id');
+        params.delete('excel_action_status');
         break;
       case 'shipping':
         updatedFilters.shippingManagement = '';
@@ -451,7 +459,11 @@ export default function PilgrimsView() {
       sections.push({ key: 'supervision', label: t('Label.supervision_organization') });
     }
 
-    if (appliedFilters.importFile || appliedFilters.source || appliedFilters.import_history_id) {
+    if (
+      appliedFilters.excel_action_status ||
+      appliedFilters.source ||
+      appliedFilters.import_history_id
+    ) {
       sections.push({ key: 'import', label: t('Label.import_file') });
     }
 

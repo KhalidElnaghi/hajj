@@ -500,6 +500,10 @@ export interface PilgrimInitDataResponse {
       created_at: string;
       updated_at: string;
     }>;
+    excelActions?: Array<{
+      value: number;
+      label: string;
+    }>;
   };
 }
 
