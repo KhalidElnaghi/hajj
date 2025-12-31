@@ -747,57 +747,47 @@ export default function FilterDialog({
                     />
                   </Stack>
                   <Stack direction="row" spacing={2}>
-                    <FilterToggleGroup
-                      label={t('Label.gender')}
-                      value={filters.gender}
-                      onChange={(value: string) => setFilters({ ...filters, gender: value })}
-                      options={genderToggleOptions}
-                      disabled={initDataLoading}
-                      highlighted={
-                        !!(searchValue && t('Label.gender')?.toLowerCase().includes(searchValue))
-                      }
-                    />
-
-                    <FilterToggleGroup
-                      label={t('Label.early_late')}
-                      value={filters.marriedLate}
-                      onChange={(value: string) => setFilters({ ...filters, marriedLate: value })}
-                      options={departureToggleOptions}
+                    <FormControl fullWidth>
+                      <Typography
+                        sx={{
+                          mb: 1,
+                          color: labelColor('Label.booking_status'),
+                          fontSize: 16,
+                          fontWeight: 400,
+                          lineHeight: '22px',
+                          textTransform: 'capitalize',
+                        }}
+                      >
+                        {t('Label.booking_status')}
+                      </Typography>
+                      <Select
+                        value={filters.bookingStatus}
+                        onChange={(e) => setFilters({ ...filters, bookingStatus: e.target.value })}
+                        displayEmpty
+                        sx={{ borderRadius: 1 }}
+                      >
+                        <MenuItem value="">{t('Label.select')}</MenuItem>
+                        <MenuItem value="completed">مكتمل</MenuItem>
+                        <MenuItem value="pending">مؤكد</MenuItem>
+                        <MenuItem value="confirmed">قيد التأكيد</MenuItem>
+                        <MenuItem value="cancelled">ملغي</MenuItem>
+                      </Select>
+                    </FormControl>
+                    <FilterDropdown
+                      label={t('Label.pilgrim_status')}
+                      value={filters.pilgrimStatus}
+                      onChange={(value: string) => setFilters({ ...filters, pilgrimStatus: value })}
+                      options={pilgrimStatusOptions}
+                      allLabel={t('Label.all')}
                       disabled={initDataLoading}
                       highlighted={
                         !!(
-                          searchValue && t('Label.early_late')?.toLowerCase().includes(searchValue)
+                          searchValue &&
+                          t('Label.pilgrim_status')?.toLowerCase().includes(searchValue)
                         )
                       }
                     />
                   </Stack>
-                  <FormControl fullWidth>
-                    <Typography
-                      sx={{
-                        mb: 1,
-                        color: labelColor('Label.booking_status'),
-                        fontSize: 16,
-                        fontWeight: 400,
-                        lineHeight: '22px',
-                        textTransform: 'capitalize',
-                      }}
-                    >
-                      {t('Label.booking_status')}
-                    </Typography>
-                    <Select
-                      value={filters.bookingStatus}
-                      onChange={(e) => setFilters({ ...filters, bookingStatus: e.target.value })}
-                      displayEmpty
-                      sx={{ borderRadius: 1 }}
-                    >
-                      <MenuItem value="">{t('Label.select')}</MenuItem>
-                      <MenuItem value="completed">مكتمل</MenuItem>
-                      <MenuItem value="pending">مؤكد</MenuItem>
-                      <MenuItem value="confirmed">قيد التأكيد</MenuItem>
-                      <MenuItem value="cancelled">ملغي</MenuItem>
-                    </Select>
-                  </FormControl>
-
                   <Stack direction="row" spacing={2}>
                     <FilterDropdown
                       label={t('Label.pilgrim_type')}
@@ -829,21 +819,31 @@ export default function FilterDialog({
                       }
                     />
                   </Stack>
+                  <Stack direction="row" spacing={2}>
+                    <FilterToggleGroup
+                      label={t('Label.gender')}
+                      value={filters.gender}
+                      onChange={(value: string) => setFilters({ ...filters, gender: value })}
+                      options={genderToggleOptions}
+                      disabled={initDataLoading}
+                      highlighted={
+                        !!(searchValue && t('Label.gender')?.toLowerCase().includes(searchValue))
+                      }
+                    />
 
-                  <FilterDropdown
-                    label={t('Label.pilgrim_status')}
-                    value={filters.pilgrimStatus}
-                    onChange={(value: string) => setFilters({ ...filters, pilgrimStatus: value })}
-                    options={pilgrimStatusOptions}
-                    allLabel={t('Label.all')}
-                    disabled={initDataLoading}
-                    highlighted={
-                      !!(
-                        searchValue &&
-                        t('Label.pilgrim_status')?.toLowerCase().includes(searchValue)
-                      )
-                    }
-                  />
+                    <FilterToggleGroup
+                      label={t('Label.early_late')}
+                      value={filters.marriedLate}
+                      onChange={(value: string) => setFilters({ ...filters, marriedLate: value })}
+                      options={departureToggleOptions}
+                      disabled={initDataLoading}
+                      highlighted={
+                        !!(
+                          searchValue && t('Label.early_late')?.toLowerCase().includes(searchValue)
+                        )
+                      }
+                    />
+                  </Stack>
                 </Stack>
               </AccordionDetails>
             </Accordion>
