@@ -185,6 +185,10 @@ export default function FilterDialog({
   // Get supervisors list from init data
   const supervisorsList = initData?.data?.employees || [];
 
+  // Get cities and countries lists from init data
+  const citiesList = initData?.data?.cities || [];
+  const countriesList = initData?.data?.countries || [];
+
   // Employee interface for autocomplete
   interface EmployeeOption {
     id: number;
@@ -194,12 +198,38 @@ export default function FilterDialog({
     };
   }
 
+  // City interface for autocomplete
+  interface CityOption {
+    city_id: number;
+    city: {
+      id: number;
+      name: {
+        ar: string;
+        en: string;
+      };
+    };
+  }
+
+  // Country interface for autocomplete
+  interface CountryOption {
+    country: {
+      id: number;
+      name: {
+        ar: string;
+        en: string;
+      };
+      flag?: {
+        svg: string;
+      };
+    };
+  }
+
   // Form state
   const [filters, setFilters] = useState({
     // Personal Information
-    nationality: '',
-    city: '',
-    badge: '',
+    nationality: null as CountryOption | null,
+    city: null as CityOption | null,
+    tag_id: '',
     gender: '',
     marriedLate: '',
     bookingStatus: '',
@@ -240,10 +270,51 @@ export default function FilterDialog({
   // Sync with external filters when they change
   useEffect(() => {
     if (externalFilters) {
+      // Handle supervisor - if it only has an id, find the full object from supervisorsList
+      let supervisorValue = externalFilters.supervisor || null;
+      if (
+        supervisorValue &&
+        supervisorValue.id &&
+        !supervisorValue.name &&
+        supervisorsList.length > 0
+      ) {
+        const foundSupervisor = supervisorsList.find(
+          (emp: EmployeeOption) => emp.id === supervisorValue.id
+        );
+        if (foundSupervisor) {
+          supervisorValue = foundSupervisor;
+        }
+      }
+
+      // Handle nationality - if it only has an id, find the full object from countriesList
+      let nationalityValue = externalFilters.nationality || null;
+      if (
+        nationalityValue &&
+        nationalityValue.id &&
+        !nationalityValue.country &&
+        countriesList.length > 0
+      ) {
+        const foundCountry = countriesList.find(
+          (country: CountryOption) => country.country.id === nationalityValue.id
+        );
+        if (foundCountry) {
+          nationalityValue = foundCountry;
+        }
+      }
+
+      // Handle city - if it only has an id, find the full object from citiesList
+      let cityValue = externalFilters.city || null;
+      if (cityValue && cityValue.id && !cityValue.city && citiesList.length > 0) {
+        const foundCity = citiesList.find((city: CityOption) => city.city_id === cityValue.id);
+        if (foundCity) {
+          cityValue = foundCity;
+        }
+      }
+
       const updatedFilters = {
-        nationality: externalFilters.nationality || '',
-        city: externalFilters.city || '',
-        badge: externalFilters.badge || '',
+        nationality: nationalityValue,
+        city: cityValue,
+        tag_id: externalFilters.tag_id || '',
         gender: externalFilters.gender || '',
         marriedLate: externalFilters.marriedLate || '',
         bookingStatus: externalFilters.bookingStatus || '',
@@ -260,7 +331,7 @@ export default function FilterDialog({
         campStatus: externalFilters.campStatus || '',
         transport: externalFilters.transport || '',
         healthStatus: externalFilters.healthStatus || '',
-        supervisor: externalFilters.supervisor || null,
+        supervisor: supervisorValue,
         importFile: externalFilters.importFile || '',
         source: externalFilters.source || '',
         shippingManagement: externalFilters.shippingManagement || '',
@@ -276,7 +347,7 @@ export default function FilterDialog({
         updatedFilters.nationality ||
         updatedFilters.city ||
         updatedFilters.package ||
-        updatedFilters.badge ||
+        updatedFilters.tag_id ||
         updatedFilters.gender ||
         updatedFilters.marriedLate ||
         updatedFilters.bookingStatus ||
@@ -325,7 +396,7 @@ export default function FilterDialog({
 
       setExpandedSections(sectionsToExpand);
     }
-  }, [externalFilters]);
+  }, [externalFilters, supervisorsList, citiesList, countriesList]);
 
   const handleAccordionChange =
     (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
@@ -336,10 +407,10 @@ export default function FilterDialog({
 
   const handleReset = () => {
     setFilters({
-      nationality: '',
-      city: '',
+      nationality: null,
+      city: null,
       package: '',
-      badge: '',
+      tag_id: '',
       gender: '',
       marriedLate: '',
       bookingStatus: '',
@@ -525,30 +596,110 @@ export default function FilterDialog({
               <AccordionDetails sx={{ px: 3, pt: 3, pb: 3, bgcolor: 'transparent' }}>
                 <Stack spacing={2.5}>
                   <Stack direction="row" spacing={2}>
-                    <FilterDropdown
-                      label={t('Label.nationality')}
-                      value={filters.nationality}
-                      onChange={(value: string) => setFilters({ ...filters, nationality: value })}
-                      options={nationalityOptions}
-                      allLabel={t('Label.all')}
-                      disabled={initDataLoading}
-                      highlighted={
-                        !!(
-                          searchValue && t('Label.nationality')?.toLowerCase().includes(searchValue)
-                        )
-                      }
-                    />
-                    <FilterDropdown
-                      label={t('Label.city')}
-                      value={filters.city}
-                      onChange={(value: string) => setFilters({ ...filters, city: value })}
-                      options={cityOptions}
-                      allLabel={t('Label.all')}
-                      disabled={initDataLoading}
-                      highlighted={
-                        !!(searchValue && t('Label.city')?.toLowerCase().includes(searchValue))
-                      }
-                    />
+                    <FormControl fullWidth>
+                      <Typography
+                        sx={{
+                          mb: 1,
+                          color: labelColor('Label.nationality'),
+                          fontSize: 16,
+                          fontWeight: 400,
+                          lineHeight: '22px',
+                          textTransform: 'capitalize',
+                        }}
+                      >
+                        {t('Label.nationality')}
+                      </Typography>
+                      <Autocomplete
+                        value={filters.nationality}
+                        onChange={(event, newValue) => {
+                          setFilters({ ...filters, nationality: newValue as CountryOption | null });
+                        }}
+                        options={countriesList}
+                        getOptionLabel={(option) => option?.country?.name?.ar || ''}
+                        getOptionKey={(option) => option?.country?.id}
+                        isOptionEqualToValue={(option, value) =>
+                          option?.country?.id === value?.country?.id
+                        }
+                        disabled={initDataLoading}
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            placeholder={t('Label.all')}
+                            sx={{
+                              '& .MuiOutlinedInput-root': {
+                                borderRadius: 1,
+                              },
+                            }}
+                          />
+                        )}
+                        renderOption={(props, option) => {
+                          const { key, ...otherProps } = props as any;
+                          return (
+                            <li key={option?.country?.id} {...otherProps}>
+                              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                {option?.country?.flag?.svg && (
+                                  <Image
+                                    src={option.country.flag.svg}
+                                    alt={option?.country?.name?.ar || 'Flag'}
+                                    width={20}
+                                    height={15}
+                                    style={{ borderRadius: 2 }}
+                                  />
+                                )}
+                                <Typography variant="body2">
+                                  {option?.country?.name?.ar || ''}
+                                </Typography>
+                              </Box>
+                            </li>
+                          );
+                        }}
+                      />
+                    </FormControl>
+
+                    <FormControl fullWidth>
+                      <Typography
+                        sx={{
+                          mb: 1,
+                          color: labelColor('Label.city'),
+                          fontSize: 16,
+                          fontWeight: 400,
+                          lineHeight: '22px',
+                          textTransform: 'capitalize',
+                        }}
+                      >
+                        {t('Label.city')}
+                      </Typography>
+                      <Autocomplete
+                        value={filters.city}
+                        onChange={(event, newValue) => {
+                          setFilters({ ...filters, city: newValue as CityOption | null });
+                        }}
+                        options={citiesList}
+                        getOptionLabel={(option) => option?.city?.name?.ar || ''}
+                        getOptionKey={(option) => option?.city_id}
+                        isOptionEqualToValue={(option, value) => option?.city_id === value?.city_id}
+                        disabled={initDataLoading}
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            placeholder={t('Label.all')}
+                            sx={{
+                              '& .MuiOutlinedInput-root': {
+                                borderRadius: 1,
+                              },
+                            }}
+                          />
+                        )}
+                        renderOption={(props, option) => {
+                          const { key, ...otherProps } = props as any;
+                          return (
+                            <li key={option?.city_id} {...otherProps}>
+                              {option?.city?.name?.ar || ''}
+                            </li>
+                          );
+                        }}
+                      />
+                    </FormControl>
                   </Stack>
 
                   <Stack direction="row" spacing={2}>
@@ -568,8 +719,8 @@ export default function FilterDialog({
                     />
                     <FilterDropdown
                       label={t('Label.tags')}
-                      value={filters.badge}
-                      onChange={(value: string) => setFilters({ ...filters, badge: value })}
+                      value={filters.tag_id}
+                      onChange={(value: string) => setFilters({ ...filters, tag_id: value })}
                       options={tagOptions}
                       allLabel={t('Label.all')}
                       disabled={initDataLoading}
@@ -1185,9 +1336,9 @@ export default function FilterDialog({
                         setFilters({ ...filters, supervisor: newValue as EmployeeOption | null });
                       }}
                       options={supervisorsList}
-                      getOptionLabel={(option) => option.name.ar}
-                      getOptionKey={(option) => option.id}
-                      isOptionEqualToValue={(option, value) => option.id === value.id}
+                      getOptionLabel={(option) => option?.name?.ar || ''}
+                      getOptionKey={(option) => option?.id}
+                      isOptionEqualToValue={(option, value) => option?.id === value?.id}
                       renderInput={(params) => (
                         <TextField
                           {...params}
@@ -1202,8 +1353,8 @@ export default function FilterDialog({
                       renderOption={(props, option) => {
                         const { key, ...otherProps } = props as any;
                         return (
-                          <li key={option.id} {...otherProps}>
-                            {option.name.ar}
+                          <li key={option?.id} {...otherProps}>
+                            {option?.name?.ar || ''}
                           </li>
                         );
                       }}
