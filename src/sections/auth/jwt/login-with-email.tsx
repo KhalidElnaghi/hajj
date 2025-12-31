@@ -13,12 +13,13 @@ import InputAdornment from '@mui/material/InputAdornment';
 import MenuItem from '@mui/material/MenuItem';
 
 import { useBoolean } from 'src/hooks/use-boolean';
+import { useTranslations } from 'next-intl';
 
 import Iconify from 'src/components/iconify';
 import FormProvider, { RHFTextField, RHFSelect, RHFCheckbox } from 'src/components/hook-form';
 
 import { useLoginMutation } from 'src/services/mutations/auth/useLoginMutation';
-import { loginSchema, LoginFormValues } from './login-schema';
+import { createLoginSchema, LoginFormValues } from './login-schema';
 import { getErrorMessage } from 'src/utils/axios';
 
 // Temporary static company list - replace with API call when endpoint is available
@@ -32,9 +33,10 @@ const TEMP_COMPANIES = [
 
 export default function LoginByEmailView() {
   const password = useBoolean();
+  const t = useTranslations('Auth.Login');
 
   const methods = useForm<LoginFormValues>({
-    resolver: yupResolver(loginSchema),
+    resolver: yupResolver(createLoginSchema((key: string) => t(key as any))),
     defaultValues: {
       email: '',
       password: '',
@@ -103,23 +105,23 @@ export default function LoginByEmailView() {
         {/* General Error Alert */}
         {generalError && (
           <Alert severity="error" sx={{ textAlign: 'right' }}>
-            {generalError || 'تعذر تسجيل الدخول. تحقق من البيانات وحاول مرة أخرى.'}
+            {generalError || t('login_error')}
           </Alert>
         )}
 
         {/* Email/Username Field */}
         <RHFTextField
           name="email"
-          label="البريد الاكتروني أو اسم المستخدم"
-          placeholder="Example@email.com"
+          label={t('email_or_username')}
+          placeholder={t('email_placeholder')}
           fullWidth
         />
 
         {/* Password Field */}
         <RHFTextField
           name="password"
-          label="كلمة السر"
-          placeholder="at least 8 characters"
+          label={t('password')}
+          placeholder={t('password_placeholder')}
           type={password.value ? 'text' : 'password'}
           InputProps={{
             endAdornment: (
@@ -133,9 +135,9 @@ export default function LoginByEmailView() {
         />
 
         {/* Company Select Field */}
-        <RHFSelect name="company" label="اختار شركتك" placeholder="Choose your company">
+        <RHFSelect name="company" label={t('choose_company')} placeholder={t('choose_company_placeholder')}>
           <MenuItem value="" disabled>
-            Choose your company
+            {t('choose_company_placeholder')}
           </MenuItem>
           {TEMP_COMPANIES.map((company) => (
             <MenuItem key={company.id} value={company.id}>
@@ -159,12 +161,12 @@ export default function LoginByEmailView() {
             href="/forgot-password"
             sx={{ fontSize: '0.875rem' }}
           >
-            نسيت كلمة السر؟
+            {t('forgot_password')}
           </Link>
 
           <RHFCheckbox
             name="rememberMe"
-            label="تذكرني"
+            label={t('remember_me')}
             sx={{
               '& .MuiFormControlLabel-label': {
                 fontSize: '0.875rem',
@@ -188,7 +190,7 @@ export default function LoginByEmailView() {
             fontWeight: 600,
           }}
         >
-          تسجيل الدخول
+          {t('sign_in')}
         </LoadingButton>
       </Stack>
     </FormProvider>

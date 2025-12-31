@@ -1,15 +1,21 @@
 import * as Yup from 'yup';
 
-export const loginSchema = Yup.object().shape({
-  email: Yup.string()
-    .required('البريد الإلكتروني أو اسم المستخدم مطلوب')
-    .email('البريد الإلكتروني غير صحيح'),
-  password: Yup.string()
-    .required('كلمة السر مطلوبة')
-    .min(8, 'كلمة السر يجب أن تكون على الأقل 8 أحرف'),
-  company: Yup.string().required('يرجى اختيار الشركة'),
-  rememberMe: Yup.boolean().default(false),
-});
+export const createLoginSchema = (t: (key: string) => string) =>
+  Yup.object().shape({
+    email: Yup.string()
+      .required(t('email_required'))
+      .email(t('email_invalid')),
+    password: Yup.string()
+      .required(t('password_required'))
+      .min(8, t('password_min')),
+    company: Yup.string().required(t('company_required')),
+    rememberMe: Yup.boolean().default(false),
+  });
 
-export type LoginFormValues = Yup.InferType<typeof loginSchema>;
+export type LoginFormValues = {
+  email: string;
+  password: string;
+  company: string;
+  rememberMe: boolean;
+};
 

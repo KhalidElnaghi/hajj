@@ -385,6 +385,28 @@
     }
   },
   "Placeholder": {},
+  "Auth": {
+    "Login": {
+      "welcome": "Welcome",
+      "description": "Log in to the control panel to manage data and operations smoothly and efficiently from one trusted platform.",
+      "email_or_username": "Email or Username",
+      "email_placeholder": "Example@email.com",
+      "password": "Password",
+      "password_placeholder": "at least 8 characters",
+      "choose_company": "Choose your company",
+      "choose_company_placeholder": "Choose your company",
+      "forgot_password": "Forgot password?",
+      "remember_me": "Remember me",
+      "sign_in": "Sign in",
+      "login_error": "Login failed. Please check your credentials and try again.",
+      "copyright": "All rights reserved © Quran",
+      "email_required": "Email or username is required",
+      "email_invalid": "Invalid email address",
+      "password_required": "Password is required",
+      "password_min": "Password must be at least 8 characters",
+      "company_required": "Please select a company"
+    }
+  },
   "Description": {
     "pilgrims_management": "This is a placeholder page for Pilgrims Management. Here you can manage all pilgrims information, registrations, and related data.",
     "supervisors_management": "This is a placeholder page for Supervisors Management. Here you can manage all supervisors, their assignments, and responsibilities.",
