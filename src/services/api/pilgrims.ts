@@ -1240,7 +1240,10 @@ export interface AssignPilgrimSupervisorsResponse {
 export const assignPilgrimSupervisors = async (
   payload: AssignPilgrimSupervisorsPayload
 ): Promise<AssignPilgrimSupervisorsResponse> => {
-  return await API.post<AssignPilgrimSupervisorsResponse>('/pilgrims/pilgrims/pilgrim-supervisors', payload);
+  return await API.post<AssignPilgrimSupervisorsResponse>(
+    '/pilgrims/pilgrims/pilgrim-supervisors',
+    payload
+  );
 };
 
 export interface BulkAutoAssignHousingPayload {
@@ -1258,5 +1261,26 @@ export interface BulkAutoAssignHousingResponse {
 export const bulkAutoAssignHousing = async (
   payload: BulkAutoAssignHousingPayload
 ): Promise<BulkAutoAssignHousingResponse> => {
-  return await API.post<BulkAutoAssignHousingResponse>('/pilgrims/pilgrims/bulk-auto-assign-housing', payload);
+  return await API.post<BulkAutoAssignHousingResponse>(
+    '/pilgrims/pilgrims/bulk-auto-assign-housing',
+    payload
+  );
+};
+
+export interface BulkAssignTagsPayload {
+  taggable_ids: number[];
+  tag_ids: number[];
+  taggable_type: string;
+}
+
+export interface BulkAssignTagsResponse {
+  success?: boolean;
+  message?: string;
+  data?: any;
+}
+
+export const bulkAssignTags = async (
+  payload: BulkAssignTagsPayload
+): Promise<BulkAssignTagsResponse> => {
+  return await API.post<BulkAssignTagsResponse>('/dashboard/settings/taggables', payload);
 };

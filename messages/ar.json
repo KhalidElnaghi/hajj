@@ -736,7 +736,9 @@
       "name_ar_two_words_required": "يجب أن يكون الاسم بالعربية ويحتوي على على كلمتين على الأقل",
       "supervisors_assigned_successfully": "تم تعيين المشرفين بنجاح",
       "housing_auto_assigned_successfully": "تم توزيع السكن بنجاح",
-      "error_assigning_housing": "فشل تعيين السكن"
+      "error_assigning_housing": "فشل تعيين السكن",
+      "tags_assigned_successfully": "تم تعيين الوسوم بنجاح",
+      "error_assigning_tags": "خطأ في تعيين الوسوم"
     },
     "Dialog": {
       "Delete": "حذف",

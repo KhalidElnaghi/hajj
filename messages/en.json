@@ -735,7 +735,9 @@
       "name_ar_two_words_required": "Name must be in Arabic and contain at least two words",
       "supervisors_assigned_successfully": "Supervisors assigned successfully",
       "housing_auto_assigned_successfully": "Housing assigned successfully",
-      "error_assigning_housing": "Failed to assign housing"
+      "error_assigning_housing": "Failed to assign housing",
+      "tags_assigned_successfully": "Tags assigned successfully",
+      "error_assigning_tags": "Error assigning tags"
     },
     "Dialog": {
       "Delete": "Delete",
