@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import * as Yup from 'yup';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import Cookie from 'js-cookie';
@@ -27,8 +26,6 @@ import { createLoginSchema, LoginFormValues } from './login-schema';
 import { getErrorMessage } from 'src/utils/axios';
 import { Company } from 'src/services/api/auth';
 
-// ----------------------------------------------------------------------
-
 export default function LoginByEmailView() {
   const password = useBoolean();
   const t = useTranslations('Auth.Login');
@@ -52,7 +49,6 @@ export default function LoginByEmailView() {
     formState: { errors },
   } = methods;
 
-  // Load companies from cookies when company selection is required
   useEffect(() => {
     if (requiresCompanySelection) {
       const companiesCookie = Cookie.get('companies');
@@ -70,7 +66,6 @@ export default function LoginByEmailView() {
   const loginMutation = useLoginMutation({
     onSuccess: (data) => {
       if (data.data.requires_company_selection) {
-        // Show company selection UI
         setRequiresCompanySelection(true);
         setCompanies(data.data.companies);
       }
@@ -270,7 +265,6 @@ export default function LoginByEmailView() {
           variant="contained"
           color="primary"
           loading={loginMutation.isPending}
-          disabled={loginMutation.isPending}
           sx={{
             py: 1.5,
             fontSize: '1rem',
