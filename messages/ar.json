@@ -404,7 +404,9 @@
       "email_invalid": "البريد الإلكتروني غير صحيح",
       "password_required": "كلمة السر مطلوبة",
       "password_min": "كلمة السر يجب أن تكون على الأقل 8 أحرف",
-      "company_required": "يرجى اختيار الشركة"
+      "company_required": "يرجى اختيار الشركة",
+      "select_company": "اختر الشركة",
+      "select_company_button": "اختر الشركة"
     }
   },
   "Description": {

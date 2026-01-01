@@ -1,8 +1,10 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import * as Yup from 'yup';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
+import Cookie from 'js-cookie';
 
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
@@ -14,33 +16,32 @@ import MenuItem from '@mui/material/MenuItem';
 
 import { useBoolean } from 'src/hooks/use-boolean';
 import { useTranslations } from 'next-intl';
+import { useLocale } from 'next-intl';
 
 import Iconify from 'src/components/iconify';
 import FormProvider, { RHFTextField, RHFSelect, RHFCheckbox } from 'src/components/hook-form';
 
 import { useLoginMutation } from 'src/services/mutations/auth/useLoginMutation';
+import { useSelectCompanyMutation } from 'src/services/mutations/auth/useSelectCompanyMutation';
 import { createLoginSchema, LoginFormValues } from './login-schema';
 import { getErrorMessage } from 'src/utils/axios';
-
-// Temporary static company list - replace with API call when endpoint is available
-const TEMP_COMPANIES = [
-  { id: '1', name: 'شركة 1' },
-  { id: '2', name: 'شركة 2' },
-  { id: '3', name: 'شركة 3' },
-];
+import { Company } from 'src/services/api/auth';
 
 // ----------------------------------------------------------------------
 
 export default function LoginByEmailView() {
   const password = useBoolean();
   const t = useTranslations('Auth.Login');
+  const locale = useLocale();
+  const [requiresCompanySelection, setRequiresCompanySelection] = useState(false);
+  const [companies, setCompanies] = useState<Company[]>([]);
 
   const methods = useForm<LoginFormValues>({
-    resolver: yupResolver(createLoginSchema((key: string) => t(key as any))),
+    resolver: yupResolver(createLoginSchema((key: string) => t(key as any))) as any,
     defaultValues: {
       email: '',
       password: '',
-      company: '',
+      company: undefined,
       rememberMe: false,
     },
   });
@@ -51,9 +52,29 @@ export default function LoginByEmailView() {
     formState: { errors },
   } = methods;
 
+  // Load companies from cookies when company selection is required
+  useEffect(() => {
+    if (requiresCompanySelection) {
+      const companiesCookie = Cookie.get('companies');
+      if (companiesCookie) {
+        try {
+          const parsedCompanies = JSON.parse(companiesCookie);
+          setCompanies(parsedCompanies);
+        } catch (error) {
+          console.error('Error parsing companies from cookie:', error);
+        }
+      }
+    }
+  }, [requiresCompanySelection]);
+
   const loginMutation = useLoginMutation({
-    onSuccess: () => {
-      // Redirect handled in mutation hook (full page reload for auth context re-init)
+    onSuccess: (data) => {
+      if (data.data.requires_company_selection) {
+        // Show company selection UI
+        setRequiresCompanySelection(true);
+        setCompanies(data.data.companies);
+      }
+      // If false, redirect is handled in mutation hook
     },
     onError: (error: any) => {
       // Handle field-level errors
@@ -77,18 +98,44 @@ export default function LoginByEmailView() {
     },
   });
 
+  const selectCompanyMutation = useSelectCompanyMutation({
+    onSuccess: () => {
+      // Redirect handled in mutation hook
+    },
+    onError: (error: any) => {
+      console.error('Select company error:', error);
+    },
+  });
+
   const onSubmit = handleSubmit(async (data) => {
     try {
       await loginMutation.mutateAsync({
         email: data.email,
         password: data.password,
-        companyId: data.company,
+        companyId: data.company || undefined,
         rememberMe: data.rememberMe,
       });
     } catch (error) {
       // Error handled in onError callback
     }
   });
+
+  const handleSelectCompany = async () => {
+    const companyValue = methods.watch('company');
+    if (!companyValue) {
+      methods.setError('company', {
+        type: 'manual',
+        message: t('company_required'),
+      });
+      return;
+    }
+
+    try {
+      await selectCompanyMutation.mutateAsync(companyValue);
+    } catch (error) {
+      // Error handled in onError callback
+    }
+  };
 
   // Get general error message if no field errors
   const hasFieldErrors = !!(
@@ -97,8 +144,61 @@ export default function LoginByEmailView() {
     errors.company?.message
   );
   const generalError =
-    loginMutation.error && !hasFieldErrors ? getErrorMessage(loginMutation.error) : null;
+    (loginMutation.error || selectCompanyMutation.error) && !hasFieldErrors
+      ? getErrorMessage(loginMutation.error || selectCompanyMutation.error)
+      : null;
 
+  // Company Selection View
+  if (requiresCompanySelection) {
+    return (
+      <FormProvider methods={methods}>
+        <Stack spacing={3}>
+          {/* General Error Alert */}
+          {generalError && (
+            <Alert severity="error" sx={{ textAlign: 'right' }}>
+              {generalError}
+            </Alert>
+          )}
+
+          {/* Company Select Field */}
+          <RHFSelect
+            name="company"
+            label={t('select_company')}
+            placeholder={t('choose_company_placeholder')}
+          >
+            <MenuItem value="" disabled>
+              {t('choose_company_placeholder')}
+            </MenuItem>
+            {companies.map((company) => (
+              <MenuItem key={company.id} value={company.id}>
+                {locale === 'ar' ? company.name.ar : company.name.en}
+              </MenuItem>
+            ))}
+          </RHFSelect>
+
+          {/* Select Company Button */}
+          <LoadingButton
+            fullWidth
+            size="large"
+            variant="contained"
+            color="primary"
+            onClick={handleSelectCompany}
+            loading={selectCompanyMutation.isPending}
+            disabled={selectCompanyMutation.isPending || !methods.watch('company')}
+            sx={{
+              py: 1.5,
+              fontSize: '1rem',
+              fontWeight: 600,
+            }}
+          >
+            {t('select_company_button')}
+          </LoadingButton>
+        </Stack>
+      </FormProvider>
+    );
+  }
+
+  // Login Form View
   return (
     <FormProvider methods={methods} onSubmit={onSubmit}>
       <Stack spacing={3}>
@@ -133,18 +233,6 @@ export default function LoginByEmailView() {
             ),
           }}
         />
-
-        {/* Company Select Field */}
-        <RHFSelect name="company" label={t('choose_company')} placeholder={t('choose_company_placeholder')}>
-          <MenuItem value="" disabled>
-            {t('choose_company_placeholder')}
-          </MenuItem>
-          {TEMP_COMPANIES.map((company) => (
-            <MenuItem key={company.id} value={company.id}>
-              {company.name}
-            </MenuItem>
-          ))}
-        </RHFSelect>
 
         {/* Forgot Password Link and Remember Me */}
         <Stack

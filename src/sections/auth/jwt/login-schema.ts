@@ -8,14 +8,14 @@ export const createLoginSchema = (t: (key: string) => string) =>
     password: Yup.string()
       .required(t('password_required'))
       .min(8, t('password_min')),
-    company: Yup.string().required(t('company_required')),
+    company: Yup.string().notRequired(),
     rememberMe: Yup.boolean().default(false),
   });
 
 export type LoginFormValues = {
   email: string;
   password: string;
-  company: string;
+  company?: string;
   rememberMe: boolean;
 };
 

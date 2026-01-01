@@ -404,7 +404,9 @@
       "email_invalid": "Invalid email address",
       "password_required": "Password is required",
       "password_min": "Password must be at least 8 characters",
-      "company_required": "Please select a company"
+      "company_required": "Please select a company",
+      "select_company": "Select Company",
+      "select_company_button": "Select Company"
     }
   },
   "Description": {

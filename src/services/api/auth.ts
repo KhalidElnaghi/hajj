@@ -85,3 +85,32 @@ export const login = async (payload: LoginPayload): Promise<LoginResponse> => {
   return response.data;
 };
 
+export interface SelectCompanyResponse {
+  success: boolean;
+  message: string;
+  data: {
+    user: LoginUser;
+    token: string;
+  };
+}
+
+export const selectCompany = async (companyId: number | string): Promise<SelectCompanyResponse> => {
+  const lang = Cookie.get('Language') || 'ar';
+  const token = Cookie.get('accessToken');
+  
+  const response = await SharedApiClient.post<SelectCompanyResponse>(
+    endpoints.auth.selectCompany,
+    {
+      company_id: companyId,
+    },
+    {
+      headers: {
+        'Accept-Language': lang,
+        ...(token && { Authorization: `Bearer ${token}` }),
+      },
+    }
+  );
+
+  return response.data;
+};
+

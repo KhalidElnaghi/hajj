@@ -4,7 +4,7 @@ import { login, LoginPayload, LoginResponse } from '../../api/auth';
 import { setAuthCookies } from '../../shared/auth-cookies';
 
 interface UseLoginMutationOptions {
-  onSuccess?: () => void;
+  onSuccess?: (data: LoginResponse) => void;
   onError?: (error: any) => void;
 }
 
@@ -23,14 +23,21 @@ export const useLoginMutation = (options?: UseLoginMutationOptions) => {
         companies: data.data.companies,
       });
 
-      // Call custom onSuccess if provided
-      if (onSuccess) {
-        onSuccess();
+      // Check if company selection is required
+      if (data.data.requires_company_selection) {
+        // Don't redirect, let the component handle company selection
+        if (onSuccess) {
+          onSuccess(data);
+        }
       } else {
-        // Default: redirect to dashboard using full page reload
-        // This ensures auth context re-initializes with new cookies
-        const returnTo = paths.dashboard.root;
-        window.location.href = returnTo;
+        // No company selection needed, redirect to dashboard
+        if (onSuccess) {
+          onSuccess(data);
+        } else {
+          // Default: redirect to dashboard using full page reload
+          const returnTo = paths.dashboard.root;
+          window.location.href = returnTo;
+        }
       }
     },
     onError: (error) => {
