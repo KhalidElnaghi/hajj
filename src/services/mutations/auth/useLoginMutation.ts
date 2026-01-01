@@ -16,7 +16,6 @@ export const useLoginMutation = (options?: UseLoginMutationOptions) => {
       return login(data);
     },
     onSuccess: (data) => {
-      // Save token, user, and companies data in cookies
       setAuthCookies({
         token: data.data.token,
         user: data.data.user,
@@ -34,17 +33,14 @@ export const useLoginMutation = (options?: UseLoginMutationOptions) => {
         if (onSuccess) {
           onSuccess(data);
         }
-        
-        // Check for returnTo parameter in URL
+
         const urlParams = new URLSearchParams(window.location.search);
         const returnTo = urlParams.get('returnTo') || paths.dashboard.root;
-        
-        // Redirect to returnTo page or main route
+
         window.location.href = returnTo;
       }
     },
     onError: (error) => {
-      // Call custom onError if provided
       if (onError) {
         onError(error);
       }
