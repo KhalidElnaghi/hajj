@@ -22,8 +22,8 @@ import {
   TextField,
   Typography,
   useMediaQuery,
-  useTheme,
 } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 
 import { useLocale, useTranslations } from 'next-intl';
 
