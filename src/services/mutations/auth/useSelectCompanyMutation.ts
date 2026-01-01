@@ -31,7 +31,12 @@ export const useSelectCompanyMutation = (options?: UseSelectCompanyMutationOptio
         onSuccess();
       }
 
-      window.location.href = paths.dashboard.root;
+      // Check for returnTo parameter in URL
+      const urlParams = new URLSearchParams(window.location.search);
+      const returnTo = urlParams.get('returnTo') || paths.dashboard.root;
+
+      // Redirect to returnTo page or main route
+      window.location.href = returnTo;
     },
     onError: (error) => {
       if (onError) {

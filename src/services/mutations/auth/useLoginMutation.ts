@@ -30,12 +30,17 @@ export const useLoginMutation = (options?: UseLoginMutationOptions) => {
           onSuccess(data);
         }
       } else {
-        // No company selection needed, redirect to main route immediately
+        // No company selection needed, redirect to main route or returnTo page
         if (onSuccess) {
           onSuccess(data);
         }
-        // Always redirect to main route after successful login (when company selection is not required)
-        window.location.href = paths.dashboard.root;
+        
+        // Check for returnTo parameter in URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const returnTo = urlParams.get('returnTo') || paths.dashboard.root;
+        
+        // Redirect to returnTo page or main route
+        window.location.href = returnTo;
       }
     },
     onError: (error) => {

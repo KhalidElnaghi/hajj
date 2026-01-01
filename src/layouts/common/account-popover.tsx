@@ -33,13 +33,27 @@ export default function AccountPopover() {
 
   const handleLogout = async () => {
     try {
-      // NOTE: Auth logic commented for future integration.
-      // Un-comment when backend auth is ready.
-      // await logout();
+      // Clear all auth data before redirecting
+      await logout();
       popover.onClose();
-      router.replace(paths.auth.jwt.login);
+      
+      // Get current path and save it in returnTo parameter
+      const currentPath = window.location.pathname;
+      const searchParams = new URLSearchParams({
+        returnTo: currentPath,
+      }).toString();
+      
+      // Redirect to login page with returnTo parameter
+      router.replace(`${paths.auth.jwt.login}?${searchParams}`);
     } catch (error) {
       console.error(error);
+      // Even if logout fails, redirect to login with returnTo
+      popover.onClose();
+      const currentPath = window.location.pathname;
+      const searchParams = new URLSearchParams({
+        returnTo: currentPath,
+      }).toString();
+      router.replace(`${paths.auth.jwt.login}?${searchParams}`);
     }
   };
 
