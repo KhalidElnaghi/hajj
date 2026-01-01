@@ -82,7 +82,7 @@ export default function SupervisorsView({
         pilgrim_ids: pilgrimIds,
         supervisor_ids: supervisorIds,
       });
-      enqueueSnackbar('Supervisors linked successfully', { variant: 'success' });
+      enqueueSnackbar(t('Message.supervisors_assigned_successfully'), { variant: 'success' });
       setSelectedSupervisors([]);
 
       if (onClearSelection) {

@@ -729,7 +729,8 @@
       "city_required": "المدينة مطلوبة",
       "name_ar_arabic_only": "يجب أن يكون الاسم بالعربية فقط",
       "name_en_two_words_required": "يجب أن يكون الاسم بالإنجليزية ويحتوي على على كلمتين على الأقل",
-      "name_ar_two_words_required": "يجب أن يكون الاسم بالعربية ويحتوي على على كلمتين على الأقل"
+      "name_ar_two_words_required": "يجب أن يكون الاسم بالعربية ويحتوي على على كلمتين على الأقل",
+      "supervisors_assigned_successfully": "تم تعيين المشرفين بنجاح"
     },
     "Dialog": {
       "Delete": "حذف",
