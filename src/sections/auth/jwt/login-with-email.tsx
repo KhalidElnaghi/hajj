@@ -5,7 +5,6 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import Cookie from 'js-cookie';
 
-import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import Alert from '@mui/material/Alert';
 import IconButton from '@mui/material/IconButton';
@@ -18,7 +17,7 @@ import { useTranslations } from 'next-intl';
 import { useLocale } from 'next-intl';
 
 import Iconify from 'src/components/iconify';
-import FormProvider, { RHFTextField, RHFSelect, RHFCheckbox } from 'src/components/hook-form';
+import FormProvider, { RHFTextField, RHFSelect } from 'src/components/hook-form';
 
 import { useLoginMutation } from 'src/services/mutations/auth/useLoginMutation';
 import { useSelectCompanyMutation } from 'src/services/mutations/auth/useSelectCompanyMutation';
@@ -39,7 +38,6 @@ export default function LoginByEmailView() {
       email: '',
       password: '',
       company: undefined,
-      rememberMe: false,
     },
   });
 
@@ -85,9 +83,6 @@ export default function LoginByEmailView() {
             });
           }
         });
-      } else {
-        // General error - show in UI (will be displayed above button)
-        console.error('Login error:', error);
       }
     },
   });
@@ -97,7 +92,7 @@ export default function LoginByEmailView() {
       // Redirect handled in mutation hook
     },
     onError: (error: any) => {
-      console.error('Select company error:', error);
+      // Error will be displayed in the general error alert above the form
     },
   });
 
@@ -107,7 +102,6 @@ export default function LoginByEmailView() {
         email: data.email,
         password: data.password,
         companyId: data.company || undefined,
-        rememberMe: data.rememberMe,
       });
     } catch (error) {
       // Error handled in onError callback
@@ -227,35 +221,6 @@ export default function LoginByEmailView() {
             ),
           }}
         />
-
-        {/* Forgot Password Link and Remember Me */}
-        <Stack
-          direction="row"
-          alignItems="center"
-          justifyContent="space-between"
-          spacing={2}
-          sx={{ flexWrap: 'wrap' }}
-        >
-          <Link
-            variant="body2"
-            color="#2B6DDD"
-            underline="always"
-            href="/forgot-password"
-            sx={{ fontSize: '0.875rem' }}
-          >
-            {t('forgot_password')}
-          </Link>
-
-          <RHFCheckbox
-            name="rememberMe"
-            label={t('remember_me')}
-            sx={{
-              '& .MuiFormControlLabel-label': {
-                fontSize: '0.875rem',
-              },
-            }}
-          />
-        </Stack>
 
         {/* Submit Button */}
         <LoadingButton
