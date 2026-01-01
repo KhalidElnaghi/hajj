@@ -86,68 +86,71 @@ export default function FilterDialog({
   const [searchTerm, setSearchTerm] = useState('');
   const [expandedSections, setExpandedSections] = useState<string[]>([]);
 
+  const getLocalizedName = (name?: { ar?: string; en?: string } | null) =>
+    name?.[locale as 'ar' | 'en'] || name?.en || name?.ar || '';
+
   // Fetch init data for dropdowns
   const { data: initData, isLoading: initDataLoading } = useFetchPilgrimInitData();
 
   // Transform API data to dropdown options
   const packageOptions = useMemo(
-    () => transformPackagesToOptions(initData?.data?.packages),
-    [initData?.data?.packages]
+    () => transformPackagesToOptions(initData?.data?.packages, locale),
+    [initData?.data?.packages, locale]
   );
 
   const cityOptions = useMemo(
-    () => transformCitiesToOptions(initData?.data?.cities),
-    [initData?.data?.cities]
+    () => transformCitiesToOptions(initData?.data?.cities, locale),
+    [initData?.data?.cities, locale]
   );
 
   const nationalityOptions = useMemo(
-    () => transformCountriesToOptions(initData?.data?.countries),
-    [initData?.data?.countries]
+    () => transformCountriesToOptions(initData?.data?.countries, locale),
+    [initData?.data?.countries, locale]
   );
 
   const transportOptions = useMemo(
-    () => transformTransportsToOptions(initData?.data?.transports),
-    [initData?.data?.transports]
+    () => transformTransportsToOptions(initData?.data?.transports, locale),
+    [initData?.data?.transports, locale]
   );
 
   const pilgrimTypeOptions = useMemo(
-    () => transformPilgrimTypesToOptions(initData?.data?.pilgrimTypes),
-    [initData?.data?.pilgrimTypes]
+    () => transformPilgrimTypesToOptions(initData?.data?.pilgrimTypes, locale),
+    [initData?.data?.pilgrimTypes, locale]
   );
 
   const muhrimStatusOptions = useMemo(
-    () => transformSimpleToDropdownOptions(initData?.data?.muhrimStatuses),
-    [initData?.data?.muhrimStatuses]
+    () => transformSimpleToDropdownOptions(initData?.data?.muhrimStatuses, locale),
+    [initData?.data?.muhrimStatuses, locale]
   );
 
   const pilgrimStatusOptions = useMemo(
-    () => transformSimpleToDropdownOptions(initData?.data?.pilgrimStatuses),
-    [initData?.data?.pilgrimStatuses]
+    () => transformSimpleToDropdownOptions(initData?.data?.pilgrimStatuses, locale),
+    [initData?.data?.pilgrimStatuses, locale]
   );
 
   const sourceOptions = useMemo(
-    () => transformSimpleToDropdownOptions(initData?.data?.sources),
-    [initData?.data?.sources]
+    () => transformSimpleToDropdownOptions(initData?.data?.sources, locale),
+    [initData?.data?.sources, locale]
   );
 
   const genderToggleOptions = useMemo(
-    () => transformSimpleToToggleOptions(initData?.data?.genders),
-    [initData?.data?.genders]
+    () => transformSimpleToToggleOptions(initData?.data?.genders, locale),
+    [initData?.data?.genders, locale]
   );
 
   const departureToggleOptions = useMemo(
-    () => transformSimpleToToggleOptions(initData?.data?.departureStatuses),
-    [initData?.data?.departureStatuses]
+    () => transformSimpleToToggleOptions(initData?.data?.departureStatuses, locale),
+    [initData?.data?.departureStatuses, locale]
   );
 
   const tagOptions = useMemo(
-    () => transformTagsToOptions(initData?.data?.tags),
-    [initData?.data?.tags]
+    () => transformTagsToOptions(initData?.data?.tags, locale),
+    [initData?.data?.tags, locale]
   );
 
   const employeeOptions = useMemo(
-    () => transformEmployeesToOptions(initData?.data?.employees),
-    [initData?.data?.employees]
+    () => transformEmployeesToOptions(initData?.data?.employees, locale),
+    [initData?.data?.employees, locale]
   );
 
   const searchValue = searchTerm.trim().toLowerCase();
@@ -687,7 +690,7 @@ export default function FilterDialog({
               </AccordionSummary>
               <AccordionDetails sx={{ px: 3, pt: 3, pb: 3, bgcolor: 'transparent' }}>
                 <Stack spacing={2.5}>
-                  <Stack direction="row" spacing={2}>
+                  <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} sx={{ width: '100%' }}>
                     <FormControl fullWidth>
                       <Typography
                         sx={{
@@ -707,7 +710,7 @@ export default function FilterDialog({
                           setFilters({ ...filters, nationality: newValue as CountryOption | null });
                         }}
                         options={countriesList}
-                        getOptionLabel={(option) => option?.country?.name?.ar || ''}
+                        getOptionLabel={(option) => getLocalizedName(option?.country?.name)}
                         getOptionKey={(option) => option?.country?.id}
                         isOptionEqualToValue={(option, value) =>
                           option?.country?.id === value?.country?.id
@@ -732,14 +735,14 @@ export default function FilterDialog({
                                 {option?.country?.flag?.svg && (
                                   <Image
                                     src={option.country.flag.svg}
-                                    alt={option?.country?.name?.ar || 'Flag'}
+                                    alt={getLocalizedName(option?.country?.name) || 'Flag'}
                                     width={20}
                                     height={15}
                                     style={{ borderRadius: 2 }}
                                   />
                                 )}
                                 <Typography variant="body2">
-                                  {option?.country?.name?.ar || ''}
+                                  {getLocalizedName(option?.country?.name) || ''}
                                 </Typography>
                               </Box>
                             </li>
@@ -767,7 +770,7 @@ export default function FilterDialog({
                           setFilters({ ...filters, city: newValue as CityOption | null });
                         }}
                         options={citiesList}
-                        getOptionLabel={(option) => option?.city?.name?.ar || ''}
+                        getOptionLabel={(option) => getLocalizedName(option?.city?.name)}
                         getOptionKey={(option) => option?.city_id}
                         isOptionEqualToValue={(option, value) => option?.city_id === value?.city_id}
                         disabled={initDataLoading}
@@ -786,7 +789,7 @@ export default function FilterDialog({
                           const { key, ...otherProps } = props as any;
                           return (
                             <li key={option?.city_id} {...otherProps}>
-                              {option?.city?.name?.ar || ''}
+                              {getLocalizedName(option?.city?.name) || ''}
                             </li>
                           );
                         }}
@@ -794,7 +797,7 @@ export default function FilterDialog({
                     </FormControl>
                   </Stack>
 
-                  <Stack direction="row" spacing={2}>
+                  <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} sx={{ width: '100%' }}>
                     <FilterDropdown
                       label={t('Label.package_name')}
                       value={filters.package}
@@ -821,7 +824,7 @@ export default function FilterDialog({
                       }
                     />
                   </Stack>
-                  <Stack direction="row" spacing={2}>
+                  <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} sx={{ width: '100%' }}>
                     <FormControl fullWidth>
                       <Typography
                         sx={{
@@ -844,7 +847,7 @@ export default function FilterDialog({
                           });
                         }}
                         options={bookingStatusesList}
-                        getOptionLabel={(option) => option?.name?.ar || ''}
+                        getOptionLabel={(option) => getLocalizedName(option?.name)}
                         getOptionKey={(option) => option?.id}
                         isOptionEqualToValue={(option, value) => option?.id === value?.id}
                         disabled={initDataLoading}
@@ -863,7 +866,7 @@ export default function FilterDialog({
                           const { key, ...otherProps } = props as any;
                           return (
                             <li key={option?.id} {...otherProps}>
-                              {option?.name?.ar || ''}
+                              {getLocalizedName(option?.name) || ''}
                             </li>
                           );
                         }}
@@ -884,7 +887,7 @@ export default function FilterDialog({
                       }
                     />
                   </Stack>
-                  <Stack direction="row" spacing={2}>
+                  <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} sx={{ width: '100%' }}>
                     <FilterDropdown
                       label={t('Label.pilgrim_type')}
                       value={filters.pilgrimType}
@@ -915,7 +918,7 @@ export default function FilterDialog({
                       }
                     />
                   </Stack>
-                  <Stack direction="row" spacing={2}>
+                  <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} sx={{ width: '100%' }}>
                     <FilterToggleGroup
                       label={t('Label.gender')}
                       value={filters.gender}
@@ -940,7 +943,7 @@ export default function FilterDialog({
                       }
                     />
                   </Stack>
-                  <Stack direction="row" spacing={2}>
+                  <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} sx={{ width: '100%' }}>
                     <FilterDropdown
                       label={t('Label.source')}
                       value={filters.source}
@@ -958,7 +961,7 @@ export default function FilterDialog({
             </Accordion>
           )}
 
-          {/* Assembly Points */}
+          {/* Gathering Points */}
           {showSection.gathering && (
             <Accordion
               expanded={
@@ -1019,7 +1022,7 @@ export default function FilterDialog({
               </AccordionSummary>
               <AccordionDetails sx={{ px: 3, pt: 3, pb: 3, bgcolor: 'transparent' }}>
                 <Stack spacing={2.5}>
-                  <Stack direction="row" spacing={2}>
+                  <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} sx={{ width: '100%' }}>
                     <FormControl fullWidth>
                       <Typography
                         sx={{
@@ -1051,7 +1054,7 @@ export default function FilterDialog({
                         <MenuItem value="">{t('Label.all')}</MenuItem>
                         {initData?.data?.gatheringPointTypes?.map((type: any) => (
                           <MenuItem key={type.id} value={type.id}>
-                            {type.name?.ar || type.name?.en}
+                            {getLocalizedName(type.name)}
                           </MenuItem>
                         ))}
                       </Select>
@@ -1088,13 +1091,13 @@ export default function FilterDialog({
                           ?.find((type: any) => type.id === filters.gathering_point_type_id)
                           ?.gathering_points?.map((point: any) => (
                             <MenuItem key={point.id} value={point.id}>
-                              {point.name?.ar || point.name?.en}
+                              {getLocalizedName(point.name)}
                             </MenuItem>
                           ))}
                       </Select>
                     </FormControl>
                   </Stack>
-                  <Stack direction="row" spacing={2}>
+                  <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} sx={{ width: '100%' }}>
                     <FormControl fullWidth>
                       <Typography
                         sx={{
@@ -1123,7 +1126,7 @@ export default function FilterDialog({
                           )
                           ?.destinations?.map((dest: any) => (
                             <MenuItem key={dest.id} value={dest.destination_id}>
-                              {dest.destination?.name?.ar || dest.destination?.name?.en}
+                              {getLocalizedName(dest.destination?.name)}
                             </MenuItem>
                           ))}
                       </Select>
@@ -1164,7 +1167,7 @@ export default function FilterDialog({
                                   {formatTime(time.from, locale)}
                                 </Typography>
                                 <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                                  ←
+                                  {locale === 'en' ? '→' : '←'}
                                 </Typography>
                                 <Typography variant="body2" sx={{ fontWeight: 500 }}>
                                   {formatTime(time.to, locale)}
@@ -1242,7 +1245,7 @@ export default function FilterDialog({
               </AccordionSummary>
               <AccordionDetails sx={{ px: 3, pt: 3, pb: 3, bgcolor: 'transparent' }}>
                 <Stack spacing={2.5}>
-                  <Stack direction="row" spacing={2}>
+                  <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} sx={{ width: '100%' }}>
                     <FormControl fullWidth>
                       <Typography
                         sx={{
@@ -1262,7 +1265,7 @@ export default function FilterDialog({
                           setFilters({ ...filters, camp_id: newValue as CampOption | null });
                         }}
                         options={campsList}
-                        getOptionLabel={(option) => option?.name?.ar || ''}
+                        getOptionLabel={(option) => getLocalizedName(option?.name)}
                         getOptionKey={(option) => option?.id}
                         isOptionEqualToValue={(option, value) => option?.id === value?.id}
                         disabled={initDataLoading}
@@ -1282,7 +1285,9 @@ export default function FilterDialog({
                           return (
                             <li key={option?.id} {...otherProps}>
                               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                <Typography variant="body2">{option?.name?.ar || ''}</Typography>
+                                <Typography variant="body2">
+                                  {getLocalizedName(option?.name) || ''}
+                                </Typography>
                                 <Typography variant="caption" sx={{ color: 'text.secondary' }}>
                                   ({option?.camp_no})
                                 </Typography>
@@ -1543,7 +1548,7 @@ export default function FilterDialog({
                         setFilters({ ...filters, supervisor: newValue as EmployeeOption | null });
                       }}
                       options={supervisorsList}
-                      getOptionLabel={(option) => option?.name?.ar || ''}
+                      getOptionLabel={(option) => getLocalizedName(option?.name)}
                       getOptionKey={(option) => option?.id}
                       isOptionEqualToValue={(option, value) => option?.id === value?.id}
                       renderInput={(params) => (
@@ -1561,7 +1566,7 @@ export default function FilterDialog({
                         const { key, ...otherProps } = props as any;
                         return (
                           <li key={option?.id} {...otherProps}>
-                            {option?.name?.ar || ''}
+                            {getLocalizedName(option?.name) || ''}
                           </li>
                         );
                       }}
@@ -1633,7 +1638,7 @@ export default function FilterDialog({
               </AccordionSummary>
               <AccordionDetails sx={{ px: 3, pt: 3, pb: 3, bgcolor: 'transparent' }}>
                 <Stack spacing={2.5}>
-                  <Stack direction="row" spacing={2}>
+                  <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} sx={{ width: '100%' }}>
                     <FormControl fullWidth>
                       <Typography
                         sx={{
@@ -1713,120 +1718,6 @@ export default function FilterDialog({
               </AccordionDetails>
             </Accordion>
           )}
-
-          {/* Shipping Operations */}
-          {/* {showSection.shipping && (
-            <Accordion
-              expanded={
-                expandedSections.includes('shipping') || (!!searchValue && showSection.shipping)
-              }
-              onChange={handleAccordionChange('shipping')}
-              sx={{
-                boxShadow: 'none !important',
-                border: 'none',
-                '&:before': { display: 'none' },
-                mb: 0,
-              }}
-            >
-              <AccordionSummary
-                expandIcon={
-                  expandedSections.includes('shipping') ? (
-                    <Iconify icon="mdi:chevron-down" width={20} color="#64748B" />
-                  ) : (
-                    <Iconify icon="mdi:plus" width={20} color="#64748B" />
-                  )
-                }
-                sx={{
-                  px: 0,
-                  minHeight: 56,
-                  '& .MuiAccordionSummary-content': { my: 1.5, mx: 3 },
-                  '& .MuiAccordionSummary-content.Mui-expanded': { my: 1.5, mx: 3 },
-                  '& .MuiAccordionSummary-expandIconWrapper': { mr: 3 },
-                  bgcolor: 'transparent',
-                  position: 'relative',
-                  '&::after': {
-                    content: '""',
-                    position: 'absolute',
-                    bottom: 0,
-                    left: 24,
-                    right: 24,
-                    height: '1px',
-                    bgcolor: 'divider',
-                  },
-                  '&:hover': {
-                    bgcolor: 'transparent',
-                  },
-                  '&.Mui-expanded': {
-                    minHeight: 56,
-                    bgcolor: 'transparent',
-                  },
-                }}
-              >
-                <Typography
-                  sx={{
-                    color: '#64748B',
-                    fontSize: 18,
-                    fontWeight: 400,
-                    lineHeight: '23px',
-                  }}
-                >
-                  {t('Label.shipping_operations')}
-                </Typography>
-              </AccordionSummary>
-              <AccordionDetails sx={{ px: 3, pt: 3, pb: 3, bgcolor: 'transparent' }}>
-                <Stack spacing={2.5}>
-                  <Stack direction="row" spacing={2}>
-                    <FormControl fullWidth>
-                      <Typography
-                        sx={{
-                          mb: 1,
-                          color: labelColor('Label.shipping_tool'),
-                          fontSize: 16,
-                          fontWeight: 400,
-                          lineHeight: '22px',
-                          textTransform: 'capitalize',
-                        }}
-                      >
-                        {t('Label.shipping_tool')}
-                      </Typography>
-                      <Select
-                        value={filters.shippingManagement}
-                        onChange={(e) =>
-                          setFilters({ ...filters, shippingManagement: e.target.value })
-                        }
-                        displayEmpty
-                        sx={{ borderRadius: 1 }}
-                      >
-                        <MenuItem value="">{t('Label.select')}</MenuItem>
-                      </Select>
-                    </FormControl>
-                    <FormControl fullWidth>
-                      <Typography
-                        sx={{
-                          mb: 1,
-                          color: labelColor('Label.shipment_status'),
-                          fontSize: 16,
-                          fontWeight: 400,
-                          lineHeight: '22px',
-                          textTransform: 'capitalize',
-                        }}
-                      >
-                        {t('Label.shipment_status')}
-                      </Typography>
-                      <Select
-                        value={filters.shipmentStatus}
-                        onChange={(e) => setFilters({ ...filters, shipmentStatus: e.target.value })}
-                        displayEmpty
-                        sx={{ borderRadius: 1 }}
-                      >
-                        <MenuItem value="">{t('Label.select')}</MenuItem>
-                      </Select>
-                    </FormControl>
-                  </Stack>
-                </Stack>
-              </AccordionDetails>
-            </Accordion>
-          )} */}
         </Box>
       </DialogContent>
 

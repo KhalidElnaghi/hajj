@@ -21,9 +21,11 @@ import {
   TableRow,
   TextField,
   Typography,
+  useMediaQuery,
 } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 
 import { useDisclosure } from 'src/hooks/useDisclosure';
 
@@ -49,6 +51,9 @@ import { ConfirmDialog } from 'src/components/custom-dialog';
 
 export default function PilgrimsView() {
   const t = useTranslations('Pilgrims');
+  const locale = useLocale();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const table = useTable();
   const bulkDialog = useDisclosure();
   const filterDialog = useDisclosure();
@@ -63,6 +68,7 @@ export default function PilgrimsView() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const { enqueueSnackbar } = useSnackbar();
+  const filterMenuWidth = isMobile ? '100%' : filterAnchorEl?.clientWidth || 250;
   // Applied filters from dialog
   const [appliedFilters, setAppliedFilters] = useState<any>({});
   const [pilgrimToDelete, setPilgrimToDelete] = useState<Pilgrim | null>(null);
@@ -538,14 +544,21 @@ export default function PilgrimsView() {
     },
   ];
 
-  const registrationStatusColors: Record<string, { bg: string; color: string; label: string }> = {
-    Active: { bg: '#E8F5E9', color: '#2E7D32', label: 'نشط' },
-    Inactive: { bg: '#F3E5F5', color: '#7B1FA2', label: 'غير نشط' },
-    Cancelled: { bg: '#FFEBEE', color: '#C62828', label: 'ملغي' },
-    completed: { bg: '#E8F5E9', color: '#2E7D32', label: 'مكتمل' },
-    pending: { bg: '#F3E5F5', color: '#7B1FA2', label: 'مؤكد' },
-    confirmed: { bg: '#FFEDD4', color: '#F54900', label: 'قيد التأكيد' },
-    cancelled: { bg: '#FFEBEE', color: '#C62828', label: 'ملغي' },
+  const registrationStatusColors: Record<
+    string,
+    { bg: string; color: string; label: { ar: string; en: string } }
+  > = {
+    Active: { bg: '#E8F5E9', color: '#2E7D32', label: { ar: 'نشط', en: 'Active' } },
+    Inactive: { bg: '#F3E5F5', color: '#7B1FA2', label: { ar: 'غير نشط', en: 'Inactive' } },
+    Cancelled: { bg: '#FFEBEE', color: '#C62828', label: { ar: 'ملغي', en: 'Cancelled' } },
+    completed: { bg: '#E8F5E9', color: '#2E7D32', label: { ar: 'مكتمل', en: 'Completed' } },
+    pending: { bg: '#F3E5F5', color: '#7B1FA2', label: { ar: 'مؤكد', en: 'Pending' } },
+    confirmed: {
+      bg: '#FFEDD4',
+      color: '#F54900',
+      label: { ar: 'قيد التأكيد', en: 'Pending Confirmation' },
+    },
+    cancelled: { bg: '#FFEBEE', color: '#C62828', label: { ar: 'ملغي', en: 'Cancelled' } },
   };
 
   const healthStatusColors: Record<string, { bg: string; color: string; label: string }> = {
@@ -563,48 +576,20 @@ export default function PilgrimsView() {
     شؤون: { bg: '#E0F7FA', color: '#00ACC1' },
   };
 
+  const getLocalizedName = (name?: { ar?: string; en?: string } | null) =>
+    name?.[locale as 'ar' | 'en'] || name?.en || name?.ar || '';
+
   const customRender: Partial<Record<keyof Pilgrim, (row: Pilgrim) => ReactNode>> = {
     name: (row) => (
       <Typography variant="body2" sx={{ fontSize: 13 }}>
-        {row.name?.ar || t('Label.not_available')}
+        {getLocalizedName(row.name) || t('Label.not_available')}
       </Typography>
     ),
     mobile: (row) => (
-      <Box sx={{ direction: 'ltr', textAlign: 'left' }}>
+      <Box sx={{ direction: locale === 'ar' ? 'rtl' : 'ltr', textAlign: 'left' }}>
         {row.mobile ? `+966${row.mobile}` : t('Label.not_available')}
       </Box>
     ),
-    status_name: (row) => {
-      if (!row.status_name) {
-        return (
-          <Typography variant="body2" sx={{ fontSize: 13, color: 'text.secondary' }}>
-            {t('Label.not_available')}
-          </Typography>
-        );
-      }
-      const statusInfo = registrationStatusColors[row.status_name] || {
-        bg: '#F5F5F5',
-        color: '#666',
-        label: row.status_name,
-      };
-      return (
-        <Box
-          component="span"
-          sx={{
-            px: 1.5,
-            py: 0.5,
-            borderRadius: 2,
-            bgcolor: statusInfo.bg,
-            color: statusInfo.color,
-            fontSize: 12,
-            fontWeight: 600,
-            display: 'inline-block',
-          }}
-        >
-          {statusInfo.label}
-        </Box>
-      );
-    },
     nationality: (row) => {
       if (!row.nationality?.country) {
         return (
@@ -618,32 +603,34 @@ export default function PilgrimsView() {
           {row.nationality.country.flag?.svg && (
             <Image
               src={row.nationality.country.flag.svg}
-              alt={row.nationality.country.name?.ar || 'Flag'}
+              alt={getLocalizedName(row.nationality.country.name) || 'Flag'}
               width={20}
               height={15}
               style={{ borderRadius: 2 }}
             />
           )}
           <Typography variant="body2" sx={{ fontSize: 13 }}>
-            {row.nationality.country.name?.ar || t('Label.not_available')}
+            {getLocalizedName(row.nationality.country.name) || t('Label.not_available')}
           </Typography>
         </Box>
       );
     },
     city: (row) => (
       <Typography variant="body2" sx={{ fontSize: 13 }}>
-        {row.city?.city?.name?.ar || t('Label.not_available')}
+        {getLocalizedName(row.city?.city?.name) || t('Label.not_available')}
       </Typography>
     ),
     package: (row) => {
-      if (!row.package?.name?.ar) {
+      const packageLabel = getLocalizedName(row.package?.name);
+      if (!packageLabel) {
         return (
           <Typography variant="body2" sx={{ fontSize: 13, color: 'text.secondary' }}>
             {t('Label.not_available')}
           </Typography>
         );
       }
-      const pkgInfo = packageColors[row.package.name.ar] || {
+      const pkgColorKey = row.package?.name?.ar || row.package?.name?.en || '';
+      const pkgInfo = packageColors[pkgColorKey] || {
         bg: '#F5F5F5',
         color: '#666',
       };
@@ -661,15 +648,51 @@ export default function PilgrimsView() {
             display: 'inline-block',
           }}
         >
-          {row.package.name.ar}
+          {packageLabel}
         </Box>
       );
     },
     transport: (row) => (
       <Typography variant="body2" sx={{ fontSize: 13 }}>
-        {row.transport?.name?.ar || t('Label.not_available')}
+        {getLocalizedName(row.transport?.name) || t('Label.not_available')}
       </Typography>
     ),
+    status_name: (row) => {
+      if (!row.status_name) {
+        return (
+          <Typography variant="body2" sx={{ fontSize: 13, color: 'text.secondary' }}>
+            {t('Label.not_available')}
+          </Typography>
+        );
+      }
+      const statusInfo = registrationStatusColors[row.status_name] || {
+        bg: '#F5F5F5',
+        color: '#666',
+        label: { ar: row.status_name, en: row.status_name },
+      };
+      const statusLabel =
+        statusInfo.label?.[locale as 'ar' | 'en'] ||
+        statusInfo.label?.en ||
+        statusInfo.label?.ar ||
+        row.status_name;
+      return (
+        <Box
+          component="span"
+          sx={{
+            px: 1.5,
+            py: 0.5,
+            borderRadius: 2,
+            bgcolor: statusInfo.bg,
+            color: statusInfo.color,
+            fontSize: 12,
+            fontWeight: 600,
+            display: 'inline-block',
+          }}
+        >
+          {statusLabel}
+        </Box>
+      );
+    },
   };
 
   // Use API data directly for server-side pagination
@@ -912,16 +935,18 @@ export default function PilgrimsView() {
               />
               {/* Absolute Filter Button with Dropdown - Only show if filters are applied */}
               {activeFilterCount > 0 && (
-                <Box>
+                <Box sx={{ width: { xs: '100%', md: 'auto' } }}>
                   <Button
                     variant="outlined"
                     onClick={handleFilterClick}
+                    fullWidth={isMobile}
                     sx={{
                       borderRadius: 1,
                       height: 44,
                       paddingInlineStart: 2,
                       paddingInlineEnd: 5,
-                      minWidth: 200,
+                      minWidth: { xs: '100%', md: 200 },
+                      width: { xs: '100%', md: 200 },
                       borderColor: '#e0e0e0',
                       color: '#333',
                       bgcolor: '#fff',
@@ -981,7 +1006,9 @@ export default function PilgrimsView() {
                       sx: {
                         mt: 1,
                         borderRadius: 1,
-                        minWidth: 250,
+                        width: filterMenuWidth,
+                        minWidth: filterMenuWidth,
+                        maxWidth: isMobile ? '100%' : undefined,
                         boxShadow: '0px 8px 24px rgba(0, 0, 0, 0.12)',
                       },
                     }}
@@ -1025,6 +1052,7 @@ export default function PilgrimsView() {
                   variant={table.selected.length > 0 ? 'contained' : 'outlined'}
                   onClick={bulkDialog.onOpen}
                   disabled={table.selected.length === 0}
+                  fullWidth={isMobile}
                   sx={{
                     bgcolor:
                       table.selected.length === 0
@@ -1042,7 +1070,8 @@ export default function PilgrimsView() {
                     height: 44,
                     paddingInlineStart: 2,
                     paddingInlineEnd: 5,
-                    minWidth: 200,
+                    minWidth: isMobile ? '100%' : 200,
+                    width: isMobile ? '100%' : 200,
                     position: 'relative',
                     boxShadow: 'none',
                     border:
@@ -1112,17 +1141,24 @@ export default function PilgrimsView() {
               )}
             </Stack>
 
-            <Stack direction="row" spacing={1.25} alignItems="center">
+            <Stack
+              direction={'row'}
+              spacing={1.25}
+              alignItems={isMobile ? 'stretch' : 'center'}
+              sx={{ width: { xs: '100%', md: 'auto' } }}
+            >
               <Button
                 variant="outlined"
                 onClick={importDialog.onOpen}
                 startIcon={
-                  <Image
-                    src="/assets/images/pilgrims/import.svg"
-                    alt="import"
-                    width={15}
-                    height={15}
-                  />
+                  !isMobile ? (
+                    <Image
+                      src="/assets/images/pilgrims/import.svg"
+                      alt="import"
+                      width={15}
+                      height={15}
+                    />
+                  ) : undefined
                 }
                 sx={{
                   height: 44,
@@ -1142,12 +1178,14 @@ export default function PilgrimsView() {
               <Button
                 variant="outlined"
                 startIcon={
-                  <Image
-                    src="/assets/images/pilgrims/export.svg"
-                    alt="export"
-                    width={15}
-                    height={15}
-                  />
+                  !isMobile ? (
+                    <Image
+                      src="/assets/images/pilgrims/export.svg"
+                      alt="export"
+                      width={15}
+                      height={15}
+                    />
+                  ) : undefined
                 }
                 sx={{
                   height: 44,
@@ -1171,7 +1209,7 @@ export default function PilgrimsView() {
                   minWidth: 'auto',
                   width: 44,
                   height: 44,
-                  p: 0,
+                  p: isMobile ? '8px 12px' : 0,
                   borderRadius: 1,
                   borderColor: '#0d6efd',
                   color: '#0d6efd',
@@ -1242,7 +1280,7 @@ export default function PilgrimsView() {
         title={t('Title.delete_pilgrim')}
         content={
           pilgrimToDelete
-            ? t('Message.delete_pilgrim_confirm', { name: pilgrimToDelete.name?.ar || '' })
+            ? t('Message.delete_pilgrim_confirm', { name: getLocalizedName(pilgrimToDelete.name) })
             : ''
         }
         buttonTitle={t('Button.delete')}
