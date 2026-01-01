@@ -21,6 +21,7 @@ import TagsView from './views/TagsView';
 import AccommodationView from './views/AccommodationView';
 import GatheringView from './views/GatheringView';
 import ArrivalView from './views/ArrivalView';
+import SupervisorsView from './views/SupervisorsView';
 
 interface BulkActionsDialogProps {
   open: boolean;
@@ -78,6 +79,8 @@ export default function BulkActionsDialog({
         return <GatheringView {...viewProps} />;
       case 'arrival':
         return <ArrivalView {...viewProps} />;
+      case 'supervisors':
+        return <SupervisorsView {...viewProps} />;
       // Add other cases as views are created
       default:
         return <MenuView onClose={handleClose} onOptionSelect={handleViewChange} />;
