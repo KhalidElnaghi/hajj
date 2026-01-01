@@ -186,13 +186,31 @@ export function AuthProvider({ children }: Readonly<Props>) {
   }, []);
 
   const logout = useCallback(async () => {
+    // Clear all auth cookies
+    Cookie.remove(ACCESS_TOKEN);
+    Cookie.remove('refreshToken');
+    Cookie.remove('accessTokenExpireAt');
+    Cookie.remove('refreshTokenExpireAt');
+    Cookie.remove(USER_KEY);
+    Cookie.remove('companies');
+
+    // Clear sessionStorage
+    if (typeof window !== 'undefined') {
+      sessionStorage.clear();
+    }
+
+    // Clear session using setSession
     setSession({
       accessToken: null,
       refreshToken: null,
       accessTokenExpireAt: null,
       refreshTokenExpireAt: null,
     });
-    sessionStorage.removeItem(USER_KEY);
+
+    // Clear axios default header
+    delete axios.defaults.headers.common.Authorization;
+
+    // Dispatch logout action
     dispatch({
       type: Types.LOGOUT,
     });

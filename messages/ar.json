@@ -385,6 +385,30 @@
     }
   },
   "Placeholder": {},
+  "Auth": {
+    "Login": {
+      "welcome": "مرحبا بك",
+      "description": "سجل دخولك إلى لوحة التحكم، لإدارة البيانات والعمليات بسلاسة وكفاءة من منصة واحدة موثوقة.",
+      "email_or_username": "البريد الاكتروني أو اسم المستخدم",
+      "email_placeholder": "Example@email.com",
+      "password": "كلمة السر",
+      "password_placeholder": "at least 8 characters",
+      "choose_company": "اختار شركتك",
+      "choose_company_placeholder": "Choose your company",
+      "forgot_password": "نسيت كلمة السر؟",
+      "remember_me": "تذكرني",
+      "sign_in": "تسجيل الدخول",
+      "login_error": "تعذر تسجيل الدخول. تحقق من البيانات وحاول مرة أخرى.",
+      "copyright": "All rights reserved © Quran",
+      "email_required": "البريد الإلكتروني أو اسم المستخدم مطلوب",
+      "email_invalid": "البريد الإلكتروني غير صحيح",
+      "password_required": "كلمة السر مطلوبة",
+      "password_min": "كلمة السر يجب أن تكون على الأقل 8 أحرف",
+      "company_required": "يرجى اختيار الشركة",
+      "select_company": "اختر الشركة",
+      "select_company_button": "اختر الشركة"
+    }
+  },
   "Description": {
     "pilgrims_management": "هذه صفحة إدارة الحجاج. هنا يمكنك إدارة جميع معلومات الحجاج والتسجيلات والبيانات المتعلقة بهم.",
     "supervisors_management": "هذه صفحة إدارة المشرفين. هنا يمكنك إدارة جميع المشرفين ومهامهم ومسؤولياتهم.",
