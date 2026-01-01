@@ -57,12 +57,66 @@ apiClient.interceptors.request.use(
 
 apiClient.interceptors.response.use(
   (response) => response,
-  (error) => Promise.reject((error.response && error.response.data) || 'Something went wrong')
+  (error) => {
+    // Handle 401 Unauthorized - token expired or invalid
+    if (error.response?.status === 401) {
+      // Clear auth cookies
+      Cookie.remove(ACCESS_TOKEN);
+      Cookie.remove('user');
+      Cookie.remove('companies');
+      
+      // Clear sessionStorage
+      if (typeof window !== 'undefined') {
+        sessionStorage.clear();
+      }
+      
+      // Clear axios default header
+      delete axios.defaults.headers.common.Authorization;
+      
+      // Redirect to login page
+      if (typeof window !== 'undefined') {
+        const currentPath = window.location.pathname;
+        const searchParams = new URLSearchParams({
+          returnTo: currentPath,
+        }).toString();
+        window.location.href = `/login?${searchParams}`;
+      }
+    }
+    
+    return Promise.reject((error.response && error.response.data) || 'Something went wrong');
+  }
 );
 
 SharedApiClient.interceptors.response.use(
   (response) => response,
-  (error) => Promise.reject((error.response && error.response.data) || 'Something went wrong')
+  (error) => {
+    // Handle 401 Unauthorized - token expired or invalid
+    if (error.response?.status === 401) {
+      // Clear auth cookies
+      Cookie.remove(ACCESS_TOKEN);
+      Cookie.remove('user');
+      Cookie.remove('companies');
+      
+      // Clear sessionStorage
+      if (typeof window !== 'undefined') {
+        sessionStorage.clear();
+      }
+      
+      // Clear axios default header
+      delete axios.defaults.headers.common.Authorization;
+      
+      // Redirect to login page
+      if (typeof window !== 'undefined') {
+        const currentPath = window.location.pathname;
+        const searchParams = new URLSearchParams({
+          returnTo: currentPath,
+        }).toString();
+        window.location.href = `/login?${searchParams}`;
+      }
+    }
+    
+    return Promise.reject((error.response && error.response.data) || 'Something went wrong');
+  }
 );
 
 export default apiClient;
