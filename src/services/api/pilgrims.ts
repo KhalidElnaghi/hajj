@@ -1284,3 +1284,27 @@ export const bulkAssignTags = async (
 ): Promise<BulkAssignTagsResponse> => {
   return await API.post<BulkAssignTagsResponse>('/dashboard/settings/taggables', payload);
 };
+
+export interface BulkAssignGatheringPointPayload {
+  gathering_point_id: number;
+  gathering_point_type_id: number;
+  pilgrim_ids: number[];
+  source: string;
+  destination_id: number;
+  gathering_point_time_id: number;
+}
+
+export interface BulkAssignGatheringPointResponse {
+  success?: boolean;
+  message?: string;
+  data?: any;
+}
+
+export const bulkAssignGatheringPoint = async (
+  payload: BulkAssignGatheringPointPayload
+): Promise<BulkAssignGatheringPointResponse> => {
+  return await API.post<BulkAssignGatheringPointResponse>(
+    '/dashboard/assign-pilgrims-gathering-point',
+    payload
+  );
+};

@@ -686,6 +686,8 @@
       "search_or_add_new_tag": "ابحث عن أو ضع وسم جديد",
       "select_destination": "اختر الوجهة",
       "select_gathering_point": "اختر نقطة التجمع",
+      "select_gathering_point_type": "اختر نوع نقطة التجمع",
+      "select_gathering_time": "اختر موعد التجمع",
       "select_camps": "اختر المخيمات",
       "select_location": "اختر الموقع",
       "select_nationality": "اختر الجنسية",
@@ -738,7 +740,9 @@
       "housing_auto_assigned_successfully": "تم توزيع السكن بنجاح",
       "error_assigning_housing": "فشل تعيين السكن",
       "tags_assigned_successfully": "تم تعيين الوسوم بنجاح",
-      "error_assigning_tags": "خطأ في تعيين الوسوم"
+      "error_assigning_tags": "خطأ في تعيين الوسوم",
+      "gathering_point_assigned_successfully": "تم تعيين نقطة التجمع بنجاح",
+      "error_assigning_gathering_point": "خطأ في تعيين نقطة التجمع"
     },
     "Dialog": {
       "Delete": "حذف",

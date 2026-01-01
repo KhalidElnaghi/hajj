@@ -685,6 +685,8 @@
       "search_or_add_new_tag": "Search or add new tag",
       "select_destination": "Select Destination",
       "select_gathering_point": "Select Gathering Point",
+      "select_gathering_point_type": "Select Gathering Point Type",
+      "select_gathering_time": "Select Gathering Time",
       "select_camps": "Select Camps",
       "select_location": "Select Location",
       "select_nationality": "Select Nationality",
@@ -737,7 +739,9 @@
       "housing_auto_assigned_successfully": "Housing assigned successfully",
       "error_assigning_housing": "Failed to assign housing",
       "tags_assigned_successfully": "Tags assigned successfully",
-      "error_assigning_tags": "Error assigning tags"
+      "error_assigning_tags": "Error assigning tags",
+      "gathering_point_assigned_successfully": "Gathering point assigned successfully",
+      "error_assigning_gathering_point": "Error assigning gathering point"
     },
     "Dialog": {
       "Delete": "Delete",
