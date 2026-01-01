@@ -1,57 +1,90 @@
 import Cookie from 'js-cookie';
-import { USER_KEY } from 'src/auth/constants';
-import { setSession } from 'src/auth/context/jwt/utils';
+import axios from 'axios';
+import { USER_KEY, ACCESS_TOKEN } from 'src/auth/constants';
 
 interface UserData {
-  id?: string | number;
+  id?: number;
   name?: string;
   email?: string;
-  phoneNumber?: string;
-  role?: string;
-  completeTeacherProfile?: boolean;
-  accessToken?: string;
+  type?: string;
+  username?: string;
+  email_verified_at?: string | null;
+  current_company_id?: number;
+  created_by?: number | null;
+  phone?: string | null;
+  status?: number;
+  avatar?: string;
+  created_at?: string;
+  updated_at?: string;
+  [key: string]: any;
+}
+
+interface CompanyData {
+  id: number;
+  company_no: number;
+  name: {
+    ar: string;
+    en: string;
+  };
+  status: string;
+  database_name: string;
+  legal_name: string;
   [key: string]: any;
 }
 
 interface SetAuthCookiesParams {
-  accessToken: string;
-  refreshToken: string;
-  accessTokenExpireAt: string;
-  refreshTokenExpireAt: string;
+  token: string;
   user: UserData;
+  companies: CompanyData[];
   rememberMe?: boolean;
 }
 
 /**
- * Sets authentication cookies and session using the existing auth utils
- * Note: Cookie expiry for rememberMe is handled by the browser session vs persistent cookies
- * The token expiry dates from the API determine actual token validity
+ * Sets authentication cookies
+ * Saves token, user, and companies data in cookies
  */
 export const setAuthCookies = ({
-  accessToken,
-  refreshToken,
-  accessTokenExpireAt,
-  refreshTokenExpireAt,
+  token,
   user,
+  companies,
   rememberMe = false,
 }: SetAuthCookiesParams): void => {
-  // Use existing setSession function which handles UTC conversion and token refresh timers
-  setSession({
-    accessToken,
-    refreshToken,
-    accessTokenExpireAt,
-    refreshTokenExpireAt,
+  // Cookie options
+  const isHttps = typeof window !== 'undefined' && window.location.protocol === 'https:';
+  const baseOptions = {
+    secure: isHttps,
+    sameSite: 'lax' as const,
+    path: '/',
+  };
+
+  // Calculate expiry dates
+  // If rememberMe is true, use 30 days, otherwise use 1 day
+  const expiry = rememberMe ? 30 : 1;
+
+  // Set access token
+  Cookie.set(ACCESS_TOKEN, token, {
+    ...baseOptions,
+    expires: expiry,
   });
 
-  // Set user data cookie (for backward compatibility)
-  Cookie.set(USER_KEY, user.name || '', {
-    path: '/',
-    ...(rememberMe && { expires: 30 }), // 30 days if rememberMe, otherwise session cookie
+  // Set user data
+  Cookie.set(USER_KEY, JSON.stringify(user), {
+    ...baseOptions,
+    expires: expiry,
+  });
+
+  // Set companies data
+  Cookie.set('companies', JSON.stringify(companies), {
+    ...baseOptions,
+    expires: expiry,
   });
 
   // Store full user object in sessionStorage for auth context (as done in auth-provider)
   if (typeof window !== 'undefined') {
-    sessionStorage.setItem(USER_KEY, JSON.stringify({ ...user, accessToken }));
+    sessionStorage.setItem(USER_KEY, JSON.stringify({ ...user, accessToken: token }));
   }
+
+  // Set axios default authorization header
+  axios.defaults.headers.common.Authorization = `Bearer ${token}`;
 };
 

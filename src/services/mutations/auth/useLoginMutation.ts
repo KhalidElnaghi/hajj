@@ -15,23 +15,12 @@ export const useLoginMutation = (options?: UseLoginMutationOptions) => {
     mutationFn: async (data: LoginPayload) => {
       return login(data);
     },
-    onSuccess: (data, variables) => {
-      // Save tokens and user data in cookies
+    onSuccess: (data) => {
+      // Save token, user, and companies data in cookies
       setAuthCookies({
-        accessToken: data.accessToken,
-        refreshToken: data.refreshToken,
-        accessTokenExpireAt: data.accessTokenExpireAt,
-        refreshTokenExpireAt: data.refreshTokenExpireAt,
-        user: {
-          id: data.id,
-          name: data.name,
-          email: data.email,
-          phoneNumber: data.phoneNumber,
-          role: data.role,
-          completeTeacherProfile: data.completeTeacherProfile,
-          accessToken: data.accessToken,
-        },
-        rememberMe: variables.rememberMe || false,
+        token: data.data.token,
+        user: data.data.user,
+        companies: data.data.companies,
       });
 
       // Call custom onSuccess if provided
@@ -52,4 +41,3 @@ export const useLoginMutation = (options?: UseLoginMutationOptions) => {
     },
   });
 };
-

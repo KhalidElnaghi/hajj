@@ -10,18 +10,59 @@ export interface LoginPayload {
   rememberMe?: boolean;
 }
 
+export interface Company {
+  id: number;
+  company_no: number;
+  name: {
+    ar: string;
+    en: string;
+  };
+  status: string;
+  database_name: string;
+  legal_name: string;
+  registration_no?: string | null;
+  tax_number?: string | null;
+  cr_expiry_date?: string | null;
+  license_number?: string | null;
+  address?: string | null;
+  country_id?: number | null;
+  city_id?: number | null;
+  postal_code?: string | null;
+  phone?: string | null;
+  hotline?: string | null;
+  email?: string | null;
+  website?: string | null;
+  language: string;
+  logo?: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface LoginUser {
+  id: number;
+  name: string;
+  email: string;
+  type: string;
+  username: string;
+  email_verified_at?: string | null;
+  current_company_id: number;
+  created_by?: number | null;
+  phone?: string | null;
+  status: number;
+  avatar: string;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface LoginResponse {
-  accessToken: string;
-  refreshToken: string;
-  accessTokenExpireAt: string;
-  refreshTokenExpireAt: string;
-  name?: string;
-  id?: string | number;
-  email?: string;
-  phoneNumber?: string;
-  role?: string;
-  completeTeacherProfile?: boolean;
-  [key: string]: any;
+  success: boolean;
+  message: string;
+  data: {
+    requires_company_selection: boolean;
+    companies: Company[];
+    user: LoginUser;
+    token: string;
+  };
 }
 
 export const login = async (payload: LoginPayload): Promise<LoginResponse> => {
