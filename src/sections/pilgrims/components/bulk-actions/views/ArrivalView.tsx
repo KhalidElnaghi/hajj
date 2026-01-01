@@ -5,6 +5,8 @@ import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 
 import { BulkActionViewProps } from '../shared/types';
+import BulkActionFooter from '../shared/BulkActionFooter';
+import BulkSectionHeader from '../shared/BulkSectionHeader';
 
 export default function ArrivalView({ onBack, onClose, selectedCount, onClearSelection }: BulkActionViewProps) {
   const t = useTranslations('Pilgrims');
@@ -20,15 +22,10 @@ export default function ArrivalView({ onBack, onClose, selectedCount, onClearSel
 
   return (
     <Stack spacing={3} sx={{ p: 1 }}>
-      {/* Section Header */}
-      <Box>
-        <Typography variant="h6" sx={{ fontWeight: 700, fontSize: 16 }}>
-          {t('Label.arrival_time')}
-        </Typography>
-        <Typography variant="body2" sx={{ color: 'text.secondary', mt: 0.5, fontSize: 13 }}>
-          {t('Description.arrival_time_description')}
-        </Typography>
-      </Box>
+      <BulkSectionHeader
+        title={t('Label.arrival_time')}
+        description={t('Description.arrival_time_description')}
+      />
 
       {/* Arrival Type Toggle */}
       <Box
@@ -82,39 +79,30 @@ export default function ArrivalView({ onBack, onClose, selectedCount, onClearSel
         </Button>
       </Box>
 
-      {/* Action Buttons */}
-      <Stack direction="row" spacing={1.5} justifyContent="flex-end">
-        <Button
-          variant="outlined"
-          onClick={onClose}
-          sx={{
-            borderRadius: 1,
-            borderColor: '#e5e7eb',
-            color: '#666',
-            px: 3,
-            '&:hover': {
-              borderColor: '#d1d5db',
-              bgcolor: '#fafafa',
+      <BulkActionFooter
+        onCancel={onClose}
+        cancelLabel={t('Button.cancel')}
+        cancelSx={{
+          borderColor: '#e5e7eb',
+          color: '#666',
+          '&:hover': {
+            borderColor: '#d1d5db',
+            bgcolor: '#fafafa',
+          },
+        }}
+        actions={[
+          {
+            label: t('Button.save'),
+            onClick: handleSave,
+            sx: {
+              bgcolor: '#0d6efd',
+              '&:hover': {
+                bgcolor: '#0b5ed7',
+              },
             },
-          }}
-        >
-          {t('Button.cancel')}
-        </Button>
-        <Button
-          variant="contained"
-          onClick={handleSave}
-          sx={{
-            borderRadius: 1,
-            bgcolor: '#0d6efd',
-            px: 3,
-            '&:hover': {
-              bgcolor: '#0b5ed7',
-            },
-          }}
-        >
-          {t('Button.save')}
-        </Button>
-      </Stack>
+          },
+        ]}
+      />
     </Stack>
   );
 }

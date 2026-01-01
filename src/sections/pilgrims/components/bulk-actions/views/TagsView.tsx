@@ -1,16 +1,18 @@
 'use client';
 
 import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete';
-import { Box, Button, Chip, InputAdornment, Stack, TextField, Typography } from '@mui/material';
-import { LoadingButton } from '@mui/lab';
+import { Box, Chip, InputAdornment, Stack, TextField, Typography } from '@mui/material';
 import { useLocale, useTranslations } from 'next-intl';
 import { useState, useMemo } from 'react';
 import { useSnackbar } from 'notistack';
 
 import { useFetchPilgrimInitData } from 'src/services/queries/pilgrims';
 import { useBulkAssignTags } from 'src/services/mutations/pilgrims';
+import { usePilgrimIds } from 'src/sections/pilgrims/hooks/usePilgrimIds';
 
 import { BulkActionViewProps } from '../shared/types';
+import BulkActionFooter from '../shared/BulkActionFooter';
+import BulkSectionHeader from '../shared/BulkSectionHeader';
 
 interface TagOption {
   id: number;
@@ -34,13 +36,7 @@ export default function TagsView({
 
   const [selectedTags, setSelectedTags] = useState<TagOption[]>([]);
 
-  const pilgrimIds = useMemo(
-    () =>
-      (selectedPilgrims ?? [])
-        .map((pilgrim) => Number(pilgrim?.id))
-        .filter((id) => Number.isFinite(id)),
-    [selectedPilgrims]
-  );
+  const pilgrimIds = usePilgrimIds(selectedPilgrims);
 
   const tagOptions = useMemo<TagOption[]>(() => {
     const tags = (initDataResponse?.data?.tags ?? []) as any[];
@@ -117,15 +113,7 @@ export default function TagsView({
 
   return (
     <Stack spacing={2.5} sx={{ p: 1 }}>
-      {/* Section Header */}
-      <Box>
-        <Typography variant="h6" sx={{ fontWeight: 700, fontSize: 16 }}>
-          {t('Label.tags')}
-        </Typography>
-        <Typography variant="body2" sx={{ color: 'text.secondary', mt: 0.5, fontSize: 13 }}>
-          {t('Description.tags_description')}
-        </Typography>
-      </Box>
+      <BulkSectionHeader title={t('Label.tags')} description={t('Description.tags_description')} />
 
       {/* Autocomplete Search */}
       <Stack spacing={1}>
@@ -245,45 +233,30 @@ export default function TagsView({
         </Box>
       )}
 
-      {/* Action Buttons */}
-      <Stack direction="row" spacing={1.5} justifyContent="space-between">
-        <Button
-          variant="text"
-          onClick={onClose}
-          color="error"
-          sx={{
-            px: 3,
-          }}
-        >
-          {t('Button.cancel')}
-        </Button>
-
-        <Stack direction="row" spacing={1}>
-          <Button
-            variant="outlined"
-            color="error"
-            onClick={handleClearAll}
-            disabled={!selectedTags.length}
-            sx={{
-              px: 3,
-            }}
-          >
-            {t('Button.clear_all')}
-          </Button>
-          <LoadingButton
-            variant="contained"
-            color="primary"
-            onClick={handleSave}
-            loading={bulkAssignTagsMutation.isPending}
-            disabled={isSaveDisabled}
-            sx={{
-              px: 3,
-            }}
-          >
-            {t('Button.save')}
-          </LoadingButton>
-        </Stack>
-      </Stack>
+      <BulkActionFooter
+        onCancel={onClose}
+        cancelLabel={t('Button.cancel')}
+        cancelVariant="text"
+        cancelColor="error"
+        justify="space-between"
+        actions={[
+          {
+            label: t('Button.clear_all'),
+            onClick: handleClearAll,
+            variant: 'outlined',
+            color: 'error',
+            disabled: !selectedTags.length,
+          },
+          {
+            label: t('Button.save'),
+            onClick: handleSave,
+            variant: 'contained',
+            color: 'primary',
+            loading: bulkAssignTagsMutation.isPending,
+            disabled: isSaveDisabled,
+          },
+        ]}
+      />
     </Stack>
   );
 }

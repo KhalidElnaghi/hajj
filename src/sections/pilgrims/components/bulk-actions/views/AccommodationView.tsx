@@ -1,15 +1,17 @@
 'use client';
 
-import { Autocomplete, Box, Chip, Stack, TextField, Typography, Button } from '@mui/material';
-import { LoadingButton } from '@mui/lab';
+import { Autocomplete, Box, Chip, Stack, TextField, Typography } from '@mui/material';
 import { useLocale, useTranslations } from 'next-intl';
 import { useMemo, useState } from 'react';
 import { useSnackbar } from 'notistack';
 
+import { usePilgrimIds } from 'src/sections/pilgrims/hooks/usePilgrimIds';
 import { useFetchPilgrimInitData } from 'src/services/queries/pilgrims';
 import { useBulkAutoAssignHousing } from 'src/services/mutations/pilgrims';
 
 import { BulkActionViewProps } from '../shared/types';
+import BulkActionFooter from '../shared/BulkActionFooter';
+import BulkSectionHeader from '../shared/BulkSectionHeader';
 
 interface Option {
   value: number;
@@ -43,13 +45,7 @@ export default function AccommodationView({
   const { data: initDataResponse, isLoading: isInitLoading } = useFetchPilgrimInitData();
   const bulkAssignMutation = useBulkAutoAssignHousing();
 
-  const pilgrimIds = useMemo(
-    () =>
-      (selectedPilgrims ?? [])
-        .map((pilgrim) => Number(pilgrim?.id))
-        .filter((id) => Number.isFinite(id)),
-    [selectedPilgrims]
-  );
+  const pilgrimIds = usePilgrimIds(selectedPilgrims);
 
   const ritualsOptions = useMemo<Option[]>(() => {
     const rituals = ((initDataResponse?.data as any)?.rituals ?? []) as any[];
@@ -116,14 +112,10 @@ export default function AccommodationView({
 
   return (
     <Stack spacing={3} sx={{ p: 1 }}>
-      <Box>
-        <Typography variant="h6" sx={{ fontWeight: 700, fontSize: 16 }}>
-          {t('Label.accommodation_needs_in_rituals')}
-        </Typography>
-        <Typography variant="body2" sx={{ color: 'text.secondary', mt: 0.5, fontSize: 13 }}>
-          {t('Description.accommodation_description')}
-        </Typography>
-      </Box>
+      <BulkSectionHeader
+        title={t('Label.accommodation_needs_in_rituals')}
+        description={t('Description.accommodation_description')}
+      />
 
       <Stack spacing={2}>
         <Stack spacing={1}>
@@ -194,50 +186,34 @@ export default function AccommodationView({
         </Stack>
       </Stack>
 
-      <Stack direction="row" spacing={1.5} justifyContent="space-between">
-        <Button
-          variant="text"
-          onClick={onClose}
-          color="error"
-          sx={{
-            borderRadius: 1,
-            px: 3,
-          }}
-        >
-          {t('Button.cancel')}
-        </Button>
-
-        <Stack direction="row" spacing={1}>
-          <Button
-            variant="outlined"
-            color="error"
-            onClick={handleClearAll}
-            disabled={!selectedRitual && !selectedCamps.length}
-            sx={{
-              borderRadius: 1,
-              px: 3,
-            }}
-          >
-            {t('Button.clear_all')}
-          </Button>
-          <LoadingButton
-            variant="contained"
-            onClick={handleSave}
-            loading={bulkAssignMutation.isPending}
-            disabled={isSaveDisabled}
-            sx={{
-              borderRadius: 1,
+      <BulkActionFooter
+        onCancel={onClose}
+        cancelLabel={t('Button.cancel')}
+        cancelVariant="text"
+        cancelColor="error"
+        justify="space-between"
+        actions={[
+          {
+            label: t('Button.clear_all'),
+            onClick: handleClearAll,
+            variant: 'outlined',
+            color: 'error',
+            disabled: !selectedRitual && !selectedCamps.length,
+          },
+          {
+            label: t('Button.save'),
+            onClick: handleSave,
+            loading: bulkAssignMutation.isPending,
+            disabled: isSaveDisabled,
+            sx: {
               bgcolor: '#0d6efd',
-              px: 3,
               '&:hover': {
                 bgcolor: '#0b5ed7',
               },
-            }}
-          >
-            {t('Button.save')}
-          </LoadingButton>
-        </Stack>
-      </Stack>
+            },
+          },
+        ]}
+      />
     </Stack>
   );
 }

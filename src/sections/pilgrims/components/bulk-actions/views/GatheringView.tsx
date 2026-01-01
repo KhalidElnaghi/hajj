@@ -1,15 +1,17 @@
 'use client';
 
 import { Box, Button, FormControl, MenuItem, Select, Stack, Typography } from '@mui/material';
-import { LoadingButton } from '@mui/lab';
 import { useLocale, useTranslations } from 'next-intl';
 import { useState, useMemo } from 'react';
 import { useSnackbar } from 'notistack';
 
+import { usePilgrimIds } from 'src/sections/pilgrims/hooks/usePilgrimIds';
 import { useFetchPilgrimInitData } from 'src/services/queries/pilgrims';
 import { useBulkAssignGatheringPoint } from 'src/services/mutations/pilgrims';
 
 import { BulkActionViewProps } from '../shared/types';
+import BulkActionFooter from '../shared/BulkActionFooter';
+import BulkSectionHeader from '../shared/BulkSectionHeader';
 
 export default function GatheringView({
   onBack,
@@ -29,13 +31,7 @@ export default function GatheringView({
   const [destinationId, setDestinationId] = useState<number | ''>('');
   const [gatheringPointTimeId, setGatheringPointTimeId] = useState<number | ''>('');
 
-  const pilgrimIds = useMemo(
-    () =>
-      (selectedPilgrims ?? [])
-        .map((pilgrim) => Number(pilgrim?.id))
-        .filter((id) => Number.isFinite(id)),
-    [selectedPilgrims]
-  );
+  const pilgrimIds = usePilgrimIds(selectedPilgrims);
 
   const gatheringPointTypes = useMemo(() => {
     const allTypes = initDataResponse?.data?.gatheringPointTypes ?? [];
@@ -134,15 +130,10 @@ export default function GatheringView({
 
   return (
     <Stack spacing={3} sx={{ p: 1 }}>
-      {/* Section Header */}
-      <Box>
-        <Typography variant="h6" sx={{ fontWeight: 700, fontSize: 16 }}>
-          {t('Label.gathering_points')}
-        </Typography>
-        <Typography variant="body2" sx={{ color: 'text.secondary', mt: 0.5, fontSize: 13 }}>
-          {t('Description.gathering_points_description')}
-        </Typography>
-      </Box>
+      <BulkSectionHeader
+        title={t('Label.gathering_points')}
+        description={t('Description.gathering_points_description')}
+      />
 
       {/* Trip Type Toggle */}
       <Stack direction="row" spacing={2} justifyContent="start">
@@ -299,41 +290,32 @@ export default function GatheringView({
         </FormControl>
       </Box>
 
-      {/* Action Buttons */}
-      <Stack direction="row" spacing={1.5} justifyContent="flex-end">
-        <Button
-          variant="outlined"
-          onClick={onClose}
-          sx={{
-            borderRadius: 1,
-            borderColor: '#e5e7eb',
-            color: '#666',
-            px: 3,
-            '&:hover': {
-              borderColor: '#d1d5db',
-              bgcolor: '#fafafa',
+      <BulkActionFooter
+        onCancel={onClose}
+        cancelLabel={t('Button.cancel')}
+        cancelSx={{
+          borderColor: '#e5e7eb',
+          color: '#666',
+          '&:hover': {
+            borderColor: '#d1d5db',
+            bgcolor: '#fafafa',
+          },
+        }}
+        actions={[
+          {
+            label: t('Button.save'),
+            onClick: handleSave,
+            loading: bulkAssignGatheringPointMutation.isPending,
+            disabled: isSaveDisabled,
+            sx: {
+              bgcolor: '#0d6efd',
+              '&:hover': {
+                bgcolor: '#0b5ed7',
+              },
             },
-          }}
-        >
-          {t('Button.cancel')}
-        </Button>
-        <LoadingButton
-          variant="contained"
-          onClick={handleSave}
-          loading={bulkAssignGatheringPointMutation.isPending}
-          disabled={isSaveDisabled}
-          sx={{
-            borderRadius: 1,
-            bgcolor: '#0d6efd',
-            px: 3,
-            '&:hover': {
-              bgcolor: '#0b5ed7',
-            },
-          }}
-        >
-          {t('Button.save')}
-        </LoadingButton>
-      </Stack>
+          },
+        ]}
+      />
     </Stack>
   );
 }
