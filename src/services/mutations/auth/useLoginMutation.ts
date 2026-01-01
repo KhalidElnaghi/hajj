@@ -30,14 +30,12 @@ export const useLoginMutation = (options?: UseLoginMutationOptions) => {
           onSuccess(data);
         }
       } else {
-        // No company selection needed, redirect to dashboard
+        // No company selection needed, redirect to main route immediately
         if (onSuccess) {
           onSuccess(data);
-        } else {
-          // Default: redirect to dashboard using full page reload
-          const returnTo = paths.dashboard.root;
-          window.location.href = returnTo;
         }
+        // Always redirect to main route after successful login (when company selection is not required)
+        window.location.href = paths.dashboard.root;
       }
     },
     onError: (error) => {

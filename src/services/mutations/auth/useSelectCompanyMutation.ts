@@ -21,28 +21,22 @@ export const useSelectCompanyMutation = (options?: UseSelectCompanyMutationOptio
       const companiesCookie = Cookie.get('companies');
       const companies = companiesCookie ? JSON.parse(companiesCookie) : [];
 
-      // Update token and user in cookies with new data
       setAuthCookies({
         token: data.data.token,
         user: data.data.user,
-        companies: companies, // Keep existing companies
+        companies: companies,
       });
 
-      // Call custom onSuccess if provided
       if (onSuccess) {
         onSuccess();
-      } else {
-        // Default: redirect to dashboard using full page reload
-        const returnTo = paths.dashboard.root;
-        window.location.href = returnTo;
       }
+
+      window.location.href = paths.dashboard.root;
     },
     onError: (error) => {
-      // Call custom onError if provided
       if (onError) {
         onError(error);
       }
     },
   });
 };
-

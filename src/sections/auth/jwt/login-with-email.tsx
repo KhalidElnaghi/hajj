@@ -74,7 +74,6 @@ export default function LoginByEmailView() {
         setRequiresCompanySelection(true);
         setCompanies(data.data.companies);
       }
-      // If false, redirect is handled in mutation hook
     },
     onError: (error: any) => {
       // Handle field-level errors
