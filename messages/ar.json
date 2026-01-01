@@ -567,6 +567,7 @@
       "personal_information": "البيانات الشخصية",
       "quick_access": "وصول سريع",
       "quick_templates": "القوالب النصّية",
+      "ritual": "النسك",
       "room_group_number": "رقم الحجرة / الفرقة",
       "room_number": "رقم الغرفة",
       "select": "اختر",
@@ -662,7 +663,8 @@
       "saving": "جاري الحفظ",
       "Female": "أنثى",
       "Male": "ذكر",
-      "excel_action_status": "إجراءات ملف الاستيراد"
+      "excel_action_status": "إجراءات ملف الاستيراد",
+      "selected_camps_count": "عدد المخيمات المحددة: {count}"
     },
     "Button": {
       "add": "إضافة",
@@ -684,8 +686,10 @@
       "search_or_add_new_tag": "ابحث عن أو ضع وسم جديد",
       "select_destination": "اختر الوجهة",
       "select_gathering_point": "اختر نقطة التجمع",
+      "select_camps": "اختر المخيمات",
       "select_location": "اختر الموقع",
       "select_nationality": "اختر الجنسية",
+      "select_ritual": "اختر النسك",
       "write_message_text": "اكتب نص الرسالة..."
     },
     "Helper": {
@@ -730,7 +734,9 @@
       "name_ar_arabic_only": "يجب أن يكون الاسم بالعربية فقط",
       "name_en_two_words_required": "يجب أن يكون الاسم بالإنجليزية ويحتوي على على كلمتين على الأقل",
       "name_ar_two_words_required": "يجب أن يكون الاسم بالعربية ويحتوي على على كلمتين على الأقل",
-      "supervisors_assigned_successfully": "تم تعيين المشرفين بنجاح"
+      "supervisors_assigned_successfully": "تم تعيين المشرفين بنجاح",
+      "housing_auto_assigned_successfully": "تم توزيع السكن بنجاح",
+      "error_assigning_housing": "فشل تعيين السكن"
     },
     "Dialog": {
       "Delete": "حذف",

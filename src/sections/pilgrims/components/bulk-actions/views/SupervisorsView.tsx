@@ -10,6 +10,7 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
+import { LoadingButton } from '@mui/lab';
 import { useLocale, useTranslations } from 'next-intl';
 import { useMemo, useState } from 'react';
 import { useSnackbar } from 'notistack';
@@ -218,9 +219,10 @@ export default function SupervisorsView({
           >
             {t('Button.clear_all')}
           </Button>
-          <Button
+          <LoadingButton
             variant="contained"
             onClick={handleSave}
+            loading={assignSupervisorsMutation.isPending}
             disabled={
               !selectedSupervisors.length ||
               !selectedPilgrims?.length ||
@@ -230,10 +232,13 @@ export default function SupervisorsView({
               borderRadius: 1,
               bgcolor: '#0d6efd',
               px: 3,
+              '&:hover': {
+                bgcolor: '#0b5ed7',
+              },
             }}
           >
             {t('Button.save')}
-          </Button>
+          </LoadingButton>
         </Stack>
       </Stack>
     </Stack>

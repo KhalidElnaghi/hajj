@@ -1242,3 +1242,21 @@ export const assignPilgrimSupervisors = async (
 ): Promise<AssignPilgrimSupervisorsResponse> => {
   return await API.post<AssignPilgrimSupervisorsResponse>('/pilgrims/pilgrims/pilgrim-supervisors', payload);
 };
+
+export interface BulkAutoAssignHousingPayload {
+  ritual_id: number;
+  camp_ids: number[];
+  pilgrim_ids: number[];
+}
+
+export interface BulkAutoAssignHousingResponse {
+  success?: boolean;
+  message?: string;
+  data?: any;
+}
+
+export const bulkAutoAssignHousing = async (
+  payload: BulkAutoAssignHousingPayload
+): Promise<BulkAutoAssignHousingResponse> => {
+  return await API.post<BulkAutoAssignHousingResponse>('/pilgrims/pilgrims/bulk-auto-assign-housing', payload);
+};

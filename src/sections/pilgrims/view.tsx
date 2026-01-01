@@ -511,7 +511,6 @@ export default function PilgrimsView() {
 
     try {
       const result = await deleteMutation.mutateAsync(pilgrimToDelete.id);
-      console.log('Delete result:', result);
       enqueueSnackbar(t('Message.delete_success'), { variant: 'success' });
       deleteDialog.onClose();
       setPilgrimToDelete(null);

@@ -567,6 +567,7 @@
       "personal_information": "Personal Information",
       "quick_access": "Quick Access",
       "quick_templates": "Quick Templates",
+      "ritual": "Ritual",
       "room_group_number": "Room / Group Number",
       "room_number": "Room Number",
       "select": "Select",
@@ -661,7 +662,8 @@
       "saving": "Saving...",
       "Female": "Female",
       "Male": "Male",
-      "excel_action_status": "Excel Actions"
+      "excel_action_status": "Excel Actions",
+      "selected_camps_count": "Selected camps: {count}"
     },
     "Button": {
       "add": "Add",
@@ -683,8 +685,10 @@
       "search_or_add_new_tag": "Search or add new tag",
       "select_destination": "Select Destination",
       "select_gathering_point": "Select Gathering Point",
+      "select_camps": "Select Camps",
       "select_location": "Select Location",
       "select_nationality": "Select Nationality",
+      "select_ritual": "Select Ritual",
       "write_message_text": "Write message text..."
     },
     "Helper": {
@@ -729,7 +733,9 @@
       "name_ar_arabic_only": "Name must be in Arabic only",
       "name_en_two_words_required": "Name must be in English and contain at least two words",
       "name_ar_two_words_required": "Name must be in Arabic and contain at least two words",
-      "supervisors_assigned_successfully": "Supervisors assigned successfully"
+      "supervisors_assigned_successfully": "Supervisors assigned successfully",
+      "housing_auto_assigned_successfully": "Housing assigned successfully",
+      "error_assigning_housing": "Failed to assign housing"
     },
     "Dialog": {
       "Delete": "Delete",
