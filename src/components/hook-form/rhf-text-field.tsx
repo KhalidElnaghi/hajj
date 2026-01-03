@@ -9,7 +9,7 @@ type Props = TextFieldProps & {
   isReadOnly?: boolean;
 };
 
-export default function RHFTextField({ name, helperText, type, isReadOnly, ...other }: Props) {
+export default function RHFTextField({ name, helperText, type, isReadOnly, slotProps, ...other }: Props) {
   const { control } = useFormContext();
 
   return (
@@ -38,7 +38,9 @@ export default function RHFTextField({ name, helperText, type, isReadOnly, ...ot
             slotProps={{
               input: {
                 readOnly: isReadOnly,
+                ...slotProps?.input,
               },
+              ...slotProps,
             }}
             {...other}
           />

@@ -3,6 +3,9 @@
     "Login": {
       "title": "تسجيل الدخول"
     },
+    "Register": {
+      "title": "إنشاء حساب"
+    },
     "ForgotPassword": {
       "title": "نسيت كلمة المرور"
     },
@@ -406,7 +409,41 @@
       "password_min": "كلمة السر يجب أن تكون على الأقل 8 أحرف",
       "company_required": "يرجى اختيار الشركة",
       "select_company": "اختر الشركة",
-      "select_company_button": "اختر الشركة"
+      "select_company_button": "اختر الشركة",
+      "no_account_question": "أليس لديك حساب لشركتك؟",
+      "subscribe_now": "اشترك الآن"
+    },
+    "Register": {
+      "welcome": "تسجيل الشركة",
+      "description": "إنشاء حساب شركة جديد يتيح لك إدارة بيانات الحج، متابعة العمليات، والتحكم الكامل في المستخدمين والخدمات من خلال لوحة تحكم موحدة.",
+      "name": "اسم صاحب الشركة",
+      "name_placeholder": "أدخل اسم صاحب الشركة",
+      "phone": "رقم الهاتف",
+      "phone_placeholder": "أدخل رقم الهاتف",
+      "email": "البريد الإلكتروني",
+      "email_placeholder": "Example@email.com",
+      "company_name": "اسم الشركة",
+      "company_name_placeholder": "أدخل اسم الشركة",
+      "password": "كلمة السر",
+      "password_placeholder": "at least 8 characters",
+      "password_confirmation": "تأكيد كلمة السر",
+      "password_confirmation_placeholder": "أعد إدخال كلمة السر",
+      "sign_up": "إنشاء حساب",
+      "register_error": "تعذر إنشاء الحساب. تحقق من البيانات وحاول مرة أخرى.",
+      "register_success": "تم إنشاء الحساب بنجاح",
+      "copyright": "All rights reserved © Quran",
+      "name_required": "اسم صاحب الشركة مطلوب",
+      "name_min_length": "يجب أن يكون اسم صاحب الشركة حرفين على الأقل",
+      "phone_required": "رقم الهاتف مطلوب",
+      "phone_invalid": "رقم الهاتف غير صحيح",
+      "email_required": "البريد الإلكتروني مطلوب",
+      "email_invalid": "البريد الإلكتروني غير صحيح",
+      "password_required": "كلمة السر مطلوبة",
+      "password_min": "كلمة السر يجب أن تكون على الأقل 8 أحرف",
+      "password_confirmation_required": "تأكيد كلمة السر مطلوب",
+      "passwords_must_match": "كلمات المرور يجب أن تتطابق",
+      "company_name_required": "اسم الشركة مطلوب",
+      "company_name_min_length": "يجب أن يكون اسم الشركة حرفين على الأقل"
     }
   },
   "Description": {
