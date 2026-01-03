@@ -5,6 +5,7 @@ import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
 
 import Iconify from 'src/components/iconify';
+import { IcEye, IcEyeOff } from 'src/assets/icons';
 import { useBoolean } from 'src/hooks/use-boolean';
 
 // ----------------------------------------------------------------------
@@ -39,7 +40,7 @@ export default function RHFPassword({ name, helperText, ...other }: Props) {
                 startAdornment: (
                   <InputAdornment position="start">
                     <IconButton onClick={showPassword.onToggle} edge="start" tabIndex={-1}>
-                      <Iconify icon={showPassword.value ? 'solar:eye-bold' : 'solar:eye-closed-bold'} />
+                      {showPassword.value ? <IcEyeOff /> : <IcEye />}
                     </IconButton>
                   </InputAdornment>
                 ),
