@@ -1,7 +1,5 @@
 import Cookies from 'js-cookie';
 
-import { decodeToken } from './decodeToken';
-
 type UserPayload = {
   name?: string;
   email?: string;
@@ -9,14 +7,9 @@ type UserPayload = {
 };
 
 export function getCurrentUser(): UserPayload | null {
-  const token = Cookies.get('accessToken');
-  const decoded = decodeToken(token || '');
-  if (token) {
-    const user: UserPayload = {
-      name: decoded?.name,
-      email: decoded?.email,
-      avatar: decoded?.avatar,
-    };
+  const user = JSON.parse(Cookies.get('user') || '{}');
+
+  if (user && Object.keys(user).length > 0) {
     return user;
   }
 
