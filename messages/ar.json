@@ -406,7 +406,9 @@
       "password_min": "كلمة السر يجب أن تكون على الأقل 8 أحرف",
       "company_required": "يرجى اختيار الشركة",
       "select_company": "اختر الشركة",
-      "select_company_button": "اختر الشركة"
+      "select_company_button": "اختر الشركة",
+      "no_account_question": "أليس لديك حساب لشركتك؟",
+      "subscribe_now": "اشترك الآن"
     }
   },
   "Description": {

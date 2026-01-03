@@ -11,6 +11,9 @@ import IconButton from '@mui/material/IconButton';
 import LoadingButton from '@mui/lab/LoadingButton';
 import InputAdornment from '@mui/material/InputAdornment';
 import MenuItem from '@mui/material/MenuItem';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Link from '@mui/material/Link';
 
 import { useBoolean } from 'src/hooks/use-boolean';
 import { useTranslations } from 'next-intl';
@@ -238,6 +241,36 @@ export default function LoginByEmailView() {
         >
           {t('sign_in')}
         </LoadingButton>
+
+        {/* Subscribe Now Section */}
+        <Box
+          sx={{
+            mt: 3,
+            p: 2,
+            textAlign: 'center',
+            backgroundColor: 'background.paper',
+          }}
+        >
+          <Typography
+            variant="body2"
+            sx={{
+              color: 'text.secondary',
+              fontSize: '0.875rem',
+            }}
+          >
+            {t('no_account_question')}
+            <Link
+              href="#"
+              sx={{
+                color: 'primary.main',
+                textDecoration: 'underline',
+                fontWeight: 500,
+              }}
+            >
+              {t('subscribe_now')}
+            </Link>
+          </Typography>
+        </Box>
       </Stack>
     </FormProvider>
   );

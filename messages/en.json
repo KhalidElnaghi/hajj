@@ -406,7 +406,9 @@
       "password_min": "Password must be at least 8 characters",
       "company_required": "Please select a company",
       "select_company": "Select Company",
-      "select_company_button": "Select Company"
+      "select_company_button": "Select Company",
+      "no_account_question": "Don't you have an account for your company?",
+      "subscribe_now": "Subscribe now"
     }
   },
   "Description": {
