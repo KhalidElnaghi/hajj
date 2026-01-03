@@ -53,7 +53,7 @@ export default function LoginView() {
             height: 'auto',
             maxHeight: '800px',
             objectFit: 'contain',
-            display: 'block',
+            display: { xs: 'none', md: 'block' },
           }}
         />
       </Box>
