@@ -114,3 +114,43 @@ export const selectCompany = async (companyId: number | string): Promise<SelectC
   return response.data;
 };
 
+export interface RegisterPayload {
+  name: string;
+  phone: string;
+  password: string;
+  email: string;
+  password_confirmation: string;
+  company_name: string;
+}
+
+export interface RegisterResponse {
+  success: boolean;
+  message: string;
+  data: {
+    user: LoginUser;
+    token: string;
+  };
+}
+
+export const register = async (payload: RegisterPayload): Promise<RegisterResponse> => {
+  const lang = Cookie.get('Language') || 'ar';
+  const response = await SharedApiClient.post<RegisterResponse>(
+    endpoints.auth.register,
+    {
+      name: payload.name,
+      phone: payload.phone,
+      password: payload.password,
+      email: payload.email,
+      password_confirmation: payload.password_confirmation,
+      company_name: payload.company_name,
+    },
+    {
+      headers: {
+        'Accept-Language': lang,
+      },
+    }
+  );
+
+  return response.data;
+};
+

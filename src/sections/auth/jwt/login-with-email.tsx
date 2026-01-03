@@ -7,20 +7,18 @@ import Cookie from 'js-cookie';
 
 import Stack from '@mui/material/Stack';
 import Alert from '@mui/material/Alert';
-import IconButton from '@mui/material/IconButton';
 import LoadingButton from '@mui/lab/LoadingButton';
-import InputAdornment from '@mui/material/InputAdornment';
 import MenuItem from '@mui/material/MenuItem';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import Link from '@mui/material/Link';
+import MuiLink from '@mui/material/Link';
+import { Link } from 'src/i18n/routing';
+import { paths } from 'src/routes/paths';
 
-import { useBoolean } from 'src/hooks/use-boolean';
 import { useTranslations } from 'next-intl';
 import { useLocale } from 'next-intl';
 
-import Iconify from 'src/components/iconify';
-import FormProvider, { RHFTextField, RHFSelect } from 'src/components/hook-form';
+import FormProvider, { RHFTextField, RHFSelect, RHFPassword } from 'src/components/hook-form';
 
 import { useLoginMutation } from 'src/services/mutations/auth/useLoginMutation';
 import { useSelectCompanyMutation } from 'src/services/mutations/auth/useSelectCompanyMutation';
@@ -29,7 +27,6 @@ import { getErrorMessage } from 'src/utils/axios';
 import { Company } from 'src/services/api/auth';
 
 export default function LoginByEmailView() {
-  const password = useBoolean();
   const t = useTranslations('Auth.Login');
   const locale = useLocale();
   const [requiresCompanySelection, setRequiresCompanySelection] = useState(false);
@@ -209,20 +206,10 @@ export default function LoginByEmailView() {
         />
 
         {/* Password Field */}
-        <RHFTextField
+        <RHFPassword
           name="password"
           label={t('password')}
           placeholder={t('password_placeholder')}
-          type={password.value ? 'text' : 'password'}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton onClick={password.onToggle} edge="end">
-                  <Iconify icon={password.value ? 'solar:eye-bold' : 'solar:eye-closed-bold'} />
-                </IconButton>
-              </InputAdornment>
-            ),
-          }}
         />
 
         {/* Submit Button */}
@@ -258,9 +245,10 @@ export default function LoginByEmailView() {
               fontSize: '0.875rem',
             }}
           >
-            {t('no_account_question')}
-            <Link
-              href="#"
+            {t('no_account_question')}{' '}
+            <MuiLink
+              component={Link}
+              href={paths.auth.jwt.register}
               sx={{
                 color: 'primary.main',
                 textDecoration: 'underline',
@@ -268,7 +256,7 @@ export default function LoginByEmailView() {
               }}
             >
               {t('subscribe_now')}
-            </Link>
+            </MuiLink>
           </Typography>
         </Box>
       </Stack>
