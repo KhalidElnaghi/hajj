@@ -2,6 +2,8 @@
 
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { useSnackbar } from 'notistack';
+import { useRouter } from 'src/i18n/routing';
 
 import Stack from '@mui/material/Stack';
 import Alert from '@mui/material/Alert';
@@ -14,9 +16,12 @@ import FormProvider, { RHFTextField, RHFPassword } from 'src/components/hook-for
 import { useRegisterMutation } from 'src/services/mutations/auth/useRegisterMutation';
 import { createRegisterSchema, RegisterFormValues } from './register-schema';
 import { getErrorMessage } from 'src/utils/axios';
+import { paths } from 'src/routes/paths';
 
 export default function RegisterByEmailView() {
   const t = useTranslations('Auth.Register');
+  const router = useRouter();
+  const { enqueueSnackbar } = useSnackbar();
 
   const methods = useForm<RegisterFormValues>({
     resolver: yupResolver(createRegisterSchema((key: string) => t(key as any))) as any,
@@ -37,6 +42,12 @@ export default function RegisterByEmailView() {
   } = methods;
 
   const registerMutation = useRegisterMutation({
+    onSuccess: () => {
+      enqueueSnackbar(t('register_success'), { variant: 'success' });
+      setTimeout(() => {
+        router.push(paths.auth.jwt.login);
+      }, 1000);
+    },
     onError: (error: any) => {
       const errorMessage = getErrorMessage(error);
 

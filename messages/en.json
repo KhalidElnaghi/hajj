@@ -430,6 +430,7 @@
       "password_confirmation_placeholder": "Re-enter password",
       "sign_up": "Sign Up",
       "register_error": "Failed to create account. Please check your information and try again.",
+      "register_success": "Account created successfully",
       "copyright": "All rights reserved © Quran",
       "name_required": "Company owner name is required",
       "name_min_length": "Company owner name must be at least 2 characters",

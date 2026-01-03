@@ -430,6 +430,7 @@
       "password_confirmation_placeholder": "أعد إدخال كلمة السر",
       "sign_up": "إنشاء حساب",
       "register_error": "تعذر إنشاء الحساب. تحقق من البيانات وحاول مرة أخرى.",
+      "register_success": "تم إنشاء الحساب بنجاح",
       "copyright": "All rights reserved © Quran",
       "name_required": "اسم صاحب الشركة مطلوب",
       "name_min_length": "يجب أن يكون اسم صاحب الشركة حرفين على الأقل",
