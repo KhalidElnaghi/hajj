@@ -1,6 +1,8 @@
 export const endpoints = {
   auth: {
-    login: '/auth/email-login',
+    login: '/login',
+    register: '/register',
+    selectCompany: '/select-company',
     forgetPassword: '/auth/forget-password-by-email',
     verifyForgetPasswordOtp: '/auth/verify-forget-password-otp',
     resetPasswordByEmail: '/auth/reset-password-by-email',

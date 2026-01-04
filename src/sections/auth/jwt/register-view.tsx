@@ -10,15 +10,15 @@ import { useTranslations } from 'next-intl';
 
 import LanguagePopover from 'src/layouts/common/language-popover';
 
-import LoginByEmailView from './login-with-email';
+import RegisterByEmailView from './register-with-email';
 import { useLocales } from 'src/locales';
 
 // ----------------------------------------------------------------------
 
-export default function LoginView() {
+export default function RegisterView() {
   const theme = useTheme();
   const { isRTL } = useLocales();
-  const t = useTranslations('Auth.Login');
+  const t = useTranslations('Auth.Register');
   return (
     <Box
       sx={{
@@ -32,7 +32,6 @@ export default function LoginView() {
         direction: isRTL ? 'rtl' : 'ltr',
       }}
     >
-      {/* Image Card - Left in RTL, Right in LTR */}
       <Box
         sx={{
           width: { xs: '100%', md: '50%' },
@@ -47,7 +46,7 @@ export default function LoginView() {
         <Box
           component="img"
           src="/assets/auth/main login.png"
-          alt="Hajj Login"
+          alt="Hajj Register"
           sx={{
             width: '100%',
             height: 'auto',
@@ -58,7 +57,6 @@ export default function LoginView() {
         />
       </Box>
 
-      {/* Form Content - Right in RTL, Left in LTR */}
       <Box
         sx={{
           width: { xs: '100%', md: '50%' },
@@ -71,7 +69,6 @@ export default function LoginView() {
           direction: isRTL ? 'rtl' : 'ltr',
         }}
       >
-        {/* Header - Logo and Language */}
         <Stack
           direction="row"
           alignItems="center"
@@ -94,7 +91,6 @@ export default function LoginView() {
           />
         </Stack>
 
-        {/* Login Form */}
         <Box sx={{ maxWidth: 480, width: '100%', mx: 'auto' }}>
           <Typography
             variant="h3"
@@ -119,10 +115,9 @@ export default function LoginView() {
             {t('description')}
           </Typography>
 
-          <LoginByEmailView />
+          <RegisterByEmailView />
         </Box>
 
-        {/* Footer - Copyright */}
         <Typography
           variant="body2"
           sx={{

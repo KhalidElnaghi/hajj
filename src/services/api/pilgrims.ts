@@ -1210,8 +1210,6 @@ export interface DeletePilgrimResponse {
 }
 
 export const deletePilgrim = async (id: number): Promise<DeletePilgrimResponse> => {
-
-
   try {
     const response = await API.delete<DeletePilgrimResponse>(`/pilgrims/pilgrims/${id}`);
     return response;
@@ -1226,4 +1224,21 @@ export const deletePilgrim = async (id: number): Promise<DeletePilgrimResponse> 
     });
     throw error;
   }
+};
+
+export interface AssignPilgrimSupervisorsPayload {
+  pilgrim_ids: number[];
+  supervisor_ids: number[];
+}
+
+export interface AssignPilgrimSupervisorsResponse {
+  success?: boolean;
+  message?: string;
+  data?: any;
+}
+
+export const assignPilgrimSupervisors = async (
+  payload: AssignPilgrimSupervisorsPayload
+): Promise<AssignPilgrimSupervisorsResponse> => {
+  return await API.post<AssignPilgrimSupervisorsResponse>('/pilgrims/pilgrims/pilgrim-supervisors', payload);
 };
