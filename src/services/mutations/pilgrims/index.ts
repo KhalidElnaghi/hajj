@@ -6,4 +6,4 @@ export { useBulkAutoAssignHousing } from './useBulkAutoAssignHousing';
 export { useBulkAssignTags } from './useBulkAssignTags';
 export { useBulkAssignGatheringPoint } from './useBulkAssignGatheringPoint';
 export { useManualDistributePilgrims } from './useManualDistributePilgrims';
-
+export { useUpdateDepartureStatus } from './useUpdateDepartureStatus';

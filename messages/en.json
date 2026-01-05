@@ -781,7 +781,10 @@
       "gathering_point_assigned_successfully": "Gathering point assigned successfully",
       "error_assigning_gathering_point": "Error assigning gathering point",
       "manual_distribute_successfully": "Pilgrims assigned to buses successfully",
-      "manual_distribute_error": "Failed to assign pilgrims to buses"
+      "manual_distribute_error": "Failed to assign pilgrims to buses",
+      "departure_status_updated_successfully": "Departure status updated successfully",
+      "error_updating_departure_status": "Error updating departure status",
+      "please_select_pilgrims": "Please select pilgrims"
     },
     "Dialog": {
       "Delete": "Delete",

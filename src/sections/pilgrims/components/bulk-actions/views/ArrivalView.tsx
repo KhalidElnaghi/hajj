@@ -3,21 +3,51 @@
 import { Box, Button, Stack, Typography } from '@mui/material';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
+import { enqueueSnackbar } from 'notistack';
 
 import { BulkActionViewProps } from '../shared/types';
 import BulkActionFooter from '../shared/BulkActionFooter';
 import BulkSectionHeader from '../shared/BulkSectionHeader';
+import { useUpdateDepartureStatus } from '../../../../../services/mutations/pilgrims';
 
-export default function ArrivalView({ onBack, onClose, selectedCount, onClearSelection }: BulkActionViewProps) {
+export default function ArrivalView({
+  onBack,
+  onClose,
+  selectedCount,
+  selectedPilgrims,
+  onClearSelection,
+}: BulkActionViewProps) {
   const t = useTranslations('Pilgrims');
   const [arrivalType, setArrivalType] = useState<'early' | 'late'>('early');
 
-  const handleSave = () => {
+  const updateDepartureStatusMutation = useUpdateDepartureStatus({
+    onSuccess: () => {
+      enqueueSnackbar(t('Message.departure_status_updated_successfully'), { variant: 'success' });
+      if (onClearSelection) {
+        onClearSelection();
+      }
+      onClose();
+    },
+    onError: (error: any) => {
+      enqueueSnackbar(error?.message || t('Message.error_updating_departure_status'), {
+        variant: 'error',
+      });
+    },
+  });
 
-    if (onClearSelection) {
-      onClearSelection();
+  const handleSave = () => {
+    if (!selectedPilgrims || selectedPilgrims.length === 0) {
+      enqueueSnackbar(t('Message.please_select_pilgrims'), { variant: 'warning' });
+      return;
     }
-    onClose();
+
+    const pilgrimIds = selectedPilgrims.map((pilgrim) => pilgrim.id);
+    const departureStatus = arrivalType !== 'early';
+
+    updateDepartureStatusMutation.mutate({
+      departure_status: departureStatus,
+      pilgrim_ids: pilgrimIds,
+    });
   };
 
   return (
@@ -94,6 +124,7 @@ export default function ArrivalView({ onBack, onClose, selectedCount, onClearSel
           {
             label: t('Button.save'),
             onClick: handleSave,
+            disabled: updateDepartureStatusMutation.isPending,
             sx: {
               bgcolor: '#0d6efd',
               '&:hover': {

@@ -1343,3 +1343,21 @@ export const manualDistributePilgrims = async (
 ): Promise<ManualDistributePilgrimsResponse> => {
   return await API.post<ManualDistributePilgrimsResponse>('/dashboard/manual-distribute-pilgrims', payload);
 };
+
+// Update Departure Status Interfaces
+export interface UpdateDepartureStatusPayload {
+  departure_status: boolean;
+  pilgrim_ids: number[];
+}
+
+export interface UpdateDepartureStatusResponse {
+  success?: boolean;
+  message?: string;
+  data?: any;
+}
+
+export const updateDepartureStatus = async (
+  payload: UpdateDepartureStatusPayload
+): Promise<UpdateDepartureStatusResponse> => {
+  return await API.post<UpdateDepartureStatusResponse>('/pilgrims/pilgrims/update-departure-status', payload);
+};

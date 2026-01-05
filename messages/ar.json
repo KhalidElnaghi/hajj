@@ -782,7 +782,10 @@
       "gathering_point_assigned_successfully": "تم تعيين نقطة التجمع بنجاح",
       "error_assigning_gathering_point": "خطأ في تعيين نقطة التجمع",
       "manual_distribute_successfully": "تم توزيع الحجاج على الحافلات بنجاح",
-      "manual_distribute_error": "فشل توزيع الحجاج على الحافلات"
+      "manual_distribute_error": "فشل توزيع الحجاج على الحافلات",
+      "departure_status_updated_successfully": "تم تحديث حالة المغادرة بنجاح",
+      "error_updating_departure_status": "خطأ في تحديث حالة المغادرة",
+      "please_select_pilgrims": "الرجاء اختيار الحجاج"
     },
     "Dialog": {
       "Delete": "حذف",
