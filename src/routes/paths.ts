@@ -11,6 +11,7 @@ export const paths = {
   auth: {
     jwt: {
       login: `${ROOTS.AUTH}/login`,
+      register: `${ROOTS.AUTH}/register`,
     },
   },
   dashboard: {
