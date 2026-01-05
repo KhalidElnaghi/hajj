@@ -358,6 +358,22 @@ export interface Employee {
   updated_at: string;
 }
 
+export interface Bus {
+  id: number;
+  name: {
+    ar: string;
+    en: string;
+  };
+  capacity?: number;
+  chassis_no?: string;
+  plate_no?: string;
+  contract_no?: string;
+  status?: boolean;
+  created_at?: string;
+  updated_at?: string;
+  [key: string]: any;
+}
+
 export interface Tag {
   id: number;
   name: {
@@ -504,6 +520,7 @@ export interface PilgrimInitDataResponse {
       value: number;
       label: string;
     }>;
+    buses?: Bus[];
   };
 }
 
@@ -1307,4 +1324,22 @@ export const bulkAssignGatheringPoint = async (
     '/dashboard/assign-pilgrims-gathering-point',
     payload
   );
+};
+
+export interface ManualDistributePilgrimsPayload {
+  gathering_point_type_id: number;
+  pilgrim_ids: number[];
+  bus_ids: number[];
+}
+
+export interface ManualDistributePilgrimsResponse {
+  success?: boolean;
+  message?: string;
+  data?: any;
+}
+
+export const manualDistributePilgrims = async (
+  payload: ManualDistributePilgrimsPayload
+): Promise<ManualDistributePilgrimsResponse> => {
+  return await API.post<ManualDistributePilgrimsResponse>('/dashboard/manual-distribute-pilgrims', payload);
 };

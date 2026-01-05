@@ -715,7 +715,8 @@
       "save": "حفظ",
       "send": "إرسال",
       "delete": "حذف",
-      "deleting": "جاري الحذف..."
+      "deleting": "جاري الحذف...",
+      "clear": "مسح"
     },
     "Placeholder": {
       "search_and_add_pilgrim": "ابحث وأضف حاج جديد",
@@ -779,7 +780,9 @@
       "tags_assigned_successfully": "تم تعيين الوسوم بنجاح",
       "error_assigning_tags": "خطأ في تعيين الوسوم",
       "gathering_point_assigned_successfully": "تم تعيين نقطة التجمع بنجاح",
-      "error_assigning_gathering_point": "خطأ في تعيين نقطة التجمع"
+      "error_assigning_gathering_point": "خطأ في تعيين نقطة التجمع",
+      "manual_distribute_successfully": "تم توزيع الحجاج على الحافلات بنجاح",
+      "manual_distribute_error": "فشل توزيع الحجاج على الحافلات"
     },
     "Dialog": {
       "Delete": "حذف",

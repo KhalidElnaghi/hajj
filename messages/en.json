@@ -714,7 +714,8 @@
       "save": "Save",
       "send": "Send",
       "delete": "Delete",
-      "deleting": "Deleting..."
+      "deleting": "Deleting...",
+      "clear": "Clear"
     },
     "Placeholder": {
       "search_and_add_pilgrim": "Search and add a pilgrim",
@@ -778,7 +779,9 @@
       "tags_assigned_successfully": "Tags assigned successfully",
       "error_assigning_tags": "Error assigning tags",
       "gathering_point_assigned_successfully": "Gathering point assigned successfully",
-      "error_assigning_gathering_point": "Error assigning gathering point"
+      "error_assigning_gathering_point": "Error assigning gathering point",
+      "manual_distribute_successfully": "Pilgrims assigned to buses successfully",
+      "manual_distribute_error": "Failed to assign pilgrims to buses"
     },
     "Dialog": {
       "Delete": "Delete",
