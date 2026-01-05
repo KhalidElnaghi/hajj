@@ -16,6 +16,9 @@ import { NAV, HEADER } from '../config-layout';
 import { IconButton, Box } from '@mui/material';
 import SvgColor from 'src/components/svg-color';
 
+import { Link } from 'src/i18n/routing';
+import { paths } from 'src/routes/paths';
+
 // ----------------------------------------------------------------------
 
 type Props = {
@@ -108,6 +111,8 @@ export default function Header({ onOpenNav }: Props) {
             </IconButton>
 
             <IconButton
+              component={Link}
+              href={paths.dashboard.settings.root}
               sx={{
                 width: 40,
                 height: 40,
