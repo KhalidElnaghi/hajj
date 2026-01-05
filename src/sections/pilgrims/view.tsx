@@ -37,7 +37,7 @@ import Iconify from 'src/components/iconify';
 import Image from 'next/image';
 import { BulkActionsDialog } from './components/bulk-actions';
 import { ImportDialog } from './components/import-dialog';
-import FilterDialog from './components/filter-dialog';
+import FilterDialog from './components/filter-dialog/filter-dialog';
 import { paths } from 'src/routes/paths';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { useFetchPilgrims, useDeletePilgrim } from 'src/services/queries/pilgrims';
