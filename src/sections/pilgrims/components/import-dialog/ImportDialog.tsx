@@ -9,22 +9,41 @@ import {
   DialogTitle,
   IconButton,
   Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
   Typography,
 } from '@mui/material';
-import { useTranslations } from 'next-intl';
-import { useState, useRef } from 'react';
+import { useTranslations, useLocale } from 'next-intl';
+import { useState, useRef, useMemo } from 'react';
 
 import Iconify from 'src/components/iconify';
+import SharedTable from 'src/components/custom-shared-table/shared-table/SharedTable';
+import { headCellType, cellAlignment } from 'src/components/custom-shared-table/shared-table/types';
+
+interface ImportHistory {
+  id: number;
+  source: string;
+  user_id: number;
+  user: {
+    id: number;
+    name: string;
+    email: string;
+  };
+  total_count: number;
+  added_count: number;
+  updated_count: number;
+  deleted_from_bus_count: number;
+  deleted_from_housing_count: number;
+  deleted_from_gathering_points: number;
+  changed_res_count: number;
+  repeated: number;
+  cancelled_count: number;
+  created_at: string;
+  updated_at: string;
+}
 
 interface ImportDialogProps {
   open: boolean;
   onClose: () => void;
+  importHistory?: ImportHistory[];
 }
 
 interface StatCard {
@@ -35,25 +54,11 @@ interface StatCard {
   bgColor: string;
 }
 
-interface ImportResultRow {
-  id: number;
-  name: string;
-  registrationDate: string;
-  status: 'success' | 'error' | 'warning' | 'info';
-  accommodation: number;
-  bus: number;
-  gathering: number;
-  supervision: number;
-  transport: number;
-  package: number;
-  healthStatus: number;
-  nationality: number;
-}
-
 type ImportStep = 'upload' | 'statistics' | 'results';
 
-export default function ImportDialog({ open, onClose }: ImportDialogProps) {
+export default function ImportDialog({ open, onClose, importHistory = [] }: ImportDialogProps) {
   const t = useTranslations('Pilgrims');
+  const locale = useLocale();
   const [currentStep, setCurrentStep] = useState<ImportStep>('upload');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [downloadType, setDownloadType] = useState('arabic');
@@ -107,122 +112,6 @@ export default function ImportDialog({ open, onClose }: ImportDialogProps) {
     },
   ];
 
-  // Mock results data with different statuses
-  const results: ImportResultRow[] = [
-    {
-      id: 1,
-      name: 'حامد صالح',
-      registrationDate: '12/11/2025',
-      status: 'success',
-      accommodation: 231,
-      bus: 14,
-      gathering: 0,
-      supervision: 0,
-      transport: 0,
-      package: 0,
-      healthStatus: 0,
-      nationality: 0,
-    },
-    {
-      id: 2,
-      name: 'حامد صالح',
-      registrationDate: '12/11/2025',
-      status: 'warning',
-      accommodation: 231,
-      bus: 14,
-      gathering: 0,
-      supervision: 0,
-      transport: 0,
-      package: 0,
-      healthStatus: 0,
-      nationality: 0,
-    },
-    {
-      id: 3,
-      name: 'حامد صالح',
-      registrationDate: '12/11/2025',
-      status: 'error',
-      accommodation: 231,
-      bus: 14,
-      gathering: 0,
-      supervision: 0,
-      transport: 0,
-      package: 0,
-      healthStatus: 0,
-      nationality: 0,
-    },
-    {
-      id: 4,
-      name: 'حامد صالح',
-      registrationDate: '12/11/2025',
-      status: 'info',
-      accommodation: 231,
-      bus: 14,
-      gathering: 0,
-      supervision: 0,
-      transport: 0,
-      package: 0,
-      healthStatus: 0,
-      nationality: 0,
-    },
-    {
-      id: 5,
-      name: 'حامد صالح',
-      registrationDate: '12/11/2025',
-      status: 'success',
-      accommodation: 231,
-      bus: 14,
-      gathering: 0,
-      supervision: 0,
-      transport: 0,
-      package: 0,
-      healthStatus: 0,
-      nationality: 0,
-    },
-    {
-      id: 6,
-      name: 'حامد صالح',
-      registrationDate: '12/11/2025',
-      status: 'info',
-      accommodation: 231,
-      bus: 14,
-      gathering: 0,
-      supervision: 0,
-      transport: 0,
-      package: 0,
-      healthStatus: 0,
-      nationality: 0,
-    },
-    {
-      id: 7,
-      name: 'حامد صالح',
-      registrationDate: '12/11/2025',
-      status: 'error',
-      accommodation: 231,
-      bus: 14,
-      gathering: 0,
-      supervision: 0,
-      transport: 0,
-      package: 0,
-      healthStatus: 0,
-      nationality: 0,
-    },
-    {
-      id: 8,
-      name: 'حامد صالح',
-      registrationDate: '12/11/2025',
-      status: 'warning',
-      accommodation: 231,
-      bus: 14,
-      gathering: 0,
-      supervision: 0,
-      transport: 0,
-      package: 0,
-      healthStatus: 0,
-      nationality: 0,
-    },
-  ];
-
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -273,144 +162,89 @@ export default function ImportDialog({ open, onClose }: ImportDialogProps) {
     onClose();
   };
 
-  const getStatusConfig = (status: 'success' | 'error' | 'warning' | 'info') => {
-    switch (status) {
-      case 'success':
-        return { label: 'اكتمل', bgcolor: '#DCFCE7', color: '#3D8A58' };
-      case 'warning':
-        return { label: 'نسك', bgcolor: '#F4EADB', color: '#B29873' };
-      case 'error':
-        return { label: 'شحن', bgcolor: '#D0F1FF', color: '#6A99AD' };
-      case 'info':
-        return { label: 'طيران', bgcolor: '#DCE2F6', color: '#6073BF' };
-      default:
-        return { label: 'اكتمل', bgcolor: '#D1FAE5', color: '#10B981' };
-    }
-  };
+  // Table configuration for import history
+  const tableHead: headCellType[] = useMemo(
+    () => [
+      { id: 'user_name', label: t('Label.table_name'), align: cellAlignment.left },
+      { id: 'source', label: t('Label.table_source'), align: cellAlignment.left },
+      { id: 'created_at', label: t('Label.table_import_date'), align: cellAlignment.left },
+      { id: 'added_count', label: t('Label.table_created'), align: cellAlignment.center },
+      { id: 'updated_count', label: t('Label.table_updated'), align: cellAlignment.center },
+      {
+        id: 'deleted_from_housing_count',
+        label: t('Label.table_removed_from_accommodation'),
+        align: cellAlignment.center,
+      },
+      {
+        id: 'deleted_from_bus_count',
+        label: t('Label.table_removed_from_buses'),
+        align: cellAlignment.center,
+      },
+      {
+        id: 'changed_res_count',
+        label: t('Label.table_updated_pilgrims'),
+        align: cellAlignment.center,
+      },
+      {
+        id: 'cancelled_count',
+        label: t('Label.table_cancelled_pilgrims'),
+        align: cellAlignment.center,
+      },
+    ],
+    [t]
+  );
+
+  // Custom render functions for special columns
+  const customRender = useMemo(
+    () => ({
+      user_name: (row: ImportHistory) => (
+        <Typography sx={{ fontSize: 13, color: '#1A1D29' }}>{row.user?.name || '-'}</Typography>
+      ),
+      source: (row: ImportHistory) => (
+        <Chip
+          label={row.source}
+          size="small"
+          sx={{
+            bgcolor: '#F0F7FF',
+            color: '#1570EF',
+            fontSize: 11,
+            fontWeight: 500,
+            height: 24,
+            borderRadius: 1.5,
+          }}
+        />
+      ),
+      created_at: (row: ImportHistory) => (
+        <Typography sx={{ fontSize: 13, color: '#1A1D29' }}>
+          {new Date(row.created_at).toLocaleDateString(locale, {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+            // hour: '2-digit',
+            // minute: '2-digit',
+          })}
+        </Typography>
+      ),
+    }),
+    [locale]
+  );
 
   const renderImportLogTable = () => (
-    <TableContainer
-      sx={{
-        // maxHeight: 400,
-        border: '1px solid #e5e7eb',
-        borderRadius: 1,
-        overflowX: 'auto',
-      }}
-    >
-      <Table size="small" stickyHeader>
-        <TableHead>
-          <TableRow>
-            <TableCell sx={{ bgcolor: '#fafafa', fontWeight: 600, fontSize: 12 }}>
-              {t('Label.table_name')}
-            </TableCell>
-            <TableCell sx={{ bgcolor: '#fafafa', fontWeight: 600, fontSize: 12 }}>
-              {t('Label.table_source')}
-            </TableCell>
-            <TableCell sx={{ bgcolor: '#fafafa', fontWeight: 600, fontSize: 12 }}>
-              {t('Label.table_import_date')}
-            </TableCell>
-            <TableCell sx={{ bgcolor: '#fafafa', fontWeight: 600, fontSize: 12 }}>
-              {t('Label.table_created')}
-            </TableCell>
-            <TableCell sx={{ bgcolor: '#fafafa', fontWeight: 600, fontSize: 12 }}>
-              {t('Label.table_updated')}
-            </TableCell>
-            <TableCell sx={{ bgcolor: '#fafafa', fontWeight: 600, fontSize: 12 }}>
-              {t('Label.table_removed_from_accommodation')}
-            </TableCell>
-            <TableCell sx={{ bgcolor: '#fafafa', fontWeight: 600, fontSize: 12 }}>
-              {t('Label.table_removed_from_buses')}
-            </TableCell>
-            <TableCell sx={{ bgcolor: '#fafafa', fontWeight: 600, fontSize: 12 }}>
-              {t('Label.table_updated_pilgrims')}
-            </TableCell>
-            <TableCell sx={{ bgcolor: '#fafafa', fontWeight: 600, fontSize: 12 }}>
-              {t('Label.table_cancelled_pilgrims')}
-            </TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {results.map((row) => {
-            const statusConfig = getStatusConfig(row.status);
-            return (
-              <TableRow key={row.id} hover>
-                <TableCell sx={{ fontSize: 13, color: '#1A1D29' }}>{row.name}</TableCell>
-                <TableCell>
-                  <Chip
-                    label={statusConfig.label}
-                    size="small"
-                    sx={{
-                      bgcolor: statusConfig.bgcolor,
-                      color: statusConfig.color,
-                      fontSize: 11,
-                      fontWeight: 500,
-                      height: 24,
-                      borderRadius: 1.5,
-                    }}
-                  />
-                </TableCell>
-                <TableCell sx={{ fontSize: 13, color: '#1A1D29' }}>
-                  {row.registrationDate}
-                </TableCell>
-                <TableCell sx={{ fontSize: 13, color: '#1A1D29', textAlign: 'center' }}>
-                  {row.accommodation}
-                </TableCell>
-                <TableCell sx={{ fontSize: 13, color: '#1A1D29', textAlign: 'center' }}>
-                  {row.bus}
-                </TableCell>
-                <TableCell sx={{ fontSize: 13, color: '#1A1D29', textAlign: 'center' }}>
-                  {row.gathering}
-                </TableCell>
-                <TableCell sx={{ fontSize: 13, color: '#1A1D29', textAlign: 'center' }}>
-                  {row.supervision}
-                </TableCell>
-                <TableCell sx={{ fontSize: 13, color: '#1A1D29', textAlign: 'center' }}>
-                  {row.transport}
-                </TableCell>
-                <TableCell sx={{ fontSize: 13, color: '#1A1D29', textAlign: 'center' }}>
-                  {row.package}
-                </TableCell>
-              </TableRow>
-            );
-          })}
-        </TableBody>
-      </Table>
-    </TableContainer>
+    <Box sx={{ border: '1px solid #e5e7eb', borderRadius: 1 }}>
+      <SharedTable<ImportHistory>
+        tableHead={tableHead}
+        data={importHistory}
+        count={importHistory.length}
+        disablePagination
+        order={false}
+        customRender={customRender}
+        headColor="#fafafa"
+      />
+    </Box>
   );
 
   const renderUploadStep = () => (
     <Stack spacing={3}>
-      {/* Excel Import Button */}
-      {/* <Box>
-        <Button
-          fullWidth
-          variant="contained"
-          startIcon={
-            <Box
-              component="img"
-              src="/assets/images/pilgrims/excel.svg"
-              alt="excel"
-              sx={{ width: 20, height: 20 }}
-            />
-          }
-          sx={{
-            bgcolor: '#0d6efd',
-            color: 'white',
-            py: 1.5,
-            borderRadius: 1,
-            fontSize: 14,
-            fontWeight: 500,
-            textTransform: 'none',
-            '&:hover': {
-              bgcolor: '#0b5ed7',
-            },
-          }}
-        >
-          {t('Button.import_from_excel')}
-        </Button>
-      </Box> */}
-
-      {/* Upload Area */}
       <Box
         sx={{
           display: 'flex',

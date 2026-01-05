@@ -627,6 +627,7 @@
       "supervision_organization": "Supervision and Organization",
       "supervisors": "Supervisors",
       "support_messages": "Permits Issued",
+      "no_import_history": "No import history available",
       "table_cancelled_pilgrims": "Cancelled Pilgrims",
       "table_created": "Created",
       "table_import_date": "Import Date",
