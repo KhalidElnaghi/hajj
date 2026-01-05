@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
-import SettingsPlaceholderView from 'src/sections/settings/placeholder-view';
+import PackagesView from 'src/sections/settings/packages/view';
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations('Metadata');
@@ -10,8 +10,7 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default async function PackagesPage() {
-  const t = await getTranslations('Settings.tiles.packages');
-  return <SettingsPlaceholderView title={t('title')} translationKey="packages" />;
+export default function PackagesPage() {
+  return <PackagesView />;
 }
 

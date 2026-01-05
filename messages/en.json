@@ -796,7 +796,34 @@
     "title": "Settings",
     "subtitle": "Manage system configuration and lookup data.",
     "Label": {
-      "breadcrumb_home": "Home"
+      "breadcrumb_home": "Home",
+      "package_number": "Package Number",
+      "name_ar": "Arabic Name",
+      "name_en": "English Name",
+      "status": "Status",
+      "active": "Active",
+      "inactive": "Inactive",
+      "not_available": "Not Available",
+      "search_by_package_name": "Search by package name...",
+      "edit": "Edit",
+      "delete": "Delete"
+    },
+    "Button": {
+      "add_package": "Add Package",
+      "import": "Import",
+      "export": "Export",
+      "edit": "Edit",
+      "delete": "Delete",
+      "deleting": "Deleting..."
+    },
+    "Message": {
+      "delete_success": "Package deleted successfully",
+      "delete_error": "Error deleting package",
+      "error_loading_packages": "Error loading packages. Please try again."
+    },
+    "Dialog": {
+      "delete_package": "Delete Package",
+      "delete_package_confirm": "Are you sure you want to delete package \"{name}\"? This action cannot be undone."
     },
     "placeholder": {
       "subtitle": "This section is under development",

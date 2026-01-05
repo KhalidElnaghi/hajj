@@ -797,7 +797,34 @@
     "title": "الإعدادات",
     "subtitle": "إدارة إعدادات النظام والبيانات المرجعية.",
     "Label": {
-      "breadcrumb_home": "الصفحة الرئيسية"
+      "breadcrumb_home": "الصفحة الرئيسية",
+      "package_number": "رقم الباقة",
+      "name_ar": "الاسم بالعربية",
+      "name_en": "الاسم بالإنجليزية",
+      "status": "الحالة",
+      "active": "فعالة",
+      "inactive": "غير فعالة",
+      "not_available": "غير متوفر",
+      "search_by_package_name": "البحث باسم باقة...",
+      "edit": "تعديل",
+      "delete": "حذف"
+    },
+    "Button": {
+      "add_package": "إضافة باقة",
+      "import": "استيراد",
+      "export": "تصدير",
+      "edit": "تعديل",
+      "delete": "حذف",
+      "deleting": "جاري الحذف..."
+    },
+    "Message": {
+      "delete_success": "تم حذف الباقة بنجاح",
+      "delete_error": "خطأ في حذف الباقة",
+      "error_loading_packages": "خطأ في تحميل الباقات. يرجى المحاولة مرة أخرى."
+    },
+    "Dialog": {
+      "delete_package": "حذف الباقة",
+      "delete_package_confirm": "هل أنت متأكد من حذف الباقة \"{name}\"؟ لا يمكن التراجع عن هذا الإجراء."
     },
     "placeholder": {
       "subtitle": "هذا القسم قيد التطوير",
