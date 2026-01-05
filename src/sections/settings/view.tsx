@@ -10,6 +10,9 @@ import Grid from '@mui/material/Grid';
 import { Link } from 'src/i18n/routing';
 
 import Iconify from 'src/components/iconify';
+import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
+
+import { paths } from 'src/routes/paths';
 
 import { settingsTiles } from './config';
 
@@ -20,6 +23,16 @@ export default function SettingsView() {
 
   return (
     <Stack spacing={4}>
+      <CustomBreadcrumbs
+        links={[
+          {
+            name: t('Label.breadcrumb_home'),
+            href: paths.dashboard.root,
+          },
+          { name: t('title') },
+        ]}
+      />
+
       <Stack spacing={1}>
         <Typography variant="h3">{t('title')}</Typography>
         <Typography variant="body2" color="text.secondary">
@@ -29,12 +42,13 @@ export default function SettingsView() {
 
       <Grid container spacing={3}>
         {settingsTiles.map((tile) => (
-          <Grid key={tile.key} xs={12} sm={6} md={4} lg={3}>
+          <Grid key={tile.key} size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
             <Card
               component={Link}
               href={tile.path}
               sx={{
                 p: 3,
+                minWidth: 280,
                 height: '100%',
                 textDecoration: 'none',
                 display: 'flex',

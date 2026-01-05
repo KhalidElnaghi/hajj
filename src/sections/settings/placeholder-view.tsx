@@ -7,7 +7,7 @@ import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-import { PageHeader } from 'src/components/custom-page-headding';
+import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 
 import { paths } from 'src/routes/paths';
 
@@ -23,11 +23,26 @@ export default function SettingsPlaceholderView({ title, translationKey }: Place
 
   return (
     <Stack spacing={4}>
-      <PageHeader
-        headding={title}
-        subHeadding={t('placeholder.subtitle')}
-        backTo={paths.dashboard.settings.root}
+      <CustomBreadcrumbs
+        links={[
+          {
+            name: t('Label.breadcrumb_home'),
+            href: paths.dashboard.root,
+          },
+          {
+            name: t('title'),
+            href: paths.dashboard.settings.root,
+          },
+          { name: title },
+        ]}
       />
+
+      <Stack spacing={1}>
+        <Typography variant="h3">{title}</Typography>
+        <Typography variant="body2" color="text.secondary">
+          {t('placeholder.subtitle')}
+        </Typography>
+      </Stack>
 
       <Card sx={{ p: 4 }}>
         <Box

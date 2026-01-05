@@ -795,6 +795,9 @@
   "Settings": {
     "title": "Settings",
     "subtitle": "Manage system configuration and lookup data.",
+    "Label": {
+      "breadcrumb_home": "Home"
+    },
     "placeholder": {
       "subtitle": "This section is under development",
       "comingSoon": "Coming Soon",

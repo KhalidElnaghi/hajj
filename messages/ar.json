@@ -796,6 +796,9 @@
   "Settings": {
     "title": "الإعدادات",
     "subtitle": "إدارة إعدادات النظام والبيانات المرجعية.",
+    "Label": {
+      "breadcrumb_home": "الصفحة الرئيسية"
+    },
     "placeholder": {
       "subtitle": "هذا القسم قيد التطوير",
       "comingSoon": "قريباً",
