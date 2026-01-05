@@ -21,6 +21,7 @@ const ICONS = {
   healthcare: icon('healthcare'),
   requests: icon('requests_management'),
   reports: icon('reports_analytics'),
+  settings: icon('reports_analytics'), // Using existing icon, can be replaced later
 };
 
 export function useNavData() {
@@ -68,6 +69,11 @@ export function useNavData() {
             title: t('Nav.reports_analytics'),
             path: paths.dashboard.reports.root,
             icon: ICONS.reports,
+          },
+          {
+            title: t('Nav.settings'),
+            path: paths.dashboard.settings.root,
+            icon: ICONS.settings,
           },
         ],
       },
