@@ -175,13 +175,16 @@ export default function PackagesView() {
             '& .MuiChip-label': {
               px: 1.5,
             },
+            '&:hover': {
+              bgcolor: isActive ? '#E8F5E9' : '#FFEBEE',
+            },
           }}
         />
       );
     },
   };
 
-  // Use API data directly for server-side pagination
+  
   const packages = useMemo(() => {
     return packagesData?.data || [];
   }, [packagesData]);
