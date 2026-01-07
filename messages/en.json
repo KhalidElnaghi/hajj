@@ -819,11 +819,16 @@
     "Message": {
       "delete_success": "Package deleted successfully",
       "delete_error": "Error deleting package",
-      "error_loading_packages": "Error loading packages. Please try again."
+      "error_loading_packages": "Error loading packages. Please try again.",
+      "name_ar_required": "Arabic name is required",
+      "name_ar_min_length": "Arabic name must be at least 2 characters",
+      "name_en_required": "English name is required",
+      "name_en_min_length": "English name must be at least 2 characters"
     },
     "Dialog": {
       "delete_package": "Delete Package",
-      "delete_package_confirm": "Are you sure you want to delete package \"{name}\"? This action cannot be undone."
+      "delete_package_confirm": "Are you sure you want to delete package \"{name}\"? This action cannot be undone.",
+      "Cancel": "Cancel"
     },
     "placeholder": {
       "subtitle": "This section is under development",

@@ -2,17 +2,7 @@
 
 import { ReactNode, useMemo, useState, useEffect } from 'react';
 
-import {
-  Box,
-  Button,
-  Card,
-  Container,
-  InputAdornment,
-  Stack,
-  TextField,
-  Typography,
-  Chip,
-} from '@mui/material';
+import { Box, Button, Card, Container, InputAdornment, Stack, TextField, Typography, Chip } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 
 import { useLocale, useTranslations } from 'next-intl';
@@ -33,6 +23,7 @@ import { useFetchPackages, useDeletePackage } from 'src/services/queries/package
 import { PackageItem } from 'src/services/api/packages';
 import { useSnackbar } from 'notistack';
 import { ConfirmDialog } from 'src/components/custom-dialog';
+import AddPackageDialog from './AddPackageDialog';
 
 // ----------------------------------------------------------------------
 
@@ -42,6 +33,7 @@ export default function PackagesView() {
   const theme = useTheme();
   const table = useTable();
   const deleteDialog = useDisclosure();
+  const addDialog = useDisclosure();
   const [searchTerm, setSearchTerm] = useState('');
   const router = useRouter();
   const pathname = usePathname();
@@ -265,10 +257,7 @@ export default function PackagesView() {
               <Button
                 variant="contained"
                 color="primary"
-                onClick={() => {
-                  // TODO: Navigate to add package page when implemented
-                  console.log('Add package');
-                }}
+                onClick={addDialog.onOpen}
                 sx={{
                   height: 44,
                   px: 4,
@@ -361,6 +350,8 @@ export default function PackagesView() {
           )}
         </Card>
       </Box>
+
+      <AddPackageDialog open={addDialog.open} onClose={addDialog.onClose} />
 
       <ConfirmDialog
         open={deleteDialog.open}

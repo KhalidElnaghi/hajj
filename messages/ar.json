@@ -820,11 +820,16 @@
     "Message": {
       "delete_success": "تم حذف الباقة بنجاح",
       "delete_error": "خطأ في حذف الباقة",
-      "error_loading_packages": "خطأ في تحميل الباقات. يرجى المحاولة مرة أخرى."
+      "error_loading_packages": "خطأ في تحميل الباقات. يرجى المحاولة مرة أخرى.",
+      "name_ar_required": "الاسم بالعربية مطلوب",
+      "name_ar_min_length": "يجب أن يكون الاسم بالعربية على الأقل حرفين",
+      "name_en_required": "الاسم بالإنجليزية مطلوب",
+      "name_en_min_length": "يجب أن يكون الاسم بالإنجليزية على الأقل حرفين"
     },
     "Dialog": {
       "delete_package": "حذف الباقة",
-      "delete_package_confirm": "هل أنت متأكد من حذف الباقة \"{name}\"؟ لا يمكن التراجع عن هذا الإجراء."
+      "delete_package_confirm": "هل أنت متأكد من حذف الباقة \"{name}\"؟ لا يمكن التراجع عن هذا الإجراء.",
+      "Cancel": "إلغاء"
     },
     "placeholder": {
       "subtitle": "هذا القسم قيد التطوير",
