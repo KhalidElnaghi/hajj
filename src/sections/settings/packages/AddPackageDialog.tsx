@@ -77,7 +77,11 @@ export default function AddEditDialog({ open, onClose, isEditMode, packageData }
     mode: 'onChange',
   });
 
-  const { handleSubmit, reset } = methods;
+  const {
+    handleSubmit,
+    reset,
+    formState: { isDirty },
+  } = methods;
 
   useEffect(() => {
     if (open) {
@@ -107,6 +111,8 @@ export default function AddEditDialog({ open, onClose, isEditMode, packageData }
 
   const createPackageMutation = useCreatePackage();
   const updatePackageMutation = useUpdatePackage();
+
+  const isSubmitting = isEditMode ? updatePackageMutation.isPending : createPackageMutation.isPending;
 
   const handleFormSubmit = handleSubmit(async (data: AddEditPackageFormValues) => {
     const basePayload = {
@@ -314,6 +320,7 @@ export default function AddEditDialog({ open, onClose, isEditMode, packageData }
                     px: 4,
                     bgcolor: 'primary.main',
                   }}
+                  disabled={!isDirty || isSubmitting}
                 >
                   {isEditMode ? t('Button.edit') : t('Button.add_package')}
                 </Button>
