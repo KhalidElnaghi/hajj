@@ -61,7 +61,6 @@ export const getPackages = async (params: GetPackagesParams = {}): Promise<Packa
   if (page) queryParams.append('page', page.toString());
   if (search) queryParams.append('query', search);
 
- 
   Object.entries(restParams).forEach(([key, value]) => {
     if (value !== undefined && value !== null) {
       queryParams.append(key, String(value));
@@ -76,3 +75,23 @@ export const getPackages = async (params: GetPackagesParams = {}): Promise<Packa
   return response;
 };
 
+export interface CreatePackagePayload {
+  name: {
+    ar: string;
+    en: string;
+  };
+  status: boolean;
+}
+
+export interface CreatePackageResponse {
+  success: boolean;
+  message: string;
+  data: PackageItem;
+}
+
+export const createPackage = async (
+  payload: CreatePackagePayload
+): Promise<CreatePackageResponse> => {
+  const response = await API.post<CreatePackageResponse>('/dashboard/settings/packages', payload);
+  return response;
+};

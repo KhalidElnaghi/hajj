@@ -18,10 +18,13 @@ import {
 } from '@mui/material';
 
 import { useTranslations } from 'next-intl';
+import { useSnackbar } from 'notistack';
 
 import DialogHeader from 'src/sections/pilgrims/components/bulk-actions/shared/DialogHeader';
 import RHFTextField from 'src/components/hook-form/rhf-text-field';
 import FormProvider from 'src/components/hook-form/form-provider';
+import { useCreatePackage } from 'src/services/queries/packages';
+import { CreatePackagePayload } from 'src/services/api/packages';
 
 type AddPackageFormValues = {
   nameAr: string;
@@ -48,8 +51,9 @@ const createPackageValidationSchema = (t: (key: string) => string) =>
       .trim(),
   });
 
-export default function AddPackageDialog({ open, onClose, onSubmit }: AddPackageDialogProps) {
+export default function AddPackageDialog({ open, onClose }: AddPackageDialogProps) {
   const t = useTranslations('Settings');
+  const { enqueueSnackbar } = useSnackbar();
 
   const [status, setStatus] = useState<boolean>(false);
 
@@ -89,12 +93,34 @@ export default function AddPackageDialog({ open, onClose, onSubmit }: AddPackage
     setStatus(value === 'active');
   };
 
-  const handleFormSubmit = handleSubmit((data: AddPackageFormValues) => {
-    if (onSubmit) {
-      onSubmit({ nameAr: data.nameAr, nameEn: data.nameEn, status });
+  const createPackageMutation = useCreatePackage();
+
+  const handleFormSubmit = handleSubmit(async (data: AddPackageFormValues) => {
+    const payload: CreatePackagePayload = {
+      name: {
+        ar: data.nameAr,
+        en: data.nameEn,
+      },
+      status,
+    };
+
+    try {
+      await createPackageMutation.mutateAsync(payload);
+      enqueueSnackbar(t('Message.create_success'), { variant: 'success' });
+      reset();
+      onClose();
+    } catch (error: any) {
+      // Log for debugging
+      // eslint-disable-next-line no-console
+      console.error('Create package error:', error);
+
+      const apiMessage =
+        error?.response?.data?.message ||
+        error?.message ||
+        t('Message.create_error');
+
+      enqueueSnackbar(apiMessage, { variant: 'error' });
     }
-    reset();
-    onClose();
   });
 
   const handleClose = () => {
@@ -146,24 +172,52 @@ export default function AddPackageDialog({ open, onClose, onSubmit }: AddPackage
                   onChange={handleStatusChange}
                   sx={{
                     bgcolor: '#F3F4F6',
-                    borderRadius: 999,
+                    borderRadius: '59px',
                     p: 0.5,
                     display: 'inline-flex',
+                    '& .MuiToggleButton-root': {
+                      borderRadius: '59px !important',
+                      border: 'none !important',
+                      '&:first-of-type': {
+                        borderRadius: '59px !important',
+                      },
+                      '&:last-of-type': {
+                        borderRadius: '59px !important',
+                      },
+                    },
                   }}
                 >
                   <ToggleButton
                     value="inactive"
+                    disableRipple
+                    disableFocusRipple
                     sx={{
-                      borderRadius: 999,
+                      borderRadius: '59px !important',
                       px: 3,
-                      border: 'none',
+                      border: 'none !important',
                       '&.Mui-selected': {
                         bgcolor: 'primary.main',
                         color: '#fff',
+                        '&:hover': {
+                          bgcolor: 'primary.main !important',
+                          color: '#fff !important',
+                          opacity: 1,
+                        },
                       },
                       '&:not(.Mui-selected)': {
                         bgcolor: 'transparent',
                         color: 'text.primary',
+                        '&:hover': {
+                          bgcolor: 'transparent !important',
+                          color: 'text.primary !important',
+                          opacity: 1,
+                        },
+                      },
+                      '&.Mui-focusVisible': {
+                        bgcolor: 'transparent !important',
+                      },
+                      '&.Mui-disabled': {
+                        bgcolor: 'transparent !important',
                       },
                     }}
                   >
@@ -172,17 +226,35 @@ export default function AddPackageDialog({ open, onClose, onSubmit }: AddPackage
 
                   <ToggleButton
                     value="active"
+                    disableRipple
+                    disableFocusRipple
                     sx={{
-                      borderRadius: 999,
+                      borderRadius: '59px !important',
                       px: 3,
-                      border: 'none',
+                      border: 'none !important',
                       '&.Mui-selected': {
                         bgcolor: 'primary.main',
                         color: '#fff',
+                        '&:hover': {
+                          bgcolor: 'primary.main !important',
+                          color: '#fff !important',
+                          opacity: 1,
+                        },
                       },
                       '&:not(.Mui-selected)': {
                         bgcolor: 'transparent',
                         color: 'text.primary',
+                        '&:hover': {
+                          bgcolor: 'transparent !important',
+                          color: 'text.primary !important',
+                          opacity: 1,
+                        },
+                      },
+                      '&.Mui-focusVisible': {
+                        bgcolor: 'transparent !important',
+                      },
+                      '&.Mui-disabled': {
+                        bgcolor: 'transparent !important',
                       },
                     }}
                   >
@@ -210,6 +282,7 @@ export default function AddPackageDialog({ open, onClose, onSubmit }: AddPackage
                   sx={{
                     borderRadius: 1,
                     px: 4,
+                    bgcolor: 'primary.main',
                   }}
                 >
                   {t('Button.add_package')}
