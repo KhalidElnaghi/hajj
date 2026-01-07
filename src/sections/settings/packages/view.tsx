@@ -2,7 +2,17 @@
 
 import { ReactNode, useMemo, useState, useEffect } from 'react';
 
-import { Box, Button, Card, Container, InputAdornment, Stack, TextField, Typography, Chip } from '@mui/material';
+import {
+  Box,
+  Button,
+  Card,
+  Container,
+  InputAdornment,
+  Stack,
+  TextField,
+  Typography,
+  Chip,
+} from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 
 import { useLocale, useTranslations } from 'next-intl';
@@ -176,7 +186,6 @@ export default function PackagesView() {
     },
   };
 
-  
   const packages = useMemo(() => {
     return packagesData?.data || [];
   }, [packagesData]);
@@ -267,56 +276,6 @@ export default function PackagesView() {
                 }}
               >
                 {t('Button.add_package')}
-              </Button>
-
-              <Button
-                variant="outlined"
-                startIcon={
-                  <Image
-                    src="/assets/images/pilgrims/import.svg"
-                    alt="import"
-                    width={15}
-                    height={15}
-                  />
-                }
-                sx={{
-                  height: 44,
-                  px: 4,
-                  borderRadius: 1,
-                  borderColor: '#dce5ef',
-                  bgcolor: '#fff',
-                  color: '#333',
-                  fontWeight: 500,
-                  fontSize: 14,
-                  '&:hover': { borderColor: 'primary.main', bgcolor: '#f3f7ff' },
-                }}
-              >
-                {t('Button.import')}
-              </Button>
-
-              <Button
-                variant="outlined"
-                startIcon={
-                  <Image
-                    src="/assets/images/pilgrims/export.svg"
-                    alt="export"
-                    width={15}
-                    height={15}
-                  />
-                }
-                sx={{
-                  height: 44,
-                  px: 4,
-                  borderRadius: 1,
-                  borderColor: '#dce5ef',
-                  bgcolor: '#fff',
-                  color: '#333',
-                  fontWeight: 500,
-                  fontSize: 14,
-                  '&:hover': { borderColor: '#0d6efd', bgcolor: '#f3f7ff' },
-                }}
-              >
-                {t('Button.export')}
               </Button>
             </Stack>
           </Stack>

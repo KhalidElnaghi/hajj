@@ -20,7 +20,7 @@ import {
 import { useTranslations } from 'next-intl';
 import { useSnackbar } from 'notistack';
 
-import DialogHeader from 'src/sections/pilgrims/components/bulk-actions/shared/DialogHeader';
+import SettingsDialogHeader from 'src/sections/settings/components/SettingsDialogHeader';
 import RHFTextField from 'src/components/hook-form/rhf-text-field';
 import FormProvider from 'src/components/hook-form/form-provider';
 import { useCreatePackage } from 'src/services/queries/packages';
@@ -110,14 +110,11 @@ export default function AddPackageDialog({ open, onClose }: AddPackageDialogProp
       reset();
       onClose();
     } catch (error: any) {
-      // Log for debugging
       // eslint-disable-next-line no-console
       console.error('Create package error:', error);
 
       const apiMessage =
-        error?.response?.data?.message ||
-        error?.message ||
-        t('Message.create_error');
+        error?.response?.data?.message || error?.message || t('Message.create_error');
 
       enqueueSnackbar(apiMessage, { variant: 'error' });
     }
@@ -142,7 +139,7 @@ export default function AddPackageDialog({ open, onClose }: AddPackageDialogProp
       }}
     >
       <DialogTitle sx={{ p: 0, mb: 2 }}>
-        <DialogHeader title={t('Button.add_package')} onClose={handleClose} />
+        <SettingsDialogHeader title={t('Button.add_package')} onClose={handleClose} />
       </DialogTitle>
 
       <DialogContent sx={{ p: 0 }}>
@@ -171,7 +168,7 @@ export default function AddPackageDialog({ open, onClose }: AddPackageDialogProp
                   value={status ? 'active' : 'inactive'}
                   onChange={handleStatusChange}
                   sx={{
-                    bgcolor: '#F3F4F6',
+                    bgcolor: '#F8FAFC',
                     borderRadius: '59px',
                     p: 0.5,
                     display: 'inline-flex',
