@@ -95,3 +95,27 @@ export const createPackage = async (
   const response = await API.post<CreatePackageResponse>('/dashboard/settings/packages', payload);
   return response;
 };
+
+// ----------------------------------------------------------------------
+// Update package
+// ----------------------------------------------------------------------
+
+export interface UpdatePackagePayload {
+  name: {
+    ar: string;
+    en: string;
+  };
+  status: boolean;
+}
+
+export const updatePackage = async (
+  id: number,
+  payload: UpdatePackagePayload
+): Promise<CreatePackageResponse> => {
+  const response = await API.patch<CreatePackageResponse>(
+    `/dashboard/settings/packages/${id}`,
+    payload
+  );
+  return response;
+};
+

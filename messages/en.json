@@ -813,6 +813,7 @@
       "import": "Import",
       "export": "Export",
       "edit": "Edit",
+      "edit_package": "Edit Package",
       "delete": "Delete",
       "deleting": "Deleting..."
     },
@@ -822,6 +823,8 @@
       "error_loading_packages": "Error loading packages. Please try again.",
       "create_success": "Package created successfully",
       "create_error": "Error creating package",
+      "update_success": "Package updated successfully",
+      "update_error": "Error updating package",
       "name_ar_required": "Arabic name is required",
       "name_ar_min_length": "Arabic name must be at least 2 characters",
       "name_en_required": "English name is required",

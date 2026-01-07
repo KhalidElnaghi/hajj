@@ -33,7 +33,7 @@ import { useFetchPackages, useDeletePackage } from 'src/services/queries/package
 import { PackageItem } from 'src/services/api/packages';
 import { useSnackbar } from 'notistack';
 import { ConfirmDialog } from 'src/components/custom-dialog';
-import AddPackageDialog from './AddPackageDialog';
+import AddEditDialog from './AddPackageDialog';
 
 // ----------------------------------------------------------------------
 
@@ -44,6 +44,7 @@ export default function PackagesView() {
   const table = useTable();
   const deleteDialog = useDisclosure();
   const addDialog = useDisclosure();
+  const editDialog = useDisclosure();
   const [searchTerm, setSearchTerm] = useState('');
   const router = useRouter();
   const pathname = usePathname();
@@ -51,6 +52,7 @@ export default function PackagesView() {
   const { createQueryString } = useQueryString();
   const { enqueueSnackbar } = useSnackbar();
   const [packageToDelete, setPackageToDelete] = useState<PackageItem | null>(null);
+  const [editingPackage, setEditingPackage] = useState<PackageItem | null>(null);
 
   // Get pagination from URL params
   const currentPage = Number(searchParams.get('page')) || 1;
@@ -134,8 +136,8 @@ export default function PackagesView() {
       label: t('Label.edit'),
       icon: '/assets/icons/table/edit.svg',
       onClick: (row) => {
-        // TODO: Navigate to edit page when implemented
-        console.log('Edit package', row.id);
+        setEditingPackage(row);
+        editDialog.onOpen();
       },
     },
     {
@@ -310,7 +312,17 @@ export default function PackagesView() {
         </Card>
       </Box>
 
-      <AddPackageDialog open={addDialog.open} onClose={addDialog.onClose} />
+      <AddEditDialog open={addDialog.open} onClose={addDialog.onClose} />
+
+      <AddEditDialog
+        open={editDialog.open}
+        onClose={() => {
+          setEditingPackage(null);
+          editDialog.onClose();
+        }}
+        isEditMode
+        packageData={editingPackage}
+      />
 
       <ConfirmDialog
         open={deleteDialog.open}

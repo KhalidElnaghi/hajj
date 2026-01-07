@@ -23,18 +23,19 @@ import { useSnackbar } from 'notistack';
 import SettingsDialogHeader from 'src/sections/settings/components/SettingsDialogHeader';
 import RHFTextField from 'src/components/hook-form/rhf-text-field';
 import FormProvider from 'src/components/hook-form/form-provider';
-import { useCreatePackage } from 'src/services/queries/packages';
-import { CreatePackagePayload } from 'src/services/api/packages';
+import { useCreatePackage, useUpdatePackage } from 'src/services/queries/packages';
+import { CreatePackagePayload, UpdatePackagePayload, PackageItem } from 'src/services/api/packages';
 
-type AddPackageFormValues = {
+type AddEditPackageFormValues = {
   nameAr: string;
   nameEn: string;
 };
 
-type AddPackageDialogProps = {
+type AddEditDialogProps = {
   open: boolean;
   onClose: () => void;
-  onSubmit?: (payload: { nameAr: string; nameEn: string; status: boolean }) => void;
+  isEditMode?: boolean;
+  packageData?: PackageItem | null;
 };
 
 // ----------------------------------------------------------------------
@@ -51,18 +52,18 @@ const createPackageValidationSchema = (t: (key: string) => string) =>
       .trim(),
   });
 
-export default function AddPackageDialog({ open, onClose }: AddPackageDialogProps) {
+export default function AddEditDialog({ open, onClose, isEditMode, packageData }: AddEditDialogProps) {
   const t = useTranslations('Settings');
   const { enqueueSnackbar } = useSnackbar();
 
   const [status, setStatus] = useState<boolean>(false);
 
-  const defaultValues: AddPackageFormValues = useMemo(
+  const defaultValues: AddEditPackageFormValues = useMemo(
     () => ({
-      nameAr: '',
-      nameEn: '',
+      nameAr: packageData?.name?.ar || '',
+      nameEn: packageData?.name?.en || '',
     }),
-    []
+    [packageData]
   );
 
   const validationSchema = useMemo(
@@ -70,7 +71,7 @@ export default function AddPackageDialog({ open, onClose }: AddPackageDialogProp
     [t]
   );
 
-  const methods = useForm<AddPackageFormValues>({
+  const methods = useForm<AddEditPackageFormValues>({
     resolver: yupResolver(validationSchema) as any,
     defaultValues,
     mode: 'onChange',
@@ -80,10 +81,21 @@ export default function AddPackageDialog({ open, onClose }: AddPackageDialogProp
 
   useEffect(() => {
     if (open) {
-      reset(defaultValues);
-      setStatus(false);
+      if (isEditMode && packageData) {
+        reset({
+          nameAr: packageData.name?.ar || '',
+          nameEn: packageData.name?.en || '',
+        });
+        setStatus(packageData.status);
+      } else {
+        reset({
+          nameAr: '',
+          nameEn: '',
+        });
+        setStatus(false);
+      }
     }
-  }, [open, reset, defaultValues]);
+  }, [open, isEditMode, packageData, reset]);
 
   const handleStatusChange = (
     _event: React.MouseEvent<HTMLElement>,
@@ -94,9 +106,10 @@ export default function AddPackageDialog({ open, onClose }: AddPackageDialogProp
   };
 
   const createPackageMutation = useCreatePackage();
+  const updatePackageMutation = useUpdatePackage();
 
-  const handleFormSubmit = handleSubmit(async (data: AddPackageFormValues) => {
-    const payload: CreatePackagePayload = {
+  const handleFormSubmit = handleSubmit(async (data: AddEditPackageFormValues) => {
+    const basePayload = {
       name: {
         ar: data.nameAr,
         en: data.nameEn,
@@ -105,16 +118,33 @@ export default function AddPackageDialog({ open, onClose }: AddPackageDialogProp
     };
 
     try {
-      await createPackageMutation.mutateAsync(payload);
-      enqueueSnackbar(t('Message.create_success'), { variant: 'success' });
+      if (isEditMode && packageData) {
+        const payload: UpdatePackagePayload = basePayload;
+        await updatePackageMutation.mutateAsync({
+          id: packageData.id,
+          data: payload,
+        });
+
+        enqueueSnackbar(t('Message.update_success'), { variant: 'success' });
+      } else {
+        const payload: CreatePackagePayload = basePayload;
+        await createPackageMutation.mutateAsync(payload);
+
+        enqueueSnackbar(t('Message.create_success'), { variant: 'success' });
+      }
+
       reset();
       onClose();
     } catch (error: any) {
       // eslint-disable-next-line no-console
-      console.error('Create package error:', error);
+      console.error('Create/Update package error:', error);
+
+      const fallbackErrorMessage = isEditMode
+        ? t('Message.update_error')
+        : t('Message.create_error');
 
       const apiMessage =
-        error?.response?.data?.message || error?.message || t('Message.create_error');
+        error?.response?.data?.message || error?.message || fallbackErrorMessage;
 
       enqueueSnackbar(apiMessage, { variant: 'error' });
     }
@@ -139,7 +169,10 @@ export default function AddPackageDialog({ open, onClose }: AddPackageDialogProp
       }}
     >
       <DialogTitle sx={{ p: 0, mb: 2 }}>
-        <SettingsDialogHeader title={t('Button.add_package')} onClose={handleClose} />
+        <SettingsDialogHeader
+          title={isEditMode ? t('Button.edit_package') : t('Button.add_package')}
+          onClose={handleClose}
+        />
       </DialogTitle>
 
       <DialogContent sx={{ p: 0 }}>
@@ -282,7 +315,7 @@ export default function AddPackageDialog({ open, onClose }: AddPackageDialogProp
                     bgcolor: 'primary.main',
                   }}
                 >
-                  {t('Button.add_package')}
+                  {isEditMode ? t('Button.edit') : t('Button.add_package')}
                 </Button>
               </Stack>
             </Stack>
