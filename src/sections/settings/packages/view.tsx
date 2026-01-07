@@ -331,16 +331,10 @@ export default function PackagesView() {
         content={t('Dialog.delete_package_confirm', {
           name: packageToDelete?.name?.ar || packageToDelete?.local_name || '',
         })}
-        action={
-          <Button
-            variant="contained"
-            color="error"
-            onClick={handleDeleteConfirm}
-            disabled={deleteMutation.isPending}
-          >
-            {deleteMutation.isPending ? t('Button.deleting') : t('Button.delete')}
-          </Button>
-        }
+        buttonTitle={t('Button.delete')}
+        buttonColor="error"
+        handleConfirmDelete={handleDeleteConfirm}
+        loading={deleteMutation.isPending}
       />
     </Container>
   );

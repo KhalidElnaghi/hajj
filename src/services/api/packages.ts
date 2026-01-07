@@ -96,10 +96,6 @@ export const createPackage = async (
   return response;
 };
 
-// ----------------------------------------------------------------------
-// Update package
-// ----------------------------------------------------------------------
-
 export interface UpdatePackagePayload {
   name: {
     ar: string;
@@ -119,3 +115,13 @@ export const updatePackage = async (
   return response;
 };
 
+export interface DeletePackageResponse {
+  success: boolean;
+  message: string;
+  data: null;
+}
+
+export const deletePackage = async (id: number): Promise<DeletePackageResponse> => {
+  const response = await API.delete<DeletePackageResponse>(`/dashboard/settings/packages/${id}`);
+  return response;
+};
