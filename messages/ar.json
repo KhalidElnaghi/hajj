@@ -717,7 +717,8 @@
       "send": "إرسال",
       "delete": "حذف",
       "deleting": "جاري الحذف...",
-      "clear": "مسح"
+      "clear": "مسح",
+      "done": "تم"
     },
     "Placeholder": {
       "search_and_add_pilgrim": "ابحث وأضف حاج جديد",
@@ -786,7 +787,11 @@
       "manual_distribute_error": "فشل توزيع الحجاج على الحافلات",
       "departure_status_updated_successfully": "تم تحديث حالة المغادرة بنجاح",
       "error_updating_departure_status": "خطأ في تحديث حالة المغادرة",
-      "please_select_pilgrims": "الرجاء اختيار الحجاج"
+      "please_select_pilgrims": "الرجاء اختيار الحجاج",
+      "statistics_loaded_successfully": "تم تحميل إحصائيات الاستيراد بنجاح",
+      "failed_to_load_statistics": "فشل تحميل إحصائيات الاستيراد",
+      "import_completed_successfully": "تم الاستيراد بنجاح",
+      "failed_to_import_data": "فشل استيراد البيانات"
     },
     "Dialog": {
       "Delete": "حذف",

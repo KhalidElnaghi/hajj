@@ -17,6 +17,8 @@ import { useState, useRef, useMemo } from 'react';
 import Iconify from 'src/components/iconify';
 import SharedTable from 'src/components/custom-shared-table/shared-table/SharedTable';
 import { headCellType, cellAlignment } from 'src/components/custom-shared-table/shared-table/types';
+import { importPilgrims, ImportStatistics } from 'src/services/api/pilgrims';
+import { useSnackbar } from 'notistack';
 
 interface ImportHistory {
   id: number;
@@ -59,58 +61,63 @@ type ImportStep = 'upload' | 'statistics' | 'results';
 export default function ImportDialog({ open, onClose, importHistory = [] }: ImportDialogProps) {
   const t = useTranslations('Pilgrims');
   const locale = useLocale();
+  const { enqueueSnackbar } = useSnackbar();
   const [currentStep, setCurrentStep] = useState<ImportStep>('upload');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [downloadType, setDownloadType] = useState('arabic');
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [showImportLog, setShowImportLog] = useState<string>('no');
+  const [importStats, setImportStats] = useState<ImportStatistics | null>(null);
 
-  // Mock statistics data
-  const statistics: StatCard[] = [
-    {
-      label: t('Label.total_records_stat'),
-      value: 42,
-      icon: '/assets/images/pilgrims/statiscits/total.svg',
-      color: '#1570EF',
-      bgColor: '#F0F7FF',
-    },
-    {
-      label: t('Label.added_records'),
-      value: 42,
-      icon: '/assets/images/pilgrims/statiscits/added.svg',
-      color: '#34C759',
-      bgColor: '#F0FDF4',
-    },
-    {
-      label: t('Label.updated_records'),
-      value: 42,
-      icon: '/assets/images/pilgrims/statiscits/updated.svg',
-      color: '#FF9500',
-      bgColor: '#FFF8E1',
-    },
-    {
-      label: t('Label.accommodation_deleted'),
-      value: 42,
-      icon: '/assets/images/pilgrims/statiscits/accommodation-deleted.svg',
-      color: '#9333EA',
-      bgColor: '#F3E8FF',
-    },
-    {
-      label: t('Label.bus_deleted'),
-      value: 42,
-      icon: '/assets/images/pilgrims/statiscits/bus-deleted.svg',
-      color: '#EC4899',
-      bgColor: '#FCE7F3',
-    },
-    {
-      label: t('Label.cancelled_records'),
-      value: 42,
-      icon: '/assets/images/pilgrims/statiscits/canceled.svg',
-      color: '#A2845E',
-      bgColor: '#F5F5DC',
-    },
-  ];
+  // Statistics data based on API response
+  const statistics: StatCard[] = useMemo(
+    () => [
+      {
+        label: t('Label.total_records_stat'),
+        value: importStats?.total_count || 0,
+        icon: '/assets/images/pilgrims/statiscits/total.svg',
+        color: '#1570EF',
+        bgColor: '#F0F7FF',
+      },
+      {
+        label: t('Label.added_records'),
+        value: importStats?.added_count || 0,
+        icon: '/assets/images/pilgrims/statiscits/added.svg',
+        color: '#34C759',
+        bgColor: '#F0FDF4',
+      },
+      {
+        label: t('Label.updated_records'),
+        value: importStats?.updated_count || 0,
+        icon: '/assets/images/pilgrims/statiscits/updated.svg',
+        color: '#FF9500',
+        bgColor: '#FFF8E1',
+      },
+      {
+        label: t('Label.accommodation_deleted'),
+        value: importStats?.deleted_from_housing_count || 0,
+        icon: '/assets/images/pilgrims/statiscits/accommodation-deleted.svg',
+        color: '#9333EA',
+        bgColor: '#F3E8FF',
+      },
+      {
+        label: t('Label.bus_deleted'),
+        value: importStats?.deleted_from_bus_count || 0,
+        icon: '/assets/images/pilgrims/statiscits/bus-deleted.svg',
+        color: '#EC4899',
+        bgColor: '#FCE7F3',
+      },
+      {
+        label: t('Label.cancelled_records'),
+        value: importStats?.cancelled_count || 0,
+        icon: '/assets/images/pilgrims/statiscits/canceled.svg',
+        color: '#A2845E',
+        bgColor: '#F5F5DC',
+      },
+    ],
+    [importStats, t]
+  );
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -132,23 +139,51 @@ export default function ImportDialog({ open, onClose, importHistory = [] }: Impo
   };
 
   const handleUpload = async () => {
-    if (selectedFile) {
+    if (!selectedFile) return;
+
+    try {
       setIsLoading(true);
-      // Simulate API call
-      setTimeout(() => {
-        setIsLoading(false);
+      // First call with statistics=true to get preview statistics only
+      const response = await importPilgrims(selectedFile, true);
+
+      if (response.success && response.data?.statistics) {
+        setImportStats(response.data.statistics);
         setCurrentStep('statistics');
-      }, 1500);
+        enqueueSnackbar(t('Message.statistics_loaded_successfully'), {
+          variant: 'success',
+        });
+      }
+    } catch (error: any) {
+      console.error('Import preview error:', error);
+      enqueueSnackbar(error?.response?.data?.message || t('Message.failed_to_load_statistics'), {
+        variant: 'error',
+      });
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleConfirmStatistics = async () => {
-    setIsLoading(true);
-    // Simulate API call
-    setTimeout(() => {
+    if (!selectedFile) return;
+
+    try {
+      setIsLoading(true);
+      // Second call with statistics=false to actually import the data
+      const response = await importPilgrims(selectedFile, false);
+
+      if (response.success && response.data?.statistics) {
+        setImportStats(response.data.statistics);
+        setCurrentStep('results');
+        enqueueSnackbar(t('Message.import_completed_successfully'));
+      }
+    } catch (error: any) {
+      console.error('Import confirmation error:', error);
+      enqueueSnackbar(error?.response?.data?.message || t('Message.failed_to_import_data'), {
+        variant: 'error',
+      });
+    } finally {
       setIsLoading(false);
-      setCurrentStep('results');
-    }, 1500);
+    }
   };
 
   const handleFinalConfirm = () => {
@@ -159,6 +194,7 @@ export default function ImportDialog({ open, onClose, importHistory = [] }: Impo
   const handleClose = () => {
     setCurrentStep('upload');
     setSelectedFile(null);
+    setImportStats(null);
     onClose();
   };
 
@@ -394,7 +430,7 @@ export default function ImportDialog({ open, onClose, importHistory = [] }: Impo
             </Typography>
           </Box>
           <Typography variant="body2" sx={{ color: '#5D6679', fontSize: 13 }}>
-            {t('Label.number_of_rows')} (8)
+            {t('Label.number_of_rows')} ({importStats?.total_count || 0})
           </Typography>
         </Stack>
 
@@ -545,7 +581,7 @@ export default function ImportDialog({ open, onClose, importHistory = [] }: Impo
           {showImportLog === 'yes' ? t('Label.hide_import_log') : t('Label.view_import_log')}
         </Button>
         <Typography variant="body2" sx={{ color: '#5D6679', fontSize: 14 }}>
-          {t('Label.total_records')} (8)
+          {t('Label.total_records')} ({importStats?.total_count || 0})
         </Typography>
       </Stack>
 
@@ -554,20 +590,6 @@ export default function ImportDialog({ open, onClose, importHistory = [] }: Impo
 
       {/* Action Buttons */}
       <Stack direction="row" spacing={1.5} justifyContent="flex-end">
-        <Button
-          variant="text"
-          onClick={handleClose}
-          sx={{
-            borderRadius: 1,
-            color: '#dc3545',
-            px: 3,
-            '&:hover': {
-              bgcolor: '#fff5f5',
-            },
-          }}
-        >
-          {t('Button.cancel')}
-        </Button>
         <Button
           variant="contained"
           onClick={handleFinalConfirm}
@@ -580,7 +602,7 @@ export default function ImportDialog({ open, onClose, importHistory = [] }: Impo
             },
           }}
         >
-          {t('Button.import_data')}
+          {t('Button.done')}
         </Button>
       </Stack>
     </Stack>

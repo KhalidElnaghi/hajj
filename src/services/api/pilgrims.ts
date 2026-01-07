@@ -1341,7 +1341,10 @@ export interface ManualDistributePilgrimsResponse {
 export const manualDistributePilgrims = async (
   payload: ManualDistributePilgrimsPayload
 ): Promise<ManualDistributePilgrimsResponse> => {
-  return await API.post<ManualDistributePilgrimsResponse>('/dashboard/manual-distribute-pilgrims', payload);
+  return await API.post<ManualDistributePilgrimsResponse>(
+    '/dashboard/manual-distribute-pilgrims',
+    payload
+  );
 };
 
 // Update Departure Status Interfaces
@@ -1359,5 +1362,68 @@ export interface UpdateDepartureStatusResponse {
 export const updateDepartureStatus = async (
   payload: UpdateDepartureStatusPayload
 ): Promise<UpdateDepartureStatusResponse> => {
-  return await API.post<UpdateDepartureStatusResponse>('/pilgrims/pilgrims/update-departure-status', payload);
+  return await API.post<UpdateDepartureStatusResponse>(
+    '/pilgrims/pilgrims/update-departure-status',
+    payload
+  );
+};
+
+// Import Pilgrims Interfaces
+export interface ImportPilgrimsPayload {
+  file: File;
+  statistics: boolean;
+}
+
+export interface ImportStatistics {
+  total_count: number;
+  added_count: number;
+  updated_count: number;
+  deleted_from_housing_count: number;
+  deleted_from_bus_count: number;
+  cancelled_count: number;
+  changed_res_count: number;
+  deleted_from_gathering_points: number;
+  repeated: number;
+  activated_count: number;
+}
+
+export interface ImportPilgrimsResponse {
+  success: boolean;
+  message: string;
+  data: {
+    status: string;
+    message: string;
+    statistics: ImportStatistics;
+  };
+}
+
+export const importPilgrims = async (
+  file: File,
+  statisticsValue?: boolean
+): Promise<ImportPilgrimsResponse> => {
+  const formData = new FormData();
+  formData.append('file', file);
+
+  // Add statistics parameter if provided
+  // First call: statistics=true (1) to get preview only
+  // Second call: statistics=false (0) to actually perform import
+  if (statisticsValue !== undefined) {
+    formData.append('statistics', statisticsValue ? '1' : '0');
+  }
+
+  console.log('Import Pilgrims Request:', {
+    fileName: file.name,
+    fileSize: file.size,
+    statisticsValue: statisticsValue,
+    statisticsParam:
+      statisticsValue === true
+        ? '1 (true - preview only)'
+        : statisticsValue === false
+        ? '0 (false - perform import)'
+        : 'not sent',
+  });
+
+  const response = await API.post<ImportPilgrimsResponse>('/pilgrims/pilgrims/import', formData);
+  console.log('Import Pilgrims Response:', response);
+  return response;
 };

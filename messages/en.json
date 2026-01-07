@@ -716,7 +716,8 @@
       "send": "Send",
       "delete": "Delete",
       "deleting": "Deleting...",
-      "clear": "Clear"
+      "clear": "Clear",
+      "done": "Done"
     },
     "Placeholder": {
       "search_and_add_pilgrim": "Search and add a pilgrim",
@@ -785,7 +786,11 @@
       "manual_distribute_error": "Failed to assign pilgrims to buses",
       "departure_status_updated_successfully": "Departure status updated successfully",
       "error_updating_departure_status": "Error updating departure status",
-      "please_select_pilgrims": "Please select pilgrims"
+      "please_select_pilgrims": "Please select pilgrims",
+      "statistics_loaded_successfully": "Import statistics loaded successfully",
+      "failed_to_load_statistics": "Failed to load import statistics",
+      "import_completed_successfully": "Import completed successfully",
+      "failed_to_import_data": "Failed to import data"
     },
     "Dialog": {
       "Delete": "Delete",
