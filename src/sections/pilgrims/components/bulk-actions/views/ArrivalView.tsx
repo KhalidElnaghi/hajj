@@ -3,32 +3,59 @@
 import { Box, Button, Stack, Typography } from '@mui/material';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
+import { enqueueSnackbar } from 'notistack';
 
 import { BulkActionViewProps } from '../shared/types';
+import BulkActionFooter from '../shared/BulkActionFooter';
+import BulkSectionHeader from '../shared/BulkSectionHeader';
+import { useUpdateDepartureStatus } from '../../../../../services/mutations/pilgrims';
 
-export default function ArrivalView({ onBack, onClose, selectedCount, onClearSelection }: BulkActionViewProps) {
+export default function ArrivalView({
+  onBack,
+  onClose,
+  selectedCount,
+  selectedPilgrims,
+  onClearSelection,
+}: BulkActionViewProps) {
   const t = useTranslations('Pilgrims');
   const [arrivalType, setArrivalType] = useState<'early' | 'late'>('early');
 
-  const handleSave = () => {
+  const updateDepartureStatusMutation = useUpdateDepartureStatus({
+    onSuccess: () => {
+      enqueueSnackbar(t('Message.departure_status_updated_successfully'), { variant: 'success' });
+      if (onClearSelection) {
+        onClearSelection();
+      }
+      onClose();
+    },
+    onError: (error: any) => {
+      enqueueSnackbar(error?.message || t('Message.error_updating_departure_status'), {
+        variant: 'error',
+      });
+    },
+  });
 
-    if (onClearSelection) {
-      onClearSelection();
+  const handleSave = () => {
+    if (!selectedPilgrims || selectedPilgrims.length === 0) {
+      enqueueSnackbar(t('Message.please_select_pilgrims'), { variant: 'warning' });
+      return;
     }
-    onClose();
+
+    const pilgrimIds = selectedPilgrims.map((pilgrim) => pilgrim.id);
+    const departureStatus = arrivalType !== 'early';
+
+    updateDepartureStatusMutation.mutate({
+      departure_status: departureStatus,
+      pilgrim_ids: pilgrimIds,
+    });
   };
 
   return (
     <Stack spacing={3} sx={{ p: 1 }}>
-      {/* Section Header */}
-      <Box>
-        <Typography variant="h6" sx={{ fontWeight: 700, fontSize: 16 }}>
-          {t('Label.arrival_time')}
-        </Typography>
-        <Typography variant="body2" sx={{ color: 'text.secondary', mt: 0.5, fontSize: 13 }}>
-          {t('Description.arrival_time_description')}
-        </Typography>
-      </Box>
+      <BulkSectionHeader
+        title={t('Label.arrival_time')}
+        description={t('Description.arrival_time_description')}
+      />
 
       {/* Arrival Type Toggle */}
       <Box
@@ -82,39 +109,31 @@ export default function ArrivalView({ onBack, onClose, selectedCount, onClearSel
         </Button>
       </Box>
 
-      {/* Action Buttons */}
-      <Stack direction="row" spacing={1.5} justifyContent="flex-end">
-        <Button
-          variant="outlined"
-          onClick={onClose}
-          sx={{
-            borderRadius: 1,
-            borderColor: '#e5e7eb',
-            color: '#666',
-            px: 3,
-            '&:hover': {
-              borderColor: '#d1d5db',
-              bgcolor: '#fafafa',
+      <BulkActionFooter
+        onCancel={onClose}
+        cancelLabel={t('Button.cancel')}
+        cancelSx={{
+          borderColor: '#e5e7eb',
+          color: '#666',
+          '&:hover': {
+            borderColor: '#d1d5db',
+            bgcolor: '#fafafa',
+          },
+        }}
+        actions={[
+          {
+            label: t('Button.save'),
+            onClick: handleSave,
+            disabled: updateDepartureStatusMutation.isPending,
+            sx: {
+              bgcolor: '#0d6efd',
+              '&:hover': {
+                bgcolor: '#0b5ed7',
+              },
             },
-          }}
-        >
-          {t('Button.cancel')}
-        </Button>
-        <Button
-          variant="contained"
-          onClick={handleSave}
-          sx={{
-            borderRadius: 1,
-            bgcolor: '#0d6efd',
-            px: 3,
-            '&:hover': {
-              bgcolor: '#0b5ed7',
-            },
-          }}
-        >
-          {t('Button.save')}
-        </Button>
-      </Stack>
+          },
+        ]}
+      />
     </Stack>
   );
 }

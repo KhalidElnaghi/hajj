@@ -358,6 +358,22 @@ export interface Employee {
   updated_at: string;
 }
 
+export interface Bus {
+  id: number;
+  name: {
+    ar: string;
+    en: string;
+  };
+  capacity?: number;
+  chassis_no?: string;
+  plate_no?: string;
+  contract_no?: string;
+  status?: boolean;
+  created_at?: string;
+  updated_at?: string;
+  [key: string]: any;
+}
+
 export interface Tag {
   id: number;
   name: {
@@ -504,6 +520,7 @@ export interface PilgrimInitDataResponse {
       value: number;
       label: string;
     }>;
+    buses?: Bus[];
   };
 }
 
@@ -1240,5 +1257,173 @@ export interface AssignPilgrimSupervisorsResponse {
 export const assignPilgrimSupervisors = async (
   payload: AssignPilgrimSupervisorsPayload
 ): Promise<AssignPilgrimSupervisorsResponse> => {
-  return await API.post<AssignPilgrimSupervisorsResponse>('/pilgrims/pilgrims/pilgrim-supervisors', payload);
+  return await API.post<AssignPilgrimSupervisorsResponse>(
+    '/pilgrims/pilgrims/pilgrim-supervisors',
+    payload
+  );
+};
+
+export interface BulkAutoAssignHousingPayload {
+  ritual_id: number;
+  camp_ids: number[];
+  pilgrim_ids: number[];
+}
+
+export interface BulkAutoAssignHousingResponse {
+  success?: boolean;
+  message?: string;
+  data?: any;
+}
+
+export const bulkAutoAssignHousing = async (
+  payload: BulkAutoAssignHousingPayload
+): Promise<BulkAutoAssignHousingResponse> => {
+  return await API.post<BulkAutoAssignHousingResponse>(
+    '/pilgrims/pilgrims/bulk-auto-assign-housing',
+    payload
+  );
+};
+
+export interface BulkAssignTagsPayload {
+  taggable_ids: number[];
+  tag_ids: number[];
+  taggable_type: string;
+}
+
+export interface BulkAssignTagsResponse {
+  success?: boolean;
+  message?: string;
+  data?: any;
+}
+
+export const bulkAssignTags = async (
+  payload: BulkAssignTagsPayload
+): Promise<BulkAssignTagsResponse> => {
+  return await API.post<BulkAssignTagsResponse>('/dashboard/settings/taggables', payload);
+};
+
+export interface BulkAssignGatheringPointPayload {
+  gathering_point_id: number;
+  gathering_point_type_id: number;
+  pilgrim_ids: number[];
+  source: string;
+  destination_id: number;
+  gathering_point_time_id: number;
+}
+
+export interface BulkAssignGatheringPointResponse {
+  success?: boolean;
+  message?: string;
+  data?: any;
+}
+
+export const bulkAssignGatheringPoint = async (
+  payload: BulkAssignGatheringPointPayload
+): Promise<BulkAssignGatheringPointResponse> => {
+  return await API.post<BulkAssignGatheringPointResponse>(
+    '/dashboard/assign-pilgrims-gathering-point',
+    payload
+  );
+};
+
+export interface ManualDistributePilgrimsPayload {
+  gathering_point_type_id: number;
+  pilgrim_ids: number[];
+  bus_ids: number[];
+}
+
+export interface ManualDistributePilgrimsResponse {
+  success?: boolean;
+  message?: string;
+  data?: any;
+}
+
+export const manualDistributePilgrims = async (
+  payload: ManualDistributePilgrimsPayload
+): Promise<ManualDistributePilgrimsResponse> => {
+  return await API.post<ManualDistributePilgrimsResponse>(
+    '/dashboard/manual-distribute-pilgrims',
+    payload
+  );
+};
+
+// Update Departure Status Interfaces
+export interface UpdateDepartureStatusPayload {
+  departure_status: boolean;
+  pilgrim_ids: number[];
+}
+
+export interface UpdateDepartureStatusResponse {
+  success?: boolean;
+  message?: string;
+  data?: any;
+}
+
+export const updateDepartureStatus = async (
+  payload: UpdateDepartureStatusPayload
+): Promise<UpdateDepartureStatusResponse> => {
+  return await API.post<UpdateDepartureStatusResponse>(
+    '/pilgrims/pilgrims/update-departure-status',
+    payload
+  );
+};
+
+// Import Pilgrims Interfaces
+export interface ImportPilgrimsPayload {
+  file: File;
+  statistics: boolean;
+}
+
+export interface ImportStatistics {
+  total_count: number;
+  added_count: number;
+  updated_count: number;
+  deleted_from_housing_count: number;
+  deleted_from_bus_count: number;
+  cancelled_count: number;
+  changed_res_count: number;
+  deleted_from_gathering_points: number;
+  repeated: number;
+  activated_count: number;
+}
+
+export interface ImportPilgrimsResponse {
+  success: boolean;
+  message: string;
+  data: {
+    status: string;
+    message: string;
+    statistics: ImportStatistics;
+  };
+}
+
+export const importPilgrims = async (
+  file: File,
+  statisticsValue?: boolean
+): Promise<ImportPilgrimsResponse> => {
+  const formData = new FormData();
+  formData.append('file', file);
+
+  // Add statistics parameter if provided
+  // First call: statistics=true (1) to get preview only
+  // Second call: statistics=false (0) to actually perform import
+  if (statisticsValue !== undefined) {
+    formData.append('statistics', statisticsValue ? '1' : '0');
+  }
+
+  console.log('Import Pilgrims Request:', {
+    fileName: file.name,
+    fileSize: file.size,
+    statisticsValue: statisticsValue,
+    statisticsParam:
+      statisticsValue === true
+        ? '1 (true - preview only)'
+        : statisticsValue === false
+        ? '0 (false - perform import)'
+        : 'not sent',
+  });
+
+  const response = await API.post<ImportPilgrimsResponse>('/pilgrims/pilgrims/import', formData);
+  console.log('Import Pilgrims Response:', response);
+  return response;
 };
