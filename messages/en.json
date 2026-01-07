@@ -621,6 +621,7 @@
       "personal_information": "Personal Information",
       "quick_access": "Quick Access",
       "quick_templates": "Quick Templates",
+      "ritual": "Ritual",
       "room_group_number": "Room / Group Number",
       "room_number": "Room Number",
       "select": "Select",
@@ -643,6 +644,7 @@
       "supervision_organization": "Supervision and Organization",
       "supervisors": "Supervisors",
       "support_messages": "Permits Issued",
+      "no_import_history": "No import history available",
       "table_cancelled_pilgrims": "Cancelled Pilgrims",
       "table_created": "Created",
       "table_import_date": "Import Date",
@@ -715,7 +717,8 @@
       "saving": "Saving...",
       "Female": "Female",
       "Male": "Male",
-      "excel_action_status": "Excel Actions"
+      "excel_action_status": "Excel Actions",
+      "selected_camps_count": "Selected camps: {count}"
     },
     "Button": {
       "add": "Add",
@@ -729,7 +732,9 @@
       "save": "Save",
       "send": "Send",
       "delete": "Delete",
-      "deleting": "Deleting..."
+      "deleting": "Deleting...",
+      "clear": "Clear",
+      "done": "Done"
     },
     "Placeholder": {
       "search_and_add_pilgrim": "Search and add a pilgrim",
@@ -737,8 +742,12 @@
       "search_or_add_new_tag": "Search or add new tag",
       "select_destination": "Select Destination",
       "select_gathering_point": "Select Gathering Point",
+      "select_gathering_point_type": "Select Gathering Point Type",
+      "select_gathering_time": "Select Gathering Time",
+      "select_camps": "Select Camps",
       "select_location": "Select Location",
       "select_nationality": "Select Nationality",
+      "select_ritual": "Select Ritual",
       "write_message_text": "Write message text..."
     },
     "Helper": {
@@ -782,7 +791,23 @@
       "city_required": "City is required",
       "name_ar_arabic_only": "Name must be in Arabic only",
       "name_en_two_words_required": "Name must be in English and contain at least two words",
-      "name_ar_two_words_required": "Name must be in Arabic and contain at least two words"
+      "name_ar_two_words_required": "Name must be in Arabic and contain at least two words",
+      "supervisors_assigned_successfully": "Supervisors assigned successfully",
+      "housing_auto_assigned_successfully": "Housing assigned successfully",
+      "error_assigning_housing": "Failed to assign housing",
+      "tags_assigned_successfully": "Tags assigned successfully",
+      "error_assigning_tags": "Error assigning tags",
+      "gathering_point_assigned_successfully": "Gathering point assigned successfully",
+      "error_assigning_gathering_point": "Error assigning gathering point",
+      "manual_distribute_successfully": "Pilgrims assigned to buses successfully",
+      "manual_distribute_error": "Failed to assign pilgrims to buses",
+      "departure_status_updated_successfully": "Departure status updated successfully",
+      "error_updating_departure_status": "Error updating departure status",
+      "please_select_pilgrims": "Please select pilgrims",
+      "statistics_loaded_successfully": "Import statistics loaded successfully",
+      "failed_to_load_statistics": "Failed to load import statistics",
+      "import_completed_successfully": "Import completed successfully",
+      "failed_to_import_data": "Failed to import data"
     },
     "Dialog": {
       "Delete": "Delete",

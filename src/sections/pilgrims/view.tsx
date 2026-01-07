@@ -37,10 +37,14 @@ import Iconify from 'src/components/iconify';
 import Image from 'next/image';
 import { BulkActionsDialog } from './components/bulk-actions';
 import { ImportDialog } from './components/import-dialog';
-import FilterDialog from './components/filter-dialog';
+import FilterDialog from './components/filter-dialog/filter-dialog';
 import { paths } from 'src/routes/paths';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
-import { useFetchPilgrims, useDeletePilgrim } from 'src/services/queries/pilgrims';
+import {
+  useFetchPilgrims,
+  useDeletePilgrim,
+  useFetchPilgrimInitData,
+} from 'src/services/queries/pilgrims';
 import { Pilgrim } from 'src/services/api/pilgrims';
 import { useSnackbar } from 'notistack';
 import { ConfirmDialog } from 'src/components/custom-dialog';
@@ -188,6 +192,9 @@ export default function PilgrimsView() {
     // Use filter params from URL (including query)
     ...urlFilters,
   });
+
+  // Fetch init data for import history
+  const { data: initData } = useFetchPilgrimInitData();
 
   // Delete pilgrim mutation
   const deleteMutation = useDeletePilgrim();
@@ -511,7 +518,6 @@ export default function PilgrimsView() {
 
     try {
       const result = await deleteMutation.mutateAsync(pilgrimToDelete.id);
-      console.log('Delete result:', result);
       enqueueSnackbar(t('Message.delete_success'), { variant: 'success' });
       deleteDialog.onClose();
       setPilgrimToDelete(null);
@@ -1271,7 +1277,11 @@ export default function PilgrimsView() {
       />
 
       {/* Import Dialog */}
-      <ImportDialog open={importDialog.open} onClose={importDialog.onClose} />
+      <ImportDialog
+        open={importDialog.open}
+        onClose={importDialog.onClose}
+        importHistory={initData?.data?.importHistory}
+      />
 
       {/* Delete Confirmation Dialog */}
       <ConfirmDialog

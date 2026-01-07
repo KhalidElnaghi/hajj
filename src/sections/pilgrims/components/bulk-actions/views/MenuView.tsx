@@ -32,7 +32,7 @@ export default function MenuView({ onClose, onOptionSelect }: MenuViewProps) {
     },
     {
       key: 'transportation',
-      label: t('Label.transportation_vehicles'),
+      label: t('Label.transportation_data'),
       icon: '/assets/images/pilgrims/bulk-action/transport.svg',
     },
     {

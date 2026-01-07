@@ -9,22 +9,43 @@ import {
   DialogTitle,
   IconButton,
   Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
   Typography,
 } from '@mui/material';
-import { useTranslations } from 'next-intl';
-import { useState, useRef } from 'react';
+import { useTranslations, useLocale } from 'next-intl';
+import { useState, useRef, useMemo } from 'react';
 
 import Iconify from 'src/components/iconify';
+import SharedTable from 'src/components/custom-shared-table/shared-table/SharedTable';
+import { headCellType, cellAlignment } from 'src/components/custom-shared-table/shared-table/types';
+import { importPilgrims, ImportStatistics } from 'src/services/api/pilgrims';
+import { useSnackbar } from 'notistack';
+
+interface ImportHistory {
+  id: number;
+  source: string;
+  user_id: number;
+  user: {
+    id: number;
+    name: string;
+    email: string;
+  };
+  total_count: number;
+  added_count: number;
+  updated_count: number;
+  deleted_from_bus_count: number;
+  deleted_from_housing_count: number;
+  deleted_from_gathering_points: number;
+  changed_res_count: number;
+  repeated: number;
+  cancelled_count: number;
+  created_at: string;
+  updated_at: string;
+}
 
 interface ImportDialogProps {
   open: boolean;
   onClose: () => void;
+  importHistory?: ImportHistory[];
 }
 
 interface StatCard {
@@ -35,193 +56,68 @@ interface StatCard {
   bgColor: string;
 }
 
-interface ImportResultRow {
-  id: number;
-  name: string;
-  registrationDate: string;
-  status: 'success' | 'error' | 'warning' | 'info';
-  accommodation: number;
-  bus: number;
-  gathering: number;
-  supervision: number;
-  transport: number;
-  package: number;
-  healthStatus: number;
-  nationality: number;
-}
-
 type ImportStep = 'upload' | 'statistics' | 'results';
 
-export default function ImportDialog({ open, onClose }: ImportDialogProps) {
+export default function ImportDialog({ open, onClose, importHistory = [] }: ImportDialogProps) {
   const t = useTranslations('Pilgrims');
+  const locale = useLocale();
+  const { enqueueSnackbar } = useSnackbar();
   const [currentStep, setCurrentStep] = useState<ImportStep>('upload');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [downloadType, setDownloadType] = useState('arabic');
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [showImportLog, setShowImportLog] = useState<string>('no');
+  const [importStats, setImportStats] = useState<ImportStatistics | null>(null);
 
-  // Mock statistics data
-  const statistics: StatCard[] = [
-    {
-      label: t('Label.total_records_stat'),
-      value: 42,
-      icon: '/assets/images/pilgrims/statiscits/total.svg',
-      color: '#1570EF',
-      bgColor: '#F0F7FF',
-    },
-    {
-      label: t('Label.added_records'),
-      value: 42,
-      icon: '/assets/images/pilgrims/statiscits/added.svg',
-      color: '#34C759',
-      bgColor: '#F0FDF4',
-    },
-    {
-      label: t('Label.updated_records'),
-      value: 42,
-      icon: '/assets/images/pilgrims/statiscits/updated.svg',
-      color: '#FF9500',
-      bgColor: '#FFF8E1',
-    },
-    {
-      label: t('Label.accommodation_deleted'),
-      value: 42,
-      icon: '/assets/images/pilgrims/statiscits/accommodation-deleted.svg',
-      color: '#9333EA',
-      bgColor: '#F3E8FF',
-    },
-    {
-      label: t('Label.bus_deleted'),
-      value: 42,
-      icon: '/assets/images/pilgrims/statiscits/bus-deleted.svg',
-      color: '#EC4899',
-      bgColor: '#FCE7F3',
-    },
-    {
-      label: t('Label.cancelled_records'),
-      value: 42,
-      icon: '/assets/images/pilgrims/statiscits/canceled.svg',
-      color: '#A2845E',
-      bgColor: '#F5F5DC',
-    },
-  ];
-
-  // Mock results data with different statuses
-  const results: ImportResultRow[] = [
-    {
-      id: 1,
-      name: 'حامد صالح',
-      registrationDate: '12/11/2025',
-      status: 'success',
-      accommodation: 231,
-      bus: 14,
-      gathering: 0,
-      supervision: 0,
-      transport: 0,
-      package: 0,
-      healthStatus: 0,
-      nationality: 0,
-    },
-    {
-      id: 2,
-      name: 'حامد صالح',
-      registrationDate: '12/11/2025',
-      status: 'warning',
-      accommodation: 231,
-      bus: 14,
-      gathering: 0,
-      supervision: 0,
-      transport: 0,
-      package: 0,
-      healthStatus: 0,
-      nationality: 0,
-    },
-    {
-      id: 3,
-      name: 'حامد صالح',
-      registrationDate: '12/11/2025',
-      status: 'error',
-      accommodation: 231,
-      bus: 14,
-      gathering: 0,
-      supervision: 0,
-      transport: 0,
-      package: 0,
-      healthStatus: 0,
-      nationality: 0,
-    },
-    {
-      id: 4,
-      name: 'حامد صالح',
-      registrationDate: '12/11/2025',
-      status: 'info',
-      accommodation: 231,
-      bus: 14,
-      gathering: 0,
-      supervision: 0,
-      transport: 0,
-      package: 0,
-      healthStatus: 0,
-      nationality: 0,
-    },
-    {
-      id: 5,
-      name: 'حامد صالح',
-      registrationDate: '12/11/2025',
-      status: 'success',
-      accommodation: 231,
-      bus: 14,
-      gathering: 0,
-      supervision: 0,
-      transport: 0,
-      package: 0,
-      healthStatus: 0,
-      nationality: 0,
-    },
-    {
-      id: 6,
-      name: 'حامد صالح',
-      registrationDate: '12/11/2025',
-      status: 'info',
-      accommodation: 231,
-      bus: 14,
-      gathering: 0,
-      supervision: 0,
-      transport: 0,
-      package: 0,
-      healthStatus: 0,
-      nationality: 0,
-    },
-    {
-      id: 7,
-      name: 'حامد صالح',
-      registrationDate: '12/11/2025',
-      status: 'error',
-      accommodation: 231,
-      bus: 14,
-      gathering: 0,
-      supervision: 0,
-      transport: 0,
-      package: 0,
-      healthStatus: 0,
-      nationality: 0,
-    },
-    {
-      id: 8,
-      name: 'حامد صالح',
-      registrationDate: '12/11/2025',
-      status: 'warning',
-      accommodation: 231,
-      bus: 14,
-      gathering: 0,
-      supervision: 0,
-      transport: 0,
-      package: 0,
-      healthStatus: 0,
-      nationality: 0,
-    },
-  ];
+  // Statistics data based on API response
+  const statistics: StatCard[] = useMemo(
+    () => [
+      {
+        label: t('Label.total_records_stat'),
+        value: importStats?.total_count || 0,
+        icon: '/assets/images/pilgrims/statiscits/total.svg',
+        color: '#1570EF',
+        bgColor: '#F0F7FF',
+      },
+      {
+        label: t('Label.added_records'),
+        value: importStats?.added_count || 0,
+        icon: '/assets/images/pilgrims/statiscits/added.svg',
+        color: '#34C759',
+        bgColor: '#F0FDF4',
+      },
+      {
+        label: t('Label.updated_records'),
+        value: importStats?.updated_count || 0,
+        icon: '/assets/images/pilgrims/statiscits/updated.svg',
+        color: '#FF9500',
+        bgColor: '#FFF8E1',
+      },
+      {
+        label: t('Label.accommodation_deleted'),
+        value: importStats?.deleted_from_housing_count || 0,
+        icon: '/assets/images/pilgrims/statiscits/accommodation-deleted.svg',
+        color: '#9333EA',
+        bgColor: '#F3E8FF',
+      },
+      {
+        label: t('Label.bus_deleted'),
+        value: importStats?.deleted_from_bus_count || 0,
+        icon: '/assets/images/pilgrims/statiscits/bus-deleted.svg',
+        color: '#EC4899',
+        bgColor: '#FCE7F3',
+      },
+      {
+        label: t('Label.cancelled_records'),
+        value: importStats?.cancelled_count || 0,
+        icon: '/assets/images/pilgrims/statiscits/canceled.svg',
+        color: '#A2845E',
+        bgColor: '#F5F5DC',
+      },
+    ],
+    [importStats, t]
+  );
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -243,23 +139,51 @@ export default function ImportDialog({ open, onClose }: ImportDialogProps) {
   };
 
   const handleUpload = async () => {
-    if (selectedFile) {
+    if (!selectedFile) return;
+
+    try {
       setIsLoading(true);
-      // Simulate API call
-      setTimeout(() => {
-        setIsLoading(false);
+      // First call with statistics=true to get preview statistics only
+      const response = await importPilgrims(selectedFile, true);
+
+      if (response.success && response.data?.statistics) {
+        setImportStats(response.data.statistics);
         setCurrentStep('statistics');
-      }, 1500);
+        enqueueSnackbar(t('Message.statistics_loaded_successfully'), {
+          variant: 'success',
+        });
+      }
+    } catch (error: any) {
+      console.error('Import preview error:', error);
+      enqueueSnackbar(error?.response?.data?.message || t('Message.failed_to_load_statistics'), {
+        variant: 'error',
+      });
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleConfirmStatistics = async () => {
-    setIsLoading(true);
-    // Simulate API call
-    setTimeout(() => {
+    if (!selectedFile) return;
+
+    try {
+      setIsLoading(true);
+      // Second call with statistics=false to actually import the data
+      const response = await importPilgrims(selectedFile, false);
+
+      if (response.success && response.data?.statistics) {
+        setImportStats(response.data.statistics);
+        setCurrentStep('results');
+        enqueueSnackbar(t('Message.import_completed_successfully'));
+      }
+    } catch (error: any) {
+      console.error('Import confirmation error:', error);
+      enqueueSnackbar(error?.response?.data?.message || t('Message.failed_to_import_data'), {
+        variant: 'error',
+      });
+    } finally {
       setIsLoading(false);
-      setCurrentStep('results');
-    }, 1500);
+    }
   };
 
   const handleFinalConfirm = () => {
@@ -270,147 +194,93 @@ export default function ImportDialog({ open, onClose }: ImportDialogProps) {
   const handleClose = () => {
     setCurrentStep('upload');
     setSelectedFile(null);
+    setImportStats(null);
     onClose();
   };
 
-  const getStatusConfig = (status: 'success' | 'error' | 'warning' | 'info') => {
-    switch (status) {
-      case 'success':
-        return { label: 'اكتمل', bgcolor: '#DCFCE7', color: '#3D8A58' };
-      case 'warning':
-        return { label: 'نسك', bgcolor: '#F4EADB', color: '#B29873' };
-      case 'error':
-        return { label: 'شحن', bgcolor: '#D0F1FF', color: '#6A99AD' };
-      case 'info':
-        return { label: 'طيران', bgcolor: '#DCE2F6', color: '#6073BF' };
-      default:
-        return { label: 'اكتمل', bgcolor: '#D1FAE5', color: '#10B981' };
-    }
-  };
+  // Table configuration for import history
+  const tableHead: headCellType[] = useMemo(
+    () => [
+      { id: 'user_name', label: t('Label.table_name'), align: cellAlignment.left },
+      { id: 'source', label: t('Label.table_source'), align: cellAlignment.left },
+      { id: 'created_at', label: t('Label.table_import_date'), align: cellAlignment.left },
+      { id: 'added_count', label: t('Label.table_created'), align: cellAlignment.center },
+      { id: 'updated_count', label: t('Label.table_updated'), align: cellAlignment.center },
+      {
+        id: 'deleted_from_housing_count',
+        label: t('Label.table_removed_from_accommodation'),
+        align: cellAlignment.center,
+      },
+      {
+        id: 'deleted_from_bus_count',
+        label: t('Label.table_removed_from_buses'),
+        align: cellAlignment.center,
+      },
+      {
+        id: 'changed_res_count',
+        label: t('Label.table_updated_pilgrims'),
+        align: cellAlignment.center,
+      },
+      {
+        id: 'cancelled_count',
+        label: t('Label.table_cancelled_pilgrims'),
+        align: cellAlignment.center,
+      },
+    ],
+    [t]
+  );
+
+  // Custom render functions for special columns
+  const customRender = useMemo(
+    () => ({
+      user_name: (row: ImportHistory) => (
+        <Typography sx={{ fontSize: 13, color: '#1A1D29' }}>{row.user?.name || '-'}</Typography>
+      ),
+      source: (row: ImportHistory) => (
+        <Chip
+          label={row.source}
+          size="small"
+          sx={{
+            bgcolor: '#F0F7FF',
+            color: '#1570EF',
+            fontSize: 11,
+            fontWeight: 500,
+            height: 24,
+            borderRadius: 1.5,
+          }}
+        />
+      ),
+      created_at: (row: ImportHistory) => (
+        <Typography sx={{ fontSize: 13, color: '#1A1D29' }}>
+          {new Date(row.created_at).toLocaleDateString(locale, {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+            // hour: '2-digit',
+            // minute: '2-digit',
+          })}
+        </Typography>
+      ),
+    }),
+    [locale]
+  );
 
   const renderImportLogTable = () => (
-    <TableContainer
-      sx={{
-        // maxHeight: 400,
-        border: '1px solid #e5e7eb',
-        borderRadius: 1,
-        overflowX: 'auto',
-      }}
-    >
-      <Table size="small" stickyHeader>
-        <TableHead>
-          <TableRow>
-            <TableCell sx={{ bgcolor: '#fafafa', fontWeight: 600, fontSize: 12 }}>
-              {t('Label.table_name')}
-            </TableCell>
-            <TableCell sx={{ bgcolor: '#fafafa', fontWeight: 600, fontSize: 12 }}>
-              {t('Label.table_source')}
-            </TableCell>
-            <TableCell sx={{ bgcolor: '#fafafa', fontWeight: 600, fontSize: 12 }}>
-              {t('Label.table_import_date')}
-            </TableCell>
-            <TableCell sx={{ bgcolor: '#fafafa', fontWeight: 600, fontSize: 12 }}>
-              {t('Label.table_created')}
-            </TableCell>
-            <TableCell sx={{ bgcolor: '#fafafa', fontWeight: 600, fontSize: 12 }}>
-              {t('Label.table_updated')}
-            </TableCell>
-            <TableCell sx={{ bgcolor: '#fafafa', fontWeight: 600, fontSize: 12 }}>
-              {t('Label.table_removed_from_accommodation')}
-            </TableCell>
-            <TableCell sx={{ bgcolor: '#fafafa', fontWeight: 600, fontSize: 12 }}>
-              {t('Label.table_removed_from_buses')}
-            </TableCell>
-            <TableCell sx={{ bgcolor: '#fafafa', fontWeight: 600, fontSize: 12 }}>
-              {t('Label.table_updated_pilgrims')}
-            </TableCell>
-            <TableCell sx={{ bgcolor: '#fafafa', fontWeight: 600, fontSize: 12 }}>
-              {t('Label.table_cancelled_pilgrims')}
-            </TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {results.map((row) => {
-            const statusConfig = getStatusConfig(row.status);
-            return (
-              <TableRow key={row.id} hover>
-                <TableCell sx={{ fontSize: 13, color: '#1A1D29' }}>{row.name}</TableCell>
-                <TableCell>
-                  <Chip
-                    label={statusConfig.label}
-                    size="small"
-                    sx={{
-                      bgcolor: statusConfig.bgcolor,
-                      color: statusConfig.color,
-                      fontSize: 11,
-                      fontWeight: 500,
-                      height: 24,
-                      borderRadius: 1.5,
-                    }}
-                  />
-                </TableCell>
-                <TableCell sx={{ fontSize: 13, color: '#1A1D29' }}>
-                  {row.registrationDate}
-                </TableCell>
-                <TableCell sx={{ fontSize: 13, color: '#1A1D29', textAlign: 'center' }}>
-                  {row.accommodation}
-                </TableCell>
-                <TableCell sx={{ fontSize: 13, color: '#1A1D29', textAlign: 'center' }}>
-                  {row.bus}
-                </TableCell>
-                <TableCell sx={{ fontSize: 13, color: '#1A1D29', textAlign: 'center' }}>
-                  {row.gathering}
-                </TableCell>
-                <TableCell sx={{ fontSize: 13, color: '#1A1D29', textAlign: 'center' }}>
-                  {row.supervision}
-                </TableCell>
-                <TableCell sx={{ fontSize: 13, color: '#1A1D29', textAlign: 'center' }}>
-                  {row.transport}
-                </TableCell>
-                <TableCell sx={{ fontSize: 13, color: '#1A1D29', textAlign: 'center' }}>
-                  {row.package}
-                </TableCell>
-              </TableRow>
-            );
-          })}
-        </TableBody>
-      </Table>
-    </TableContainer>
+    <Box sx={{ border: '1px solid #e5e7eb', borderRadius: 1 }}>
+      <SharedTable<ImportHistory>
+        tableHead={tableHead}
+        data={importHistory}
+        count={importHistory.length}
+        disablePagination
+        order={false}
+        customRender={customRender}
+        headColor="#fafafa"
+      />
+    </Box>
   );
 
   const renderUploadStep = () => (
     <Stack spacing={3}>
-      {/* Excel Import Button */}
-      {/* <Box>
-        <Button
-          fullWidth
-          variant="contained"
-          startIcon={
-            <Box
-              component="img"
-              src="/assets/images/pilgrims/excel.svg"
-              alt="excel"
-              sx={{ width: 20, height: 20 }}
-            />
-          }
-          sx={{
-            bgcolor: '#0d6efd',
-            color: 'white',
-            py: 1.5,
-            borderRadius: 1,
-            fontSize: 14,
-            fontWeight: 500,
-            textTransform: 'none',
-            '&:hover': {
-              bgcolor: '#0b5ed7',
-            },
-          }}
-        >
-          {t('Button.import_from_excel')}
-        </Button>
-      </Box> */}
-
-      {/* Upload Area */}
       <Box
         sx={{
           display: 'flex',
@@ -560,7 +430,7 @@ export default function ImportDialog({ open, onClose }: ImportDialogProps) {
             </Typography>
           </Box>
           <Typography variant="body2" sx={{ color: '#5D6679', fontSize: 13 }}>
-            {t('Label.number_of_rows')} (8)
+            {t('Label.number_of_rows')} ({importStats?.total_count || 0})
           </Typography>
         </Stack>
 
@@ -711,7 +581,7 @@ export default function ImportDialog({ open, onClose }: ImportDialogProps) {
           {showImportLog === 'yes' ? t('Label.hide_import_log') : t('Label.view_import_log')}
         </Button>
         <Typography variant="body2" sx={{ color: '#5D6679', fontSize: 14 }}>
-          {t('Label.total_records')} (8)
+          {t('Label.total_records')} ({importStats?.total_count || 0})
         </Typography>
       </Stack>
 
@@ -720,20 +590,6 @@ export default function ImportDialog({ open, onClose }: ImportDialogProps) {
 
       {/* Action Buttons */}
       <Stack direction="row" spacing={1.5} justifyContent="flex-end">
-        <Button
-          variant="text"
-          onClick={handleClose}
-          sx={{
-            borderRadius: 1,
-            color: '#dc3545',
-            px: 3,
-            '&:hover': {
-              bgcolor: '#fff5f5',
-            },
-          }}
-        >
-          {t('Button.cancel')}
-        </Button>
         <Button
           variant="contained"
           onClick={handleFinalConfirm}
@@ -746,7 +602,7 @@ export default function ImportDialog({ open, onClose }: ImportDialogProps) {
             },
           }}
         >
-          {t('Button.import_data')}
+          {t('Button.done')}
         </Button>
       </Stack>
     </Stack>

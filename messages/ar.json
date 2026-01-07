@@ -621,6 +621,7 @@
       "personal_information": "البيانات الشخصية",
       "quick_access": "وصول سريع",
       "quick_templates": "القوالب النصّية",
+      "ritual": "النسك",
       "room_group_number": "رقم الحجرة / الفرقة",
       "room_number": "رقم الغرفة",
       "select": "اختر",
@@ -644,6 +645,7 @@
       "supervision_organization": "الإشراف والتنظيم",
       "supervisors": "المشرفين",
       "support_messages": "التصاريح الصادرة",
+      "no_import_history": "لا يوجد سجل استيراد متاح",
       "table_cancelled_pilgrims": "الحجاج الملغيين",
       "table_created": "المنشئ",
       "table_import_date": "تاريخ الاستيراد",
@@ -716,7 +718,8 @@
       "saving": "جاري الحفظ",
       "Female": "أنثى",
       "Male": "ذكر",
-      "excel_action_status": "إجراءات ملف الاستيراد"
+      "excel_action_status": "إجراءات ملف الاستيراد",
+      "selected_camps_count": "عدد المخيمات المحددة: {count}"
     },
     "Button": {
       "add": "إضافة",
@@ -730,7 +733,9 @@
       "save": "حفظ",
       "send": "إرسال",
       "delete": "حذف",
-      "deleting": "جاري الحذف..."
+      "deleting": "جاري الحذف...",
+      "clear": "مسح",
+      "done": "تم"
     },
     "Placeholder": {
       "search_and_add_pilgrim": "ابحث وأضف حاج جديد",
@@ -738,8 +743,12 @@
       "search_or_add_new_tag": "ابحث عن أو ضع وسم جديد",
       "select_destination": "اختر الوجهة",
       "select_gathering_point": "اختر نقطة التجمع",
+      "select_gathering_point_type": "اختر نوع نقطة التجمع",
+      "select_gathering_time": "اختر موعد التجمع",
+      "select_camps": "اختر المخيمات",
       "select_location": "اختر الموقع",
       "select_nationality": "اختر الجنسية",
+      "select_ritual": "اختر النسك",
       "write_message_text": "اكتب نص الرسالة..."
     },
     "Helper": {
@@ -783,7 +792,23 @@
       "city_required": "المدينة مطلوبة",
       "name_ar_arabic_only": "يجب أن يكون الاسم بالعربية فقط",
       "name_en_two_words_required": "يجب أن يكون الاسم بالإنجليزية ويحتوي على على كلمتين على الأقل",
-      "name_ar_two_words_required": "يجب أن يكون الاسم بالعربية ويحتوي على على كلمتين على الأقل"
+      "name_ar_two_words_required": "يجب أن يكون الاسم بالعربية ويحتوي على على كلمتين على الأقل",
+      "supervisors_assigned_successfully": "تم تعيين المشرفين بنجاح",
+      "housing_auto_assigned_successfully": "تم توزيع السكن بنجاح",
+      "error_assigning_housing": "فشل تعيين السكن",
+      "tags_assigned_successfully": "تم تعيين الوسوم بنجاح",
+      "error_assigning_tags": "خطأ في تعيين الوسوم",
+      "gathering_point_assigned_successfully": "تم تعيين نقطة التجمع بنجاح",
+      "error_assigning_gathering_point": "خطأ في تعيين نقطة التجمع",
+      "manual_distribute_successfully": "تم توزيع الحجاج على الحافلات بنجاح",
+      "manual_distribute_error": "فشل توزيع الحجاج على الحافلات",
+      "departure_status_updated_successfully": "تم تحديث حالة المغادرة بنجاح",
+      "error_updating_departure_status": "خطأ في تحديث حالة المغادرة",
+      "please_select_pilgrims": "الرجاء اختيار الحجاج",
+      "statistics_loaded_successfully": "تم تحميل إحصائيات الاستيراد بنجاح",
+      "failed_to_load_statistics": "فشل تحميل إحصائيات الاستيراد",
+      "import_completed_successfully": "تم الاستيراد بنجاح",
+      "failed_to_import_data": "فشل استيراد البيانات"
     },
     "Dialog": {
       "Delete": "حذف",

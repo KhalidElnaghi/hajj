@@ -22,6 +22,7 @@ import AccommodationView from './views/AccommodationView';
 import GatheringView from './views/GatheringView';
 import ArrivalView from './views/ArrivalView';
 import SupervisorsView from './views/SupervisorsView';
+import TransportationView from './views/TransportationView';
 
 interface BulkActionsDialogProps {
   open: boolean;
@@ -75,6 +76,8 @@ export default function BulkActionsDialog({
         return <TagsView {...viewProps} />;
       case 'accommodation':
         return <AccommodationView {...viewProps} />;
+      case 'transportation':
+        return <TransportationView {...viewProps} />;
       case 'gathering':
         return <GatheringView {...viewProps} />;
       case 'arrival':
