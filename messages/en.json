@@ -34,7 +34,23 @@
     "users": "Users",
     "students": "Students",
     "main_page": "Main Page",
-    "teachers": "Teachers"
+    "teachers": "Teachers",
+    "settings": {
+      "title": "Settings",
+      "general_settings": "General Settings",
+      "packages": "Packages",
+      "booking_statuses": "Booking Statuses",
+      "gathering_point_types": "Gathering Point Types",
+      "destinations": "Destinations",
+      "tags": "Tags",
+      "taggables": "Taggables",
+      "security_offices": "Security Offices",
+      "request_types": "Request Types",
+      "order_sources": "Order Sources",
+      "job_titles": "Job Titles",
+      "countries": "Countries",
+      "cities": "Cities"
+    }
   },
   "Nav": {
     "main": "Home",
@@ -63,7 +79,8 @@
     "users": "Users",
     "students": "Students",
     "main_page": "Main Page",
-    "teachers": "Teachers"
+    "teachers": "Teachers",
+    "settings": "Settings"
   },
   "Title": {
     "supervisors_management": "Supervisors Management",
@@ -774,5 +791,108 @@
   },
   "None": {
     "label": "None"
+  },
+  "Settings": {
+    "title": "Settings",
+    "subtitle": "Manage system configuration and lookup data.",
+    "Label": {
+      "breadcrumb_home": "Home",
+      "package_number": "Package Number",
+      "name_ar": "Arabic Name",
+      "name_en": "English Name",
+      "status": "Status",
+      "active": "Active",
+      "inactive": "Inactive",
+      "not_available": "Not Available",
+      "search_by_package_name": "Search by package name...",
+      "edit": "Edit",
+      "delete": "Delete"
+    },
+    "Button": {
+      "add_package": "Add Package",
+      "import": "Import",
+      "export": "Export",
+      "edit": "Edit",
+      "edit_package": "Edit Package",
+      "delete": "Delete",
+      "deleting": "Deleting..."
+    },
+    "Message": {
+      "delete_success": "Package deleted successfully",
+      "delete_error": "Error deleting package",
+      "error_loading_packages": "Error loading packages. Please try again.",
+      "create_success": "Package created successfully",
+      "create_error": "Error creating package",
+      "update_success": "Package updated successfully",
+      "update_error": "Error updating package",
+      "name_ar_required": "Arabic name is required",
+      "name_ar_min_length": "Arabic name must be at least 2 characters",
+      "name_en_required": "English name is required",
+      "name_en_min_length": "English name must be at least 2 characters"
+    },
+    "Dialog": {
+      "delete_package": "Delete Package",
+      "delete_package_confirm": "Are you sure you want to delete package \"{name}\"? This action cannot be undone.",
+      "Cancel": "Cancel"
+    },
+    "placeholder": {
+      "subtitle": "This section is under development",
+      "comingSoon": "Coming Soon",
+      "description": "This feature will be available soon."
+    },
+    "tiles": {
+      "general-settings": {
+        "title": "General Settings",
+        "description": "Configure general system settings and preferences"
+      },
+      "packages": {
+        "title": "Packages",
+        "description": "Manage package configurations and options"
+      },
+      "booking-statuses": {
+        "title": "Booking Statuses",
+        "description": "Configure booking status types and workflows"
+      },
+      "gathering-point-types": {
+        "title": "Gathering Point Types",
+        "description": "Manage gathering point type definitions"
+      },
+      "destinations": {
+        "title": "Destinations",
+        "description": "Configure destination locations and details"
+      },
+      "tags": {
+        "title": "Tags",
+        "description": "Manage tag categories and labels"
+      },
+      "taggables": {
+        "title": "Taggables",
+        "description": "Configure taggable entities and relationships"
+      },
+      "security-offices": {
+        "title": "Security Offices",
+        "description": "Manage security office locations and information"
+      },
+      "request-types": {
+        "title": "Request Types",
+        "description": "Configure request type categories and settings"
+      },
+      "order-sources": {
+        "title": "Order Sources",
+        "description": "Manage order source types and configurations"
+      },
+      "job-titles": {
+        "title": "Job Titles",
+        "description": "Configure job title definitions and hierarchy"
+      },
+      "countries": {
+        "title": "Countries",
+        "description": "Manage country data and configurations"
+      },
+      "cities": {
+        "title": "Cities",
+        "description": "Manage city data and location information"
+      }
+    }
   }
 }

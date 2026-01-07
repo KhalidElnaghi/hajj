@@ -34,7 +34,23 @@
     "users": "المستخدمون",
     "students": "الطلاب",
     "main_page": "الصفحة الرئيسية",
-    "teachers": "المعلمون"
+    "teachers": "المعلمون",
+    "settings": {
+      "title": "الإعدادات",
+      "general_settings": "الإعدادات العامة",
+      "packages": "الباقات",
+      "booking_statuses": "حالات الحجز",
+      "gathering_point_types": "أنواع نقاط التجمع",
+      "destinations": "الوجهات",
+      "tags": "العلامات",
+      "taggables": "الكيانات القابلة للوسم",
+      "security_offices": "مكاتب الأمن",
+      "request_types": "أنواع الطلبات",
+      "order_sources": "مصادر الطلبات",
+      "job_titles": "المسميات الوظيفية",
+      "countries": "الدول",
+      "cities": "المدن"
+    }
   },
   "Nav": {
     "main": "الرئيسية",
@@ -63,7 +79,8 @@
     "users": "المستخدمون",
     "students": "الطلاب",
     "main_page": "الصفحة الرئيسية",
-    "teachers": "المعلمون"
+    "teachers": "المعلمون",
+    "settings": "الإعدادات"
   },
   "Title": {
     "supervisors_management": "إدارة المشرفين",
@@ -775,5 +792,108 @@
   },
   "None": {
     "label": "لا شيء"
+  },
+  "Settings": {
+    "title": "الإعدادات",
+    "subtitle": "إدارة إعدادات النظام والبيانات المرجعية.",
+    "Label": {
+      "breadcrumb_home": "الصفحة الرئيسية",
+      "package_number": "رقم الباقة",
+      "name_ar": "الاسم بالعربية",
+      "name_en": "الاسم بالإنجليزية",
+      "status": "الحالة",
+      "active": "فعالة",
+      "inactive": "غير فعالة",
+      "not_available": "غير متوفر",
+      "search_by_package_name": "البحث باسم باقة...",
+      "edit": "تعديل",
+      "delete": "حذف"
+    },
+    "Button": {
+      "add_package": "إضافة باقة",
+      "import": "استيراد",
+      "export": "تصدير",
+      "edit": "تعديل",
+      "edit_package": "تعديل باقة",
+      "delete": "حذف",
+      "deleting": "جاري الحذف..."
+    },
+    "Message": {
+      "delete_success": "تم حذف الباقة بنجاح",
+      "delete_error": "خطأ في حذف الباقة",
+      "error_loading_packages": "خطأ في تحميل الباقات. يرجى المحاولة مرة أخرى.",
+      "create_success": "تم إنشاء الباقة بنجاح",
+      "create_error": "حدث خطأ أثناء إنشاء الباقة",
+      "update_success": "تم تحديث الباقة بنجاح",
+      "update_error": "حدث خطأ أثناء تحديث الباقة",
+      "name_ar_required": "الاسم بالعربية مطلوب",
+      "name_ar_min_length": "يجب أن يكون الاسم بالعربية على الأقل حرفين",
+      "name_en_required": "الاسم بالإنجليزية مطلوب",
+      "name_en_min_length": "يجب أن يكون الاسم بالإنجليزية على الأقل حرفين"
+    },
+    "Dialog": {
+      "delete_package": "حذف الباقة",
+      "delete_package_confirm": "هل أنت متأكد من حذف الباقة \"{name}\"؟ لا يمكن التراجع عن هذا الإجراء.",
+      "Cancel": "إلغاء"
+    },
+    "placeholder": {
+      "subtitle": "هذا القسم قيد التطوير",
+      "comingSoon": "قريباً",
+      "description": "ستكون هذه الميزة متاحة قريباً."
+    },
+    "tiles": {
+      "general-settings": {
+        "title": "الإعدادات العامة",
+        "description": "تكوين الإعدادات العامة وتفضيلات النظام"
+      },
+      "packages": {
+        "title": "الباقات",
+        "description": "إدارة تكوينات الباقات والخيارات"
+      },
+      "booking-statuses": {
+        "title": "حالات الحجز",
+        "description": "تكوين أنواع حالات الحجز وسير العمل"
+      },
+      "gathering-point-types": {
+        "title": "أنواع نقاط التجمع",
+        "description": "إدارة تعريفات أنواع نقاط التجمع"
+      },
+      "destinations": {
+        "title": "الوجهات",
+        "description": "تكوين مواقع الوجهات والتفاصيل"
+      },
+      "tags": {
+        "title": "العلامات",
+        "description": "إدارة فئات العلامات والتسميات"
+      },
+      "taggables": {
+        "title": "الكيانات القابلة للوسم",
+        "description": "تكوين الكيانات القابلة للوسم والعلاقات"
+      },
+      "security-offices": {
+        "title": "مكاتب الأمن",
+        "description": "إدارة مواقع مكاتب الأمن والمعلومات"
+      },
+      "request-types": {
+        "title": "أنواع الطلبات",
+        "description": "تكوين فئات أنواع الطلبات والإعدادات"
+      },
+      "order-sources": {
+        "title": "مصادر الطلبات",
+        "description": "إدارة أنواع مصادر الطلبات والتكوينات"
+      },
+      "job-titles": {
+        "title": "المسميات الوظيفية",
+        "description": "تكوين تعريفات المسميات الوظيفية والتسلسل الهرمي"
+      },
+      "countries": {
+        "title": "الدول",
+        "description": "إدارة بيانات الدول والتكوينات"
+      },
+      "cities": {
+        "title": "المدن",
+        "description": "إدارة بيانات المدن ومعلومات الموقع"
+      }
+    }
   }
 }

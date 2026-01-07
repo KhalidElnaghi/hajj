@@ -9,6 +9,14 @@ export const queryKeys = {
     detail: (id: string | number) => [...queryKeys.pilgrims.details(), id] as const,
     initData: () => [...queryKeys.pilgrims.all, 'init-data'] as const,
   },
+  // Packages
+  packages: {
+    all: ['packages'] as const,
+    lists: () => [...queryKeys.packages.all, 'list'] as const,
+    list: (params?: any) => [...queryKeys.packages.lists(), params] as const,
+    details: () => [...queryKeys.packages.all, 'detail'] as const,
+    detail: (id: string | number) => [...queryKeys.packages.details(), id] as const,
+  },
 };
 
 // Helper to create query keys for new resources
